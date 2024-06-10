@@ -45,7 +45,6 @@ Configuration:
 ; Resolution: 0 = 13 bit, sign bit + 12 bits  
 
 ## Memory layout
-
 0x1000 - 0x1023 : EEPROM, configuration. Copied at boot to: 0x2189 - 0x21ad  
   
 0x2000 [2B] : USART_F0 rx buffer head & tail pointers  
@@ -54,8 +53,10 @@ Configuration:
 0x2006 [1B] : FPGA communication request  
 0x2007 [64B] : USART_F0 rx buffer, 64 bytes  
 0x2047 [xx] : USART_F0 tx buffer, xx bytes  
+0x2158 [] : 
 0x215b - 0x215f : some vadj related settings  
 0x2161 : Clock source settings  
+0x2162 [] : 
 0x2173 [16B] : USART_D0 tx buffer  
 0x2183 [2B] : USART_D0 tx buffer head & tail pointers  
 0x2185 [1B] : USART_D0 status  
@@ -68,35 +69,36 @@ Configuration:
 0x219d [] :  
 0x21ab [2B] : Board S/N (4 x 4bit)  
 ---  
+0x21ad [] : 
 0x2b7c [4B] : Flash timestamp  
 0x3ffd [1B] : program status  
 
-
 ## UART F0 commands
-
 | CMD 		| DESC |
 |:--- 		|:--- |
 | AC\rxxx 	| Send xxx msg to UART_D0, till ESC is present |
-| CA\r		| 
-| CP		|
-| L x\r 	| x=0 or x=1
-| O
-| P
+| CA\r		| |
+| CL x\r 	| x=0 or x=1,  setting PORTF interrupt behavior |
+| CP\r		| get PMA0..7 link status|
+| ON		| |
+| OF		| |
+| PA		| |
+| PF		| |
 | RP 		| Send system status |
-| RS 		| Send system params|
+| RS 		| Send system params |
 | SA 		| |
 | SC 		| |
-| SI | |
-| SL | |
-| SM | |
-| SS | |
-| STH | |
-| STL | |
-| STM | |
-| SV.. | |
-| SWR | |
-| THA | |
-| THC | |
-| TMA | |
-| TMC | |
-| WR ||
+| SI 		| |
+| SL 		| |
+| SM 		| |
+| SS 		| |
+| STH 		| |
+| STL 		| |
+| STM 		| |
+| SV.. 		| |
+| SWR 		| |
+| THA 		| |
+| THC 		| |
+| TMA 		| |
+| TMC 		| |
+| WR 		| |
