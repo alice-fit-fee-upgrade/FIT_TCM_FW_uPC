@@ -26,7 +26,7 @@ Some details about the peripherals the MCU ATxmega128a3 is communicating with.
 |16	|DD15_SDA		|PC0	|**Si5338 (x2)**|
 |17	|DD15_SCL		|PC1	||
 |18	|DD17_INTR		|PC2	|Si5338 dev.2 interrupt|
-|19	|DD15_INTR		|PC3	|Si5338 dev.2 interrupt|
+|19	|DD15_INTR		|PC3	|Si5338 dev.1 interrupt|
 |20	|DD16_CLK_SEL		|PC4	|**Si55301 CLK BUFFER**|
 |21 	|Xmega_PC5		|PC5 	|**FPGA**|
 |22 	|Xmega_PC6		|PC6 	||
@@ -44,61 +44,77 @@ Configuration:
 ; Operation mode: 01 = one shot (240ms conversion)  
 ; Resolution: 0 = 13 bit, sign bit + 12 bits  
 
+---
 ## Memory layout
 0x1000 - 0x1023 : EEPROM, configuration. Copied at boot to: 0x2189 - 0x21ad  
   
-0x2000 [2B] : USART_F0 rx buffer head & tail pointers  
-0x2002 [2B] : USART_F0 tx buffer head & tail pointers  
-0x2005 [1B] : USART_F0  
-0x2006 [1B] : FPGA communication request  
-0x2007 [64B] : USART_F0 rx buffer, 64 bytes  
-0x2047 [xx] : USART_F0 tx buffer, xx bytes  
-0x2158 [] : 
-0x215b - 0x215f : some vadj related settings  
-0x2161 : Clock source settings  
-0x2162 [] : 
-0x2173 [16B] : USART_D0 tx buffer  
-0x2183 [2B] : USART_D0 tx buffer head & tail pointers  
-0x2185 [1B] : USART_D0 status  
-0x2186 - 0x2187 : ???  
----  
-0x2189 [4B] : IP ADDR  
+| MEM 	| EEPROM| Bytes | Value 		|
+| :--- 	| :---	| :---	| :---			|
+| 0x2000|	| 2	| USART_F0 rx buffer head & tail pointers	|
+| 0x2002|	| 2	| USART_F0 tx buffer head & tail pointers  	|
+| 0x2005|	| 1	| USART_F0 status  	|
+| 0x2006|	| 1	| FPGA communication request   	|
+| 0x2007|	| 64	| USART_F0 rx buffer, 64 bytes     	|
+| 0x2047|	| xx	| USART_F0 tx buffer, xx bytes       	|
+|	|	|	|	|
+| 0x2156|	| 1	| ?       	|
+| 0x2157| 	| 1	| 5V on PORTE.1 present |
+|	|	|	|	|
+| 0x215b|	| 5	| some vadj related settings  |
+| 	| 	| 	| 	|
+| 0x2161| 	| 1 	| clock source settings |
+|	| 	| 	| 	|
+| 0x2173| 	| 16	| USART_D0 tx buffer 	|
+| 0x2183| 	| 2	| USART_D0 tx buffer head & tail pointers  |
+| 0x2185| 	| 1	| USART_D0 status	|
+| 	| 	| 	| 	|
+| --- 	| ---	| ---	| ---			|
+| 0x2189|0x1000	| 4	| IP addr 		|
+| 0x218d|0x1004	| 6	| MAC addr 		|
+| 0x2193|0x100A	| 2	| A-side phase (delay) 	|
+| 0x2195|0x100C	| 2	| C-side phase (delay) 	|
+| 0x2197|0x100E	| 2	| Laser phase (delay) 	|
+| 0x2199|0x1010	| 1	|  	|
+| 0x219a|	| 1	| PORT B[0:3] settings |
+| 0x219b|	| 1 	| Port B settings (PB4+PB7)	|
+| 0x219d|	| 2	| Vertex time low threshold	|
+| 0x219f|	| 2	| Vertex time high threshold	|
+| 0x21a1|	| 2	| SemiCentral level A 	|
+| 0x21a3|	| 2	| SemiCentral level C 	|
+| 0x21a5|	| 2	| Central level A 	|
+| 0x21a7|	| 2	| Central level C 	|
+| 0x21a9|	| 1	| Trigger mode 		|
+| 0x21ab|	| 2	| Board S/N (4x4bit)	|
+| ---	| ---	| ---	| ---	|
+| 0x2b7c|	| 4	| Flash timestamp	|
+| 0x3ffd| 	| 1	| Program status 	|
 
-0x2193 -  
-0x219a [1B] : PORT B[0:3] settings  
-0x219d [] :  
-0x21ab [2B] : Board S/N (4 x 4bit)  
 ---  
-0x21ad [] : 
-0x2b7c [4B] : Flash timestamp  
-0x3ffd [1B] : program status  
-
 ## UART F0 commands
 | CMD 		| DESC |
 |:--- 		|:--- |
 | AC\rxxx 	| Send xxx msg to UART_D0, till ESC is present |
 | CA\r		| |
 | CL x\r 	| x=0 or x=1,  setting PORTF interrupt behavior |
-| CP\r		| get PMA0..7 link status|
-| ON		| |
-| OF		| |
+| CP\r		| get PMA0..7 link status |
+| ON or OF	| EEPROM erase? |
 | PA		| |
 | PF		| |
-| RP 		| Send system status |
-| RS 		| Send system params |
-| SA 		| |
-| SC 		| |
-| SI 		| |
-| SL 		| |
-| SM 		| |
-| SS 		| |
-| STH 		| |
-| STL 		| |
-| STM 		| |
-| SV.. 		| |
-| SWR 		| |
-| THA 		| |
-| THC 		| |
-| TMA 		| |
-| TMC 		| |
-| WR 		| |
+| RP 		| Read params |
+| RS 		| Read status |
+| SA 		| Set A-side phase (delay) |
+| SC 		| Set C-side phase (delay) |
+| SI 		| Set IP address |
+| SL 		| Set Laser phase (delay) |
+| SM 		| Set MAC address|
+| SS 		| Set 0x14 (port B settings	|
+| STH 		| Set vertex time high threshold |
+| STL 		| Set vertex time low threshold |
+| STM 		| Set trigger mode |
+| SV 		| Set board S/N	|
+| SW 		| Set 0x13	|
+| THA 		| Set Central level A|
+| THC 		| Set Central level C|
+| TMA 		| Set SemiCentral level A|
+| TMC 		| Set SemiCentral level C|
+| WR 		| Write settings to EEPROM|
