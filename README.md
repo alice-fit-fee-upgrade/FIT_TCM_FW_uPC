@@ -110,6 +110,7 @@ Configuration:
 | 0x21ab|	| 2	| Board S/N (4x4bit)	|
 | ---	| ---	| ---	| ---	|
 | 0x23ae| 	| 4	| 	|
+| 0x2b74| 	| 8 	| Programming lock [0x78,0x56,0x34,0x12,0x98,0xBA,0xDC,0xFE ] |
 | 0x2b7c|	| 4	| Flash timestamp	|
 | 0x3ffd| 	| 1	| Program status 	|
 
@@ -122,8 +123,8 @@ Configuration:
 | CL x\r 	| x=0 or x=1,  setting PORTF interrupt behavior |
 | CP\r		| get PMA0..7 link status |
 | ON or OF	| EEPROM erase? |
-| PA		| |
-| PF		| |
+| PA		| Flash ATxmega with new firmware |
+| PF		| Flash FPGA with new firmware |
 | RP 		| Read params |
 | RS 		| Read status |
 | SA 		| Set A-side phase (delay) |
