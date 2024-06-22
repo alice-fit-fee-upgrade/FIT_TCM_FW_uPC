@@ -10,54 +10,71 @@ The timestamp can be easily translated to firmware version YMD.Hm using the foll
 - m: minutes
 All the values are coded using the following alphabet:  
 > 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvw
+
 ---
 ## Hardware 
 Some details about the peripherals the MCU ATxmega128a3 is communicating with.
 
-| PIN 	| LABEL 		| PORT 	| PERIPHERAL |
-|:--- 	|:---:  		|:---: 	|:---        |
-|63  	|DA27_SCLK		|PA1 	|**ADT7311WTRZ Temperature Sensor**| 
-|64	|DA27_DOUT		|PA2 	|| 
-|1	|DA27_DIN		|PA3  	|| 
-|2	|DA27_CS		|PA4	|| 
-|37	|DA21_RST_N		|PE1	||
-|39	|DA2_OUT		|PE3	|**TPS3700DSER voltage monitor** |
-|40	|DD9_S  		|PE4	|**N25Q032A11EF840 Serial Flash Memory**| 
-|41	|DD9_DQ0		|PE5	||
-|42	|DD9_DQ1		|PE6	||
-|43	|DD9_C			|PE6	||
-|28	|DD45_ROUT		|PD1 	|**X36 Connector**|
-|29	|DD45_TIN		|PD2	||
-|6	|DD46A_AB		|PB0	||
-|7	|DD46B_AB		|PB1	||
-|8	|DD46C_AB		|PB2	||
-|9	|DD46D_AB		|PB3	||
-|46	|DD7_T2IN		|PF0	|**RJ45 Connector**|
-|47	|DD7_R2OUT		|PF1	| CTS |
-|48	|DD7_R1OUT		|PF2	| RTS |
-|49	|DD7_T1IN		|PF3	||
-|50	|DD16_LOS1		|PF4	|**CLK1 input clock not present (Si53301)**|
-|51	|DD16_LOS0		|PF5	|**CLK0 input clock not present (Si55301)**|
-|16	|DD15_SDA		|PC0	|**Si5338 (x2)**|
-|17	|DD15_SCL		|PC1	||
-|18	|DD17_INTR		|PC2	|Si5338 dev.2 interrupt|
-|19	|DD15_INTR		|PC3	|Si5338 dev.1 interrupt|
-|20	|DD16_CLK_SEL		|PC4	|**Si55301 CLK BUFFER**|
-|21 	|Xmega_PC5		|PC5 	|**FPGA**|
-|22 	|Xmega_PC6		|PC6 	||
-|23 	|Xmega_PC7		|PC7 	||
-|26 	|Xmega_PD0		|PD0 	||
-|36 	|Xmega_PE0		|PE0 	| communication request int|
+| PIN 	| LABEL 	| PORT	| MODE			| PERIPHERAL 	|
+|:---:	|:---:  	|:---:	| :---:			|:---:        	
+|63  	|DA27_SCLK	|PA1 	| SPI CLK		|**ADT7311WTRZ Temperature Sensor**| 
+|64	|DA27_DOUT	|PA2 	| SPI MISO		|		| 
+|1	|DA27_DIN	|PA3  	| SPI MOSI		| 		|
+|2	|DA27_CS	|PA4	| SPI CS		| 		|
+|62	|		|PA0 	| OUT LED VD8 (red)	|**LEDS**	|
+|3	|		|PA5 	| OUT LED VD12 (blue)	|		|
+|4	|		|PA6 	| OUT LED VD13 (red)	|		|
+|5	|		|PA7 	| OUT LED VD14 (green)	|		|
+|6	|DD46A_AB	|PB0	|			|**X36 Connector**		|
+|7	|DD46B_AB	|PB1	|			|		|
+|8	|DD46C_AB	|PB2	|			|		|
+|9	|DD46D_AB	|PB3	|			|		|
+|28	|DD45_ROUT	|PD1 	|			|		|
+|29	|DD45_TIN	|PD2	|			|		|
+|6	|Xmega_PB4	|PB4	| ???			|**X35**	|		
+|16	|DD15_SDA	|PC0	| I2C SDA		|**Si5338 (x2)**|
+|17	|DD15_SCL	|PC1	| I2C SCL		|		|
+|18	|DD17_INTR	|PC2	| INT0 Si5338 (2) int.	| 		|
+|19	|DD15_INTR	|PC3	| INT0 Si5338 (1) int.	|		|
+|20	|DD16_CLK_SEL	|PC4	| OUT (clk_sel)		|**Si55301**	|
+|50	|DD16_LOS1	|PF4	| INT1 (CLK1 input clock not present | 	|
+|51	|DD16_LOS0	|PF5	| INT1 (CLK0 input clock not present |	|
+|36 	|Xmega_PE0	|PE0 	| INT 			|**FPGA**	|
+|21 	|Xmega_PC5	|PC5 	| SPI MOSI		|		|
+|22 	|Xmega_PC6	|PC6 	| SPI MISO 		|		|
+|23 	|Xmega_PC7	|PC7 	| SPI SCK		|		|
+|26 	|Xmega_PD0	|PD0 	| SPI CS 		|		|
+|27 	|Xmega_PD1	|PD1 	| OUT (program) 	|		|
+|30	|Xmega_PD4	|PD4	| (init)		|		|
+|31	|DD13C_AB	|PD5 	| INT0 (done)		|		|
+|9	|Xmega_PB7	|PB7	| ???			|		|
+|37	|DA21_RST_N	|PE1	| INT (nrst)		|**LTC2906ITS8**|
+|38	|DD11A_A	|PE2	| OUT (enable)		|**2x LM21215AMHX-1 & 1x LD49150PT10R**	|
+|39	|DA2_OUT	|PE3	| IN  (outa & outb)	|**TPS3700DSER Voltage monitor** 	|
+|40	|DD9_S  	|PE4	| SPI CS		|**N25Q032A11EF840 Serial Flash Memory**| 
+|41	|DD9_DQ0	|PE5	| SPI MOSI		|		|
+|42	|DD9_DQ1	|PE6	| SPI MISO		|		|
+|43	|DD9_C		|PE7	| SPI CLK		|		|
+|46	|DD7_T2IN	|PF0	| UART CTS		|**RJ45 Connector**|
+|47	|DD7_R2OUT	|PF1	| UART RTS (INT0)	|		|
+|48	|DD7_R1OUT	|PF2	| UART Rx 		|		|
+|49	|DD7_T1IN	|PF3	| UART Tx		|		|
+|7	|NC		|PB5	| ---			|		|
+|8	|NC		|PB6	| ---			|		|
+|32	|NC		|PD6	| ---			|		|
+|33	|NC		|PD7	| ---			|		|
+|54	|NC		|PF6	| ---			|		|
+|55	|NC		|PF7	| ---			|		|
 
 ### ADT7311
 Configuration:  
-; 0x50 = 0b01010000  
-; Fault queue: 00 = 1 fault (default)  
-; CT pin polarity: 0 = active low  
-; INT pin polarity: 0 = active low  
-; INT/CT mode: 1 = comparator mode  
-; Operation mode: 01 = one shot (240ms conversion)  
-; Resolution: 0 = 13 bit, sign bit + 12 bits  
+- 0x50 = 0b01010000  
+- Fault queue: 00 = 1 fault (default)  
+- CT pin polarity: 0 = active low  
+- INT pin polarity: 0 = active low  
+- INT/CT mode: 1 = comparator mode  
+- Operation mode: 01 = one shot (240ms conversion)  
+- Resolution: 0 = 13 bit, sign bit + 12 bits  
 
 ---
 ## Memory layout
@@ -72,7 +89,8 @@ Configuration:
 | 0x2007|	| 64	| USART_F0 rx buffer, 64 bytes     	|
 | 0x2047|	| xx	| USART_F0 tx buffer, xx bytes       	|
 |	|	|	|	|
-| 0x2156|	| 1	| ?       	|
+| 0x214f|	| ?	| Some attenuator msg bufffer (ending here)	|
+| 0x2156|	| ?	| Some usart f0 msg buffer (ending here)       	|
 | 0x2157| 	| 1	| 5V on PORTE.1 present |
 |	|	|	|	|
 | 0x215b|	| 5	| some vadj related settings  |
@@ -87,7 +105,7 @@ Configuration:
 | 0x2173| 	| 16	| USART_D0 tx buffer 	|
 | 0x2183| 	| 2	| USART_D0 tx buffer head & tail pointers  |
 | 0x2185| 	| 1	| USART_D0 status	|
-| 0x2186| 	| 1	| ??	|
+| 0x2186| 	| 2	| ??	|
 | 0x2187|	| 1	| ??	|
 | --- 	| ---	| ---	| ---			|
 | 0x2189|0x1000	| 4	| IP addr 		|
@@ -95,8 +113,7 @@ Configuration:
 | 0x2193|0x100A	| 2	| A-side phase (delay) 	|
 | 0x2195|0x100C	| 2	| C-side phase (delay) 	|
 | 0x2197|0x100E	| 2	| Laser phase (delay) 	|
-| 0x2199|0x1010	| 1	| ??	|
-| 0x219a|	| 1	| PORT B[0:3] settings |
+| 0x2199|0x1010	| 2	| Attenuator settings	|
 | 0x219b|	| 1 	| Port B settings (PB4+PB7)	|
 | 0x219d|	| 2	| Vertex time low threshold	|
 | 0x219c|	| 1	| [UNUSED]	|
@@ -117,7 +134,7 @@ Configuration:
 ---  
 ## UART F0 commands
 | CMD 		| DESC |
-|:--- 		|:--- |
+|:---: 		|:---: |
 | AC\rxxx 	| Send xxx msg to UART_D0, till ESC is present |
 | CA\r		| |
 | CL x\r 	| x=0 or x=1,  setting PORTF interrupt behavior |
@@ -132,14 +149,19 @@ Configuration:
 | SI 		| Set IP address |
 | SL 		| Set Laser phase (delay) |
 | SM 		| Set MAC address|
-| SS 		| Set 0x14 (port B settings	|
+| SS 		| Set switches (port B settings)	|
 | STH 		| Set vertex time high threshold |
 | STL 		| Set vertex time low threshold |
 | STM 		| Set trigger mode |
 | SV 		| Set board S/N	|
-| SW 		| Set 0x13	|
+| SW 		| Set attenuator steps	|
 | THA 		| Set Central level A|
 | THC 		| Set Central level C|
 | TMA 		| Set SemiCentral level A|
 | TMC 		| Set SemiCentral level C|
 | WR 		| Write settings to EEPROM|
+
+---
+## NOTES
+PORTA_OUTSET 0x80 has some connection with PORTB_OUTCLR = 0x80
+PORTA_OUTSET 0xC0 has some connection with PORTB_OUTSET = 0x10
