@@ -98,7 +98,7 @@ Configuration:
 | 0x2159| 	| 1	| 	|
 | 0x2160| 	| 1	| ?? 	| 
 | 0x2161| 	| 1 	| clock source settings |
-| 0x2162| 	| 4 	| 16#18# settings |
+| 0x2162| 	| 1 	| 16#18# settings |
 | 0x2163| 	| 4 	| ?? |
 | 	| 	| 	| 	|
 | 	| 	| 	| 	|
@@ -114,19 +114,20 @@ Configuration:
 | 0x2195|0x100C	| 2	| C-side phase (delay) 	|
 | 0x2197|0x100E	| 2	| Laser phase (delay) 	|
 | 0x2199|0x1010	| 2	| Attenuator settings	|
-| 0x219b|	| 1 	| Port B settings (PB4+PB7)	|
-| 0x219d|	| 2	| Vertex time low threshold	|
-| 0x219c|	| 1	| [UNUSED]	|
-| 0x219f|	| 2	| Vertex time high threshold	|
-| 0x21a1|	| 2	| SemiCentral level A 	|
-| 0x21a3|	| 2	| SemiCentral level C 	|
-| 0x21a5|	| 2	| Central level A 	|
-| 0x21a7|	| 2	| Central level C 	|
-| 0x21a9|	| 1	| Trigger mode 		|
-| 0x21aa|	| 1 	| [UNUSED] 	|
-| 0x21ab|	| 2	| Board S/N (4x4bit)	|
+| 0x219b|0x1012	| 1 	| Port B settings (PB4+PB7)	|
+| 0x219d|0x1013	| 2	| Vertex time low threshold	|
+| 0x219c|0x1015	| 1	| [UNUSED]	|
+| 0x219f|0x1016	| 2	| Vertex time high threshold	|
+| 0x21a1|0x1018	| 2	| SemiCentral level A 	|
+| 0x21a3|0x101A	| 2	| SemiCentral level C 	|
+| 0x21a5|0x101C	| 2	| Central level A 	|
+| 0x21a7|0x101E	| 2	| Central level C 	|
+| 0x21a9|0x1020	| 1	| Trigger mode 		|
+| 0x21aa|0x1021	| 1 	| [UNUSED] 	|
+| 0x21ab|0x1022	| 2	| Board S/N (4x4bit)	|
 | ---	| ---	| ---	| ---	|
 | 0x23ae| 	| 4	| 	|
+| 0x29ba|
 | 0x2b74| 	| 8 	| Programming lock [0x78,0x56,0x34,0x12,0x98,0xBA,0xDC,0xFE ] |
 | 0x2b7c|	| 4	| Flash timestamp	|
 | 0x3ffd| 	| 1	| Program status 	|
