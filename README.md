@@ -7,7 +7,7 @@ The timestamp can be easily translated to firmware version YMD.Hm using the foll
 - M: month
 - D: day
 - H: hour
-- m: minutes
+- m: minutes  
 All the values are coded using the following alphabet:  
 > 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvw
 
@@ -76,6 +76,56 @@ Configuration:
 - Operation mode: 01 = one shot (240ms conversion)  
 - Resolution: 0 = 13 bit, sign bit + 12 bits  
 
+### Si5338
+Switch flow:
+
+| MEM 	| Stream| Substream	| CODE	| LABEL		| START	| Msg		|
+| :---	| :---	| :---		| :---	|:---		| :---	| :---		|
+| 0x25a6| 00	| 00		| 0x0117|caseD_0	| YES	| Reg 6 SEL	|
+| 0x25a8| 00	| 01		| 0x0122|caseD_2	| 	| Reg 6 WR 0xc	|
+| 0x25aa| 00	| 02		| 0x0145|caseD_4	| 	| Switch to other dev |
+| 0x25ac| 00	| 03		| 0x014b|caseD_6	| 	| PORTF_INTFLAGS = 0b00000010; PORTF_INTCTRL = 0b00001010 	|
+| 0x25ae| 01	| 00		| 0x0153|caseD_8	| YES	| Reg 235 SEL (FCAL) |
+| 0x25b0| 01	| 01		| 0x0159|caseD_a	| 	| Set slave RD 	|
+| 0x25b2| 01	| 02		| 0x0166|caseD_c	| 	| Reg 235 RD	|
+| 0x25b4| 01	| 03		| 0x016f|caseD_e	| 	| Reg 236 RD 	|
+| 0x25b6| 01	| 04		| 0x0174|caseD_10	| 	| Reg 237 RD	|
+| 0x25b8| 01	| 05		| 0x0183|caseD_12	| 	| Reg 45 SEL	|
+| 0x25ba| 01	| 06		| 0x0189|caseD_14	| 	| Reg 45 WR	|
+| 0x25bc| 01	| 07		| 0x018c|caseD_16	| 	| Reg 46 WR	|
+| 0x25be| 01	| 08		| 0x018f|caseD_18	| 	| Reg 47 WR	|
+| 0x25c0| 01	| 09		| 0x0194|caseD_1a	| 	| 		|
+| 0x25c2| 01	| 0a		| 0x019a|caseD_1c	| 	| Reg 49 SEL	|
+| 0x25c4| 01	| 0b		| 0x01a0|caseD_1e	| 	| Reg 49 WR 0x80 or 0x90 |
+| 0x25c6| 01	| 0c		| 0x01a9|caseD_20	| 	| Reg 
+| 0x25c8| 02	| 00		| 0x01bd|caseD_22	| YES	|
+| 0x25ca| 02	| 01		| 0x01cd|caseD_24	| 	|
+| 0x25cc| 02	| 02		| 0x01b3|caseD_26	| 	|
+| 0x25ce| 03	| 00		| 0x01d7|caseD_28	| YES	| Reg 241 SEL
+| 0x25d0| 03	| 01		| 0x01dd|caseD_2a	| 	|
+| 0x25d2| 03	| 02		| 0x01e5|caseD_2c	| 	|
+| 0x25d4| 03	| 03		| 0x01eb|caseD_2e	| 	|
+| 0x25d6| 03	| 04		| 0x01f6|caseD_30	| 	|
+| 0x25d8| 03	| 05		| 0x0207|caseD_32	| 	|
+| 0x25da| 03	| 06		| 0x020d|caseD_34	| 	|
+| 0x25dc| 03	| 07		| 0x0213|caseD_36	| 	|
+| 0x25de| 03	| 08		| 0x0220|caseD_38	| 	|
+| 0x25e0| 03	| 09		| 0x0226|caseD_3a	| 	|
+| 0x25e2| 03	| 0a		| 0x022c|caseD_3c	| 	|
+| 0x25e4| 03	| 0b		| 0x0235|caseD_3e	| 	|
+| 0x25e6| 03	| 0c		| 0x023b|caseD_40	| 	|
+| 0x25e8| 03	| 0d		| 0x0241|caseD_42	| 	|
+| 0x25ea| 03	| 0e		| 0x024a|caseD_44	| 	|
+| 0x25ec| 03	| 0f		| 0x0250|caseD_46	| 	|
+| 0x25ee| 03	| 10		| 0x0256|caseD_48	| 	|
+| 0x25f0| 03	| 11		| 0x025f|caseD_4a	| 	|
+| 0x25f2| 03	| 12		| 0x0265|caseD_4c	| YES 	|
+| 0x25f4| 03	| 13		| 0x026b|caseD_4e	| 	|
+| 0x25f6| 03	| 14		| 0x0203|caseD_50	| 	|
+| 0x25f8| 04	| 00		| 0x0285|caseD_52	| YES	| Reg = 241
+| 0x25fa| 04	| 01		| 0x028b|caseD_54	| 	| Val = 0x65
+| 0x25fc| 04	| 02		| 0x0291|caseD_56	| 	| ?
+
 ---
 ## Memory layout
 0x1000 - 0x1023 : EEPROM, configuration. Copied at boot to: 0x2189 - 0x21ad  
@@ -95,11 +145,11 @@ Configuration:
 |	|	|	|	|
 | 0x215b|	| 5	| some vadj related settings  |
 | 0x2158| 	| 1	| FPGA 0x7F status 	|
-| 0x2159| 	| 1	| 	|
+| 0x2159| 	| 7	| Timer related settings?	|
 | 0x2160| 	| 1	| ?? 	| 
 | 0x2161| 	| 1 	| clock source settings |
 | 0x2162| 	| 1 	| 16#18# settings |
-| 0x2163| 	| 4 	| ?? |
+| 0x2163| 	| 2 	| Si5338 current msg stream |
 | 	| 	| 	| 	|
 | 	| 	| 	| 	|
 | 0x2173| 	| 16	| USART_D0 tx buffer 	|
@@ -127,7 +177,8 @@ Configuration:
 | 0x21ab|0x1022	| 2	| Board S/N (4x4bit)	|
 | ---	| ---	| ---	| ---	|
 | 0x23ae| 	| 4	| 	|
-| 0x29ba|
+| 0x25a6|	| ?	| Si5338 comm. func. references |
+| 0x29ba|	|	|			|
 | 0x2b74| 	| 8 	| Programming lock [0x78,0x56,0x34,0x12,0x98,0xBA,0xDC,0xFE ] |
 | 0x2b7c|	| 4	| Flash timestamp	|
 | 0x3ffd| 	| 1	| Program status 	|
