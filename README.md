@@ -29,9 +29,9 @@ Some details about the peripherals the MCU ATxmega128a3 is communicating with.
 |7	|DD46B_AB	|PB1	|			|		|
 |8	|DD46C_AB	|PB2	|			|		|
 |9	|DD46D_AB	|PB3	|			|		|
-|28	|DD45_ROUT	|PD1 	|			|		|
-|29	|DD45_TIN	|PD2	|			|		|
-|6	|Xmega_PB4	|PB4	| ???			|**X35**	|		
+|28	|DD45_ROUT	|PD2 	|			|		|
+|29	|DD45_TIN	|PD3	|			|		|
+|10	|Xmega_PB4	|PB4	| ???			|**X35**	|		
 |16	|DD15_SDA	|PC0	| I2C SDA		|**Si5338 (x2)**|
 |17	|DD15_SCL	|PC1	| I2C SCL		|		|
 |18	|DD17_INTR	|PC2	| INT0 Si5338 (2) int.	| 		|
@@ -47,7 +47,7 @@ Some details about the peripherals the MCU ATxmega128a3 is communicating with.
 |27 	|Xmega_PD1	|PD1 	| OUT (program) 	|		|
 |30	|Xmega_PD4	|PD4	| (init)		|		|
 |31	|DD13C_AB	|PD5 	| INT0 (done)		|		|
-|9	|Xmega_PB7	|PB7	| ???			|		|
+|13	|Xmega_PB7	|PB7	| ???			|		|
 |37	|DA21_RST_N	|PE1	| INT (nrst)		|**LTC2906ITS8**|
 |38	|DD11A_A	|PE2	| OUT (enable)		|**2x LM21215AMHX-1 & 1x LD49150PT10R**	|
 |39	|DA2_OUT	|PE3	| IN  (outa & outb)	|**TPS3700DSER Voltage monitor** 	|
@@ -59,8 +59,8 @@ Some details about the peripherals the MCU ATxmega128a3 is communicating with.
 |47	|DD7_R2OUT	|PF1	| UART RTS (INT0)	|		|
 |48	|DD7_R1OUT	|PF2	| UART Rx 		|		|
 |49	|DD7_T1IN	|PF3	| UART Tx		|		|
-|7	|NC		|PB5	| ---			|		|
-|8	|NC		|PB6	| ---			|		|
+|11	|NC		|PB5	| ---			|		|
+|12	|NC		|PB6	| ---			|		|
 |32	|NC		|PD6	| ---			|		|
 |33	|NC		|PD7	| ---			|		|
 |54	|NC		|PF6	| ---			|		|
