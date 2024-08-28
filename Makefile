@@ -4,14 +4,14 @@
 ##########    Check these every time you start a new project    ##########
 ##########------------------------------------------------------##########
 
-MCU   = atxmega128a1
-F_CPU = 16000000UL  
-## Also try BAUD = 19200 or 38400 if you're feeling lucky.
+MCU   = atxmega128a3u
+F_CPU = 16000000UL
 
 ## A directory for common include files and the simple USART library.
 ## If you move either the current folder or the Library folder, you'll 
 ##  need to change this path to match.
 #LIBDIR = ../../AVR-Programming-Library # Not used
+DRVDIR = drivers
 
 ##########------------------------------------------------------##########
 ##########                 Programmer Defaults                  ##########
@@ -19,9 +19,9 @@ F_CPU = 16000000UL
 ##########        (Can override.  See bottom of file.)          ##########
 ##########------------------------------------------------------##########
 
-PROGRAMMER_TYPE = jtagmkII
+PROGRAMMER_TYPE = avrisp2
 # extra arguments to avrdude: baud rate, chip type, -F flag, etc.
-PROGRAMMER_ARGS = -p x128a1 -v
+PROGRAMMER_ARGS = -p x128a3u -v
 
 ##########------------------------------------------------------##########
 ##########                  Program Locations                   ##########
@@ -44,14 +44,14 @@ AVRDUDE = avrdude
 ##########------------------------------------------------------##########
 
 ## The name of your project (without the .c)
-# TARGET = blinkLED
+TARGET = alice_tcm
 ## Or name it automatically after the enclosing directory
-TARGET = $(lastword $(subst /, ,$(CURDIR)))
+#TARGET = $(lastword $(subst /, ,$(CURDIR)))
 
 # Object files: will find all .c/.h files in current directory
 #  and in LIBDIR.  If you have any other (sub-)directories with code,
 #  you can add them in to SOURCES below in the wildcard statement.
-SOURCES=$(wildcard *.c $(LIBDIR)/*.c)
+SOURCES=$(wildcard *.c $(LIBDIR)/*.c $(DRVDIR)/*.c)
 OBJECTS=$(SOURCES:.c=.o)
 HEADERS=$(SOURCES:.c=.h)
 
