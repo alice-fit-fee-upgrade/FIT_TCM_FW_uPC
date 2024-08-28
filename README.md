@@ -12,59 +12,79 @@ All the values are coded using the following alphabet:
 > 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvw
 
 ---
+## Firmware
+### Boot
+- port, timer counter, oscillator, interrupts, etc. settings
+- clear storage memory (0x2000 - 0x23b2)
+- 
+- check whether 5V is available. If so, set 4s. FPGA status (0x215b <= 1) and timer (0x215c). Otherwise, set GPIOR0 bit 1.
+- set attenuator timer (0x215e) to 2s.
+
+#### Si5338 startup
+
+#### FPGA startup
+FPGA status is stored at 0x215b with starting value equal zero.
+0. Do nothing
+1. If 5V is present, then enable (EN_PSU) 2x LM21212AMHX-1 & 1x LD49150PT10R, delay 2s.
+2. Check whether TPS3700 are ok, set USART_D0 status to 0x1f, initialize Si5338 communication
+3. Set FPGA init pin, clear FPGA program pin then set, delay 2,5s.
+4. Wait for FPGA done pin, then set 0x2157 4-th bit, send mcu_ts and ip_addr
+5. If xmega_PB7 is set (FPGA_RST) -> proceed sending FPGA settings.
+
+---
 ## Hardware 
 Some details about the peripherals the MCU ATxmega128a3 is communicating with.
 
-| PIN 	| LABEL 	| PORT	| MODE			| PERIPHERAL 	|
+| PIN 	| LABEL 	| PORT	| MODE			| PERIPHERAL 	| COMMENTS |
 |:---:	|:---:  	|:---:	| :---:			|:---:        	
-|63  	|DA27_SCLK	|PA1 	| SPI CLK		|**ADT7311WTRZ Temperature Sensor**| 
-|64	|DA27_DOUT	|PA2 	| SPI MISO		|		| 
-|1	|DA27_DIN	|PA3  	| SPI MOSI		| 		|
-|2	|DA27_CS	|PA4	| SPI CS		| 		|
-|62	|		|PA0 	| OUT LED VD8 (red)	|**LEDS**	|
-|3	|		|PA5 	| OUT LED VD12 (blue)	|		|
-|4	|		|PA6 	| OUT LED VD13 (red)	|		|
-|5	|		|PA7 	| OUT LED VD14 (green)	|		|
-|6	|DD46A_AB	|PB0	|			|**X36 Connector**		|
-|7	|DD46B_AB	|PB1	|			|		|
-|8	|DD46C_AB	|PB2	|			|		|
-|9	|DD46D_AB	|PB3	|			|		|
-|28	|DD45_ROUT	|PD2 	|			|		|
-|29	|DD45_TIN	|PD3	|			|		|
-|10	|Xmega_PB4	|PB4	| ???			|**X35**	|		
-|16	|DD15_SDA	|PC0	| I2C SDA		|**Si5338 (x2)**|
-|17	|DD15_SCL	|PC1	| I2C SCL		|		|
-|18	|DD17_INTR	|PC2	| INT0 Si5338 (2) int.	| 		|
-|19	|DD15_INTR	|PC3	| INT0 Si5338 (1) int.	|		|
-|20	|DD16_CLK_SEL	|PC4	| OUT (clk_sel)		|**Si55301**	|
-|50	|DD16_LOS1	|PF4	| INT1 (CLK1 input clock not present | 	|
-|51	|DD16_LOS0	|PF5	| INT1 (CLK0 input clock not present |	|
+|63  	|DA27_SCLK	|PA1 	| SPI CLK		|**ADT7311WTRZ Temperature Sensor**| |
+|64	    |DA27_DOUT	|PA2 	| SPI MISO		|		| |
+|1	    |DA27_DIN	|PA3  	| SPI MOSI		| 		| |
+|2	    |DA27_CS	|PA4	| SPI CS		| 		| |
+|62	    |		|PA0 	| OUT LED VD8 (red)	|**LEDS**	| |
+|3	    |		|PA5 	| OUT LED VD12 (blue)	|		| |
+|4	    |		|PA6 	| OUT LED VD13 (red)	|		| |
+|5	    |		|PA7 	| OUT LED VD14 (green)	|		| |
+|6	    |DD46A_AB	|PB0	|			|**X36 Connector**		|
+|7	    |DD46B_AB	|PB1	|			|		|
+|8	    |DD46C_AB	|PB2	|			|		|
+|9	    |DD46D_AB	|PB3	|			|		|
+|28	    |DD45_ROUT	|PD2 	|			|		|
+|29	    |DD45_TIN	|PD3	|			|		|
+|10	    |Xmega_PB4	|PB4	| ???			|**X35**	|		
+|16	    |DD15_SDA	|PC0	| I2C SDA		|**Si5338 (x2)**|
+|17	    |DD15_SCL	|PC1	| I2C SCL		|		|
+|18	    |DD17_INTR	|PC2	| INT0 Si5338 (2) int.	| 		|
+|19	    |DD15_INTR	|PC3	| INT0 Si5338 (1) int.	|		|
+|20	    |DD16_CLK_SEL	|PC4	| OUT (clk_sel)		|**Si55301**	|
+|50	    |DD16_LOS1	|PF4	| INT1 (CLK1 input clock not present | 	|
+|51	    |DD16_LOS0	|PF5	| INT1 (CLK0 input clock not present |	|
 |36 	|Xmega_PE0	|PE0 	| INT 			|**FPGA**	|
 |21 	|Xmega_PC5	|PC5 	| SPI MOSI		|		|
 |22 	|Xmega_PC6	|PC6 	| SPI MISO 		|		|
 |23 	|Xmega_PC7	|PC7 	| SPI SCK		|		|
 |26 	|Xmega_PD0	|PD0 	| SPI CS 		|		|
 |27 	|Xmega_PD1	|PD1 	| OUT (program) 	|		|
-|30	|Xmega_PD4	|PD4	| (init)		|		|
-|31	|DD13C_AB	|PD5 	| INT0 (done)		|		|
-|13	|Xmega_PB7	|PB7	| ???			|		|
-|37	|DA21_RST_N	|PE1	| INT (nrst)		|**LTC2906ITS8**|
-|38	|DD11A_A	|PE2	| OUT (enable)		|**2x LM21215AMHX-1 & 1x LD49150PT10R**	|
-|39	|DA2_OUT	|PE3	| IN  (outa & outb)	|**TPS3700DSER Voltage monitor** 	|
-|40	|DD9_S  	|PE4	| SPI CS		|**N25Q032A11EF840 Serial Flash Memory**| 
-|41	|DD9_DQ0	|PE5	| SPI MOSI		|		|
-|42	|DD9_DQ1	|PE6	| SPI MISO		|		|
-|43	|DD9_C		|PE7	| SPI CLK		|		|
-|46	|DD7_T2IN	|PF0	| UART CTS		|**RJ45 Connector**|
-|47	|DD7_R2OUT	|PF1	| UART RTS (INT0)	|		|
-|48	|DD7_R1OUT	|PF2	| UART Rx 		|		|
-|49	|DD7_T1IN	|PF3	| UART Tx		|		|
-|11	|NC		|PB5	| ---			|		|
-|12	|NC		|PB6	| ---			|		|
-|32	|NC		|PD6	| ---			|		|
-|33	|NC		|PD7	| ---			|		|
-|54	|NC		|PF6	| ---			|		|
-|55	|NC		|PF7	| ---			|		|
+|30	    |Xmega_PD4	|PD4	| (init)		|		|
+|31	    |DD13C_AB	|PD5 	| INT0 (done)		|		|
+|13	    |Xmega_PB7	|PB7	| ???			|		|
+|37	    |DA21_RST_N	|PE1	| INT (nrst)		|**LTC2906ITS8**|
+|38	    |DD11A_A	|PE2	| OUT (enable)		|**2x LM21215AMHX-1 & 1x LD49150PT10R**	|
+|39	    |DA2_OUT	|PE3	| IN  (outa & outb)	|**TPS3700DSER Voltage monitor** 	|
+|40	    |DD9_S  	|PE4	| SPI CS		|**N25Q032A11EF840 Serial Flash Memory**| 
+|41	    |DD9_DQ0	|PE5	| SPI MOSI		|		|
+|42	    |DD9_DQ1	|PE6	| SPI MISO		|		|
+|43	    |DD9_C		|PE7	| SPI CLK		|		|
+|46	    |DD7_T2IN	|PF0	| UART CTS		|**RJ45 Connector**|
+|47	    |DD7_R2OUT	|PF1	| UART RTS (INT0)	|		|
+|48	    |DD7_R1OUT	|PF2	| UART Rx 		|		|
+|49	    |DD7_T1IN	|PF3	| UART Tx		|		|
+|11	    |NC		|PB5	| ---			|		|
+|12	    |NC		|PB6	| ---			|		|
+|32	    |NC		|PD6	| ---			|		|
+|33	    |NC		|PD7	| ---			|		|
+|54	    |NC		|PF6	| ---			|		|
+|55	    |NC		|PF7	| ---			|		|
 
 ### ADT7311
 Configuration:  
@@ -145,18 +165,22 @@ Switch flow:
 |	|	|	|	|
 | 0x215b|	| 5	| some vadj related settings  |
 | 0x2158| 	| 1	| FPGA 0x7F status 	|
-| 0x2159| 	| 7	| Timer related settings?	|
+| 0x2159| 	| 1	| Timer Si5338 status 	|
+| 0x215a| 	| 1	| Timer Si5338 value	|
+| 0x215b| 	| 1	| Timer FPGA status	| 
+| 0x215c| 	| 2	| Timer FPGA value 	| 
+| 0x215e| 	| 2	| Timer Attenuator 	| 
 | 0x2160| 	| 1	| ?? 	| 
 | 0x2161| 	| 1 	| clock source settings |
 | 0x2162| 	| 1 	| 16#18# settings |
 | 0x2163| 	| 2 	| Si5338 current msg stream |
-| 	| 	| 	| 	|
+| 0x2165| 	| 2	| Si5338 msg to send	|
 | 	| 	| 	| 	|
 | 0x2173| 	| 16	| USART_D0 tx buffer 	|
 | 0x2183| 	| 2	| USART_D0 tx buffer head & tail pointers  |
 | 0x2185| 	| 1	| USART_D0 status	|
-| 0x2186| 	| 2	| ??	|
-| 0x2187|	| 1	| ??	|
+| 0x2186| 	| 2	| Attenuator steps settings, initial value 0xFFFF	|
+| 0x2188|	| 1	| ??	|
 | --- 	| ---	| ---	| ---			|
 | 0x2189|0x1000	| 4	| IP addr 		|
 | 0x218d|0x1004	| 6	| MAC addr 		|
@@ -165,8 +189,8 @@ Switch flow:
 | 0x2197|0x100E	| 2	| Laser phase (delay) 	|
 | 0x2199|0x1010	| 2	| Attenuator settings	|
 | 0x219b|0x1012	| 1 	| Port B settings (PB4+PB7)	|
-| 0x219d|0x1013	| 2	| Vertex time low threshold	|
 | 0x219c|0x1015	| 1	| [UNUSED]	|
+| 0x219d|0x1013	| 2	| Vertex time low threshold	|
 | 0x219f|0x1016	| 2	| Vertex time high threshold	|
 | 0x21a1|0x1018	| 2	| SemiCentral level A 	|
 | 0x21a3|0x101A	| 2	| SemiCentral level C 	|
@@ -175,9 +199,12 @@ Switch flow:
 | 0x21a9|0x1020	| 1	| Trigger mode 		|
 | 0x21aa|0x1021	| 1 	| [UNUSED] 	|
 | 0x21ab|0x1022	| 2	| Board S/N (4x4bit)	|
+| 0x21ad|0x1023	| 1	| 	|
 | ---	| ---	| ---	| ---	|
+| 	| 	| 	| 	|
 | 0x23ae| 	| 4	| 	|
-| 0x25a6|	| ?	| Si5338 comm. func. references |
+| 0x25a6|	| 88	| Si5338 comm. func. references (0x25a6 - 0x25fd) |
+|	|	|	|			|
 | 0x29ba|	|	|			|
 | 0x2b74| 	| 8 	| Programming lock [0x78,0x56,0x34,0x12,0x98,0xBA,0xDC,0xFE ] |
 | 0x2b7c|	| 4	| Flash timestamp	|
@@ -188,7 +215,7 @@ Switch flow:
 | CMD 		| DESC |
 |:---: 		|:---: |
 | AC\rxxx 	| Send xxx msg to UART_D0, till ESC is present |
-| CA\r		| |
+| CA\r		| Clear alarms|
 | CL x\r 	| x=0 or x=1,  setting PORTF interrupt behavior |
 | CP\r		| get PMA0..7 link status |
 | ON or OF	| EEPROM erase? |
