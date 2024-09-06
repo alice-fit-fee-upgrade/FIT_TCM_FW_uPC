@@ -1,11 +1,15 @@
+#include <stdio.h>
+
 #include "drivers/usart_driver.h"
 #include "drivers/port_driver.h"
 #include "console.h"
 
 #define USART USARTF0
+#define PRINTF_BUF_LEN  (256)
 
 USART_data_t USART_data;
 
+static char vsprintf_buf[PRINTF_BUF_LEN];
 
 void console_init(void)
 {
@@ -49,9 +53,15 @@ void console_cts_enable(void)
     return;
 }
 
-void console_send(char *p_msg)
+__attribute__((format(printf, 1, 2))) void console_print(const char *fmt, ...)
 {
-    while (*p_msg != '\0')
+    va_list args;
+
+    va_start(args, fmt);
+    vsnprintf(vsprintf_buf, PRINTF_BUF_LEN, fmt, args);
+    char *p_msg = vsprintf_buf;
+
+    while(*p_msg)
     {
         bool b_sent_to_buf = false;
         b_sent_to_buf = USART_TXBuffer_PutByte(&USART_data, *p_msg);

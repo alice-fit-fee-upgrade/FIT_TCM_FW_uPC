@@ -1,9 +1,12 @@
 #include <avr/io.h>
 #include <util/delay.h>
+#include <stdio.h>
 #include <stdbool.h>
+
 
 #include "avr_compiler.h"
 #include "drivers/clksys_driver.h"
+#include "drivers/eeprom_driver.h"
 #include "drivers/pmic_driver.h"
 
 #include "console.h"
@@ -13,6 +16,13 @@
 extern struct timer_state ts_fpga;
 extern struct timer_state ts_attenuator;
 extern struct timer_state ts_si5338;
+
+struct eeprom_params {
+  uint8_t ip_addr[4];
+  uint8_t mac_addr[6];
+};
+
+struct eeprom_params *p_params = (struct eeprom_params *)MAPPED_EEPROM_START;
 
 static void sysclk_init(void)
 {
@@ -61,7 +71,7 @@ int main(void)
   console_init();
   timer_init();
 
-  NVM_CTRLB = 0b00001000;
+  EEPROM_EnableMapping();
 
   /* Check 5V supply status */
   if(io_is_5v_present())
@@ -90,7 +100,26 @@ int main(void)
   // TODO: Set PORTB according to EEPROM
 
   /* Send welcome message */ 
-  console_send("\r\nINR TCM control interface ready\r\n");
+  console_print("\r\nINR TCM control interface ready\r\n");
+
+  console_print(
+    "MAC ADDRESS: %02X:%02X:%02X:%02X:%02X:%02X\r\n", 
+    p_params->mac_addr[0],
+    p_params->mac_addr[1],
+    p_params->mac_addr[2],
+    p_params->mac_addr[3],
+    p_params->mac_addr[4],
+    p_params->mac_addr[5]
+    );
+
+  console_print(
+    "IP ADDRESS: %d.%d.%d.%d\r\n", 
+    p_params->ip_addr[0],
+    p_params->ip_addr[1],
+    p_params->ip_addr[2],
+    p_params->ip_addr[3]
+    );
+  
   console_rts_clr();
 
   do 
