@@ -46,63 +46,63 @@ static void sysclk_init(void)
  */
 int main(void)
 {
-    sysclk_init();
-    io_init();
+  sysclk_init();
+  io_init();
 
-    //TWIC_MASTER_BAUD = 0x23;
-    //TWIC_MASTER_CTRLA = 0x48;
-    //TWIC_MASTER_STATUS = 1;
+  TWIC_MASTER_BAUD = 0x23;
+  TWIC_MASTER_CTRLA = 0x48;
+  TWIC_MASTER_STATUS = 1;
 
-    //USARTD0_BAUDCTRLB = 0x40;
-    //USARTD0_BAUDCTRLA = 0xc;
-    //USARTD0_CTRLC = 3;
+  USARTD0_BAUDCTRLB = 0x40;
+  USARTD0_BAUDCTRLA = 0xc;
+  USARTD0_CTRLC = 3;
 
-    timer_init();
-    console_init();
+  console_init();
+  timer_init();
 
-    NVM_CTRLB = 0b00001000;
+  NVM_CTRLB = 0b00001000;
 
-    /* Check 5V supply status */
-    if(io_is_5v_present())
-    {
-        timer_tc_set_state(&ts_fpga, 1);
-        timer_tc_set_value_ms(&ts_fpga, 2000);
-    }
-    else
-    {
+  /* Check 5V supply status */
+  if(io_is_5v_present())
+  {
+      timer_tc_set_state(&ts_fpga, 1);
+      timer_tc_set_value_ms(&ts_fpga, 2000);
+  }
+  else
+  {
 
-    }
-    
-    /* Set attenuator timer */
-    timer_tc_set_value_ms(&ts_fpga, 1000);
+  }
 
-    // Enable PORTE INTCTRL level LOW
-    // Enable PORTF INTCTRL level MED
+  /* Set attenuator timer */
+  timer_tc_set_value_ms(&ts_fpga, 1000);
 
-    /* Enable PMIC interrupt level low & med. */
+  // TODO: Enable PORTE INTCTRL level LOW
+  console_cts_enable();
+
+  /* Enable PMIC interrupt level low & med. */
 	PMIC.CTRL |= (PMIC_LOLVLEX_bm | PMIC_MEDLVLEX_bm);
-    sei();
-    nop();
+  sei();
+  nop();
 
-    // Set ADT7311
-    // Get settings from EEPROM
-    // Set PORTB according to EEPROM
+  // TODO: Set ADT7311
+  // TODO: Get settings from EEPROM
+  // TODO: Set PORTB according to EEPROM
 
-    /* Send welcome message */ 
-    console_send("INR TCM control interface ready\r\n");
-    console_cts_set();
+  /* Send welcome message */ 
+  console_send("\r\nINR TCM control interface ready\r\n");
+  console_rts_clr();
 
-    do 
-    {
-        do 
-        {
-            nop();
-        }
-        while (true);
-        
-    }
-    while(true);
+  do 
+  {
+      do 
+      {
+          nop();
+      }
+      while (true);
+    
+  }
+  while(true);
 
-    /* Should never get here */
-    return 0;
+  /* Should never get here */
+  return 0;
 }

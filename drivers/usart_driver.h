@@ -98,6 +98,22 @@ typedef struct USART_Buffer
 	volatile uint8_t TX_Tail;
 } USART_Buffer_t;
 
+typedef struct USART_FlowControl
+{
+	/* \brief Flow Control usage status. */
+	bool b_flowControlUsed;
+	/* \brief Flow Control port. */
+	PORT_t * port;
+	/* \brief CTS pin. */
+	uint8_t cts_pinMask;
+	/* \brief RTS pin. */
+	uint8_t rts_pinMask;
+	/* \brief Clear To Send status. */
+	volatile bool cts;
+	/* \brief Request To Send status. */
+	volatile bool rts;
+} USART_FlowControl_t;
+
 
 /*! \brief Struct used when interrupt driven driver is used.
 *
@@ -112,6 +128,8 @@ typedef struct Usart_and_buffer
 	USART_DREINTLVL_t dreIntLevel;
 	/* \brief Data buffer. */
 	USART_Buffer_t buffer;
+	/* \brief Flow control. */
+	USART_FlowControl_t flowCtrl;
 } USART_data_t;
 
 
@@ -163,7 +181,6 @@ typedef struct Usart_and_buffer
  *  \param _usart    Pointer to the USART module
  */
 #define USART_Rx_Enable(_usart) ((_usart)->CTRLB |= USART_RXEN_bm)
-
 
 /*! \brief Disable USART receiver.
  *
@@ -287,7 +304,16 @@ typedef struct Usart_and_buffer
 /* Functions for interrupt driven driver. */
 void USART_InterruptDriver_Initialize(USART_data_t * usart_data,
                                       USART_t * usart,
-                                      USART_DREINTLVL_t dreIntLevel );
+                                      USART_DREINTLVL_t dreIntLevel);
+
+void USART_FlowControl_Initialize(USART_data_t * usart_data,
+								  PORT_t * port,
+								  uint8_t cts_pin,
+								  uint8_t rts_pin);
+
+void USART_CTS_Enable(USART_data_t * usart_data);
+void USART_CTS_Read(USART_data_t * usart_data);
+void USART_RTS_Set(USART_data_t * usart_data, bool b_setLow);
 
 void USART_InterruptDriver_DreInterruptLevel_Set(USART_data_t * usart_data,
                                                  USART_DREINTLVL_t dreIntLevel);
@@ -298,6 +324,7 @@ bool USART_RXBufferData_Available(USART_data_t * usart_data);
 uint8_t USART_RXBuffer_GetByte(USART_data_t * usart_data);
 bool USART_RXComplete(USART_data_t * usart_data);
 void USART_DataRegEmpty(USART_data_t * usart_data);
+void USART_ClearToSend(USART_data_t * usart_data);
 
 /* Functions for polled driver. */
 void USART_NineBits_PutChar(USART_t * usart, uint16_t data);

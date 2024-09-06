@@ -9,18 +9,42 @@ USART_data_t USART_data;
 
 void console_init(void)
 {
-    /* PF3 (TXD0) as output. */
-	PORTF.DIRSET  = PIN3_bm;
-    PORTF.OUTSET  = PIN3_bm;
-	/* PF2 (RXD0) as input. */
-	PORTF.DIRCLR = PIN2_bm;
+    /* PF0(RTS) & PF3(TXD0) as output. */
+    PORT_SetPinsAsOutput(&PORTF, PIN0_bm | PIN3_bm);
+    /* PF1(CST) & PF2(RXD0) as input. */
+    PORT_SetPinsAsInput(&PORTF, PIN1_bm | PIN2_bm);
 
     USART_InterruptDriver_Initialize(&USART_data, &USART, USART_DREINTLVL_MED_gc);
+    USART_FlowControl_Initialize(&USART_data, &PORTF, 1, 0);
     USART_Format_Set(USART_data.usart, USART_CHSIZE_8BIT_gc, USART_PMODE_DISABLED_gc, false);
     USART_RxdInterruptLevel_Set(USART_data.usart, USART_RXCINTLVL_LO_gc);
-    USART_Baudrate_Set(USART_data.usart, 131, 0x0d);
+    USART_Baudrate_Set(USART_data.usart, 103, 0x00);
     USART_Tx_Enable(USART_data.usart);
     USART_Rx_Enable(USART_data.usart);
+
+    USART_CTS_Read(&USART_data);
+    
+    PORTF_INTCTRL = 0x2;
+    return;
+}
+
+void console_rts_clr(void)
+{
+    USART_RTS_Set(&USART_data, true);
+
+    return;
+}
+
+void console_rts_set(void)
+{
+    USART_RTS_Set(&USART_data, false);
+
+    return; 
+}
+
+void console_cts_enable(void)
+{
+    USART_CTS_Enable(&USART_data);
 
     return;
 }
@@ -36,13 +60,6 @@ void console_send(char *p_msg)
             ++p_msg;   
         }
     }
-
-    return;
-}
-
-void console_cts_set(void)
-{
-    PORT_ClearPins(&PORTF, 0b00000001);
 
     return;
 }
@@ -64,4 +81,9 @@ ISR(USARTF0_DRE_vect)
 ISR(USARTF0_RXC_vect)
 {
 	USART_RXComplete(&USART_data);
+}
+
+ISR(PORTF_INT0_vect)
+{
+	USART_ClearToSend(&USART_data);
 }

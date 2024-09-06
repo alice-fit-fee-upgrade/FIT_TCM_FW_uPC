@@ -5,7 +5,7 @@
 ##########------------------------------------------------------##########
 
 MCU   = atxmega128a3u
-F_CPU = 16000000UL
+F_CPU = 32000000UL
 
 ## A directory for common include files and the simple USART library.
 ## If you move either the current folder or the Library folder, you'll 

@@ -8,7 +8,6 @@ void io_init(void)
     PORT_ConfigurePins(&PORTA, 0b00011010, true, false, 0, 0);
     PORT_ConfigurePins(&PORTA, 0b00000100, false, false, PORT_OPC_PULLUP_gc, 0);
 
-
     // PORTB
     PORT_SetDirection(&PORTB, 0b00011111);
     PORT_SetPins(&PORTB, 0b00010000);

@@ -5,6 +5,8 @@ struct timer_state ts_fpga = {0, 0};
 struct timer_state ts_attenuator = {0, 0};
 struct timer_state ts_si5338 = {0, 0};
 
+volatile uint16_t cnt = 1000;
+
 void timer_init(void)
 {
     // 32MHZ / 256 divider & 125 ticks period => 1ms
@@ -33,5 +35,9 @@ void timer_tc_set_value_ms(struct timer_state *p_ts, uint16_t timer)
 
 ISR(TCC0_OVF_vect)
 {
-
+    if(--cnt == 0)
+    {
+        cnt = 1000;
+        PORTA_OUTTGL = 0b00000001;
+    }
 }

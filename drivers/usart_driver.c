@@ -84,6 +84,7 @@ void USART_InterruptDriver_Initialize(USART_data_t * usart_data,
 {
 	usart_data->usart = usart;
 	usart_data->dreIntLevel = dreIntLevel;
+	usart_data->flowCtrl.b_flowControlUsed = false;
 
 	usart_data->buffer.RX_Tail = 0;
 	usart_data->buffer.RX_Head = 0;
@@ -91,6 +92,66 @@ void USART_InterruptDriver_Initialize(USART_data_t * usart_data,
 	usart_data->buffer.TX_Head = 0;
 }
 
+
+void USART_FlowControl_Initialize(USART_data_t * usart_data,
+								  PORT_t * port,
+								  uint8_t cts_pin,
+								  uint8_t rts_pin)
+{
+	usart_data->flowCtrl.b_flowControlUsed = true;
+	usart_data->flowCtrl.port = port;
+	usart_data->flowCtrl.cts_pinMask = (1 << cts_pin);
+	usart_data->flowCtrl.rts_pinMask = (1 << rts_pin);
+	usart_data->flowCtrl.cts = false;
+	usart_data->flowCtrl.rts = false;
+}
+
+void USART_CTS_Enable(USART_data_t * usart_data)
+{
+	if (!usart_data->flowCtrl.b_flowControlUsed)
+	{
+		return;
+	}
+	PORT_t * port = usart_data->flowCtrl.port;
+	port->INTCTRL = ( port->INTCTRL & ~PORT_INT0LVL_gm ) | PORT_INT0LVL_MED_gc;
+
+	return;
+}
+
+void USART_CTS_Read(USART_data_t * usart_data)
+{
+	if (!usart_data->flowCtrl.b_flowControlUsed)
+	{
+		return;
+	}
+	PORT_t * port = usart_data->flowCtrl.port;
+	uint8_t pinMask = usart_data->flowCtrl.cts_pinMask;
+	usart_data->flowCtrl.cts = !((port->IN) & pinMask);
+}
+
+void USART_RTS_Set(USART_data_t * usart_data, bool b_setLow)
+{
+	if (!usart_data->flowCtrl.b_flowControlUsed)
+	{
+		return;
+	}
+	PORT_t * port = usart_data->flowCtrl.port;
+	uint8_t pinMask = usart_data->flowCtrl.rts_pinMask;
+	if(b_setLow)
+	{
+		port->OUTCLR = pinMask;
+	}
+	else
+	{
+		port->OUTSET = pinMask;
+	}
+}
+
+/*! \brief Disable USART receiver.
+ *
+ *  \param _usart Pointer to the USART module.
+ */
+#define USART_Rx_Disable(_usart) ((_usart)->CTRLB &= ~USART_RXEN_bm)
 
 /*! \brief Set USART DRE interrupt level.
  *
@@ -262,9 +323,16 @@ void USART_DataRegEmpty(USART_data_t * usart_data)
 	USART_Buffer_t * bufPtr;
 	bufPtr = &usart_data->buffer;
 
+	/* Check flow control*/
+	bool b_cts = true;
+	if (usart_data->flowCtrl.b_flowControlUsed)
+	{
+		b_cts = usart_data->flowCtrl.cts;
+	}
+
 	/* Check if all data is transmitted. */
 	uint8_t tempTX_Tail = usart_data->buffer.TX_Tail;
-	if (bufPtr->TX_Head == tempTX_Tail){
+	if (bufPtr->TX_Head == tempTX_Tail || !b_cts){
 	    /* Disable DRE interrupts. */
 		uint8_t tempCTRLA = usart_data->usart->CTRLA;
 		tempCTRLA = (tempCTRLA & ~USART_DREINTLVL_gm) | USART_DREINTLVL_OFF_gc;
@@ -277,6 +345,40 @@ void USART_DataRegEmpty(USART_data_t * usart_data)
 
 		/* Advance buffer tail. */
 		bufPtr->TX_Tail = (bufPtr->TX_Tail + 1) & USART_TX_BUFFER_MASK;
+	}
+}
+
+void USART_ClearToSend(USART_data_t * usart_data)
+{
+	USART_Buffer_t * bufPtr;
+	bufPtr = &usart_data->buffer;
+
+	/* Check flow control*/
+	bool b_cts = true;
+	if (usart_data->flowCtrl.b_flowControlUsed)
+	{
+		USART_CTS_Read(usart_data);
+		b_cts = usart_data->flowCtrl.cts;
+	}
+
+	/* Check if all data is transmitted. */
+	uint8_t tempTX_Tail = usart_data->buffer.TX_Tail;
+	if (bufPtr->TX_Head != tempTX_Tail && b_cts)
+	{
+		if (!USART_IsTXDataRegisterEmpty(usart_data->usart))
+		{
+			/* Start transmitting. */
+			uint8_t data = bufPtr->TX[usart_data->buffer.TX_Tail];
+			usart_data->usart->DATA = data;
+
+			/* Advance buffer tail. */
+			bufPtr->TX_Tail = (bufPtr->TX_Tail + 1) & USART_TX_BUFFER_MASK;
+		}
+
+	    /* Disable DRE interrupts. */
+		uint8_t tempCTRLA = usart_data->usart->CTRLA;
+		tempCTRLA = (tempCTRLA & ~USART_DREINTLVL_gm) | USART_DREINTLVL_MED_gc;
+		usart_data->usart->CTRLA = tempCTRLA;
 	}
 }
 
