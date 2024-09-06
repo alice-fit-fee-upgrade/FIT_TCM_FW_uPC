@@ -20,6 +20,21 @@ extern struct timer_state ts_si5338;
 struct eeprom_params {
   uint8_t ip_addr[4];
   uint8_t mac_addr[6];
+  int16_t a_side_phase;
+  int16_t c_side_phase;
+  int16_t laser_phase;
+  uint16_t attenuator_config;
+  uint8_t port_b_config;
+  uint8_t _res0;
+  int16_t vertex_time_low_th;
+  int16_t vertex_time_high_th;
+  uint16_t semicentral_lvl_a;
+  uint16_t semicentral_lvl_c;
+  uint16_t central_lvl_a;
+  uint16_t central_lvl_c;
+  uint16_t trigger_mode;
+  uint16_t board_sn;
+  uint8_t _res1;
 };
 
 struct eeprom_params *p_params = (struct eeprom_params *)MAPPED_EEPROM_START;
