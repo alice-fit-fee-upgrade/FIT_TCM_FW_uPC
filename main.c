@@ -4,6 +4,7 @@
 
 #include "avr_compiler.h"
 #include "drivers/clksys_driver.h"
+#include "drivers/pmic_driver.h"
 
 #include "console.h"
 #include "io.h"
@@ -19,13 +20,13 @@ static void sysclk_init(void)
     CLKSYS_Enable(OSC_RC2MEN_bm | OSC_XOSCEN_bm);
     do {} while (CLKSYS_IsReady(OSC_XOSCRDY_bm) == 0);
 
-    // PLL: 16MHz x 2
+    /* PLL: 16MHz x 2 */
     CLKSYS_PLL_Config(OSC_PLLSRC_XOSC_gc, 2);
     CLKSYS_Enable(OSC_PLLEN_bm);
     do {} while (CLKSYS_IsReady(OSC_PLLRDY_bm) == 0);
 
-    // Set PLL as sysclk
     CPU_CCP = CCP_IOREG_gc;
+    /* Set PLL as sysclk */
     CLK_CTRL = CLK_SCLKSEL_PLL_gc;
     CLKSYS_Disable(OSC_RC2MEN_bm);
     
@@ -80,9 +81,9 @@ int main(void)
   console_cts_enable();
 
   /* Enable PMIC interrupt level low & med. */
-	PMIC.CTRL |= (PMIC_LOLVLEX_bm | PMIC_MEDLVLEX_bm);
+  PMIC_EnableLowLevel();
+  PMIC_EnableMediumLevel();
   sei();
-  nop();
 
   // TODO: Set ADT7311
   // TODO: Get settings from EEPROM
