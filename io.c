@@ -45,3 +45,52 @@ void io_init(void)
 
     return;
 }
+
+ISR(PORTE_INT0_vect)
+{
+    uint8_t port_e_val = PORT_GetPortValue(&PORTE);
+    uint8_t port_e_tgl = system_status_get()->porte_status ^ port_e_val;
+    system_status_get()->porte_status = port_e_val;
+
+    /* 12V unchanged */
+    if (0 == (port_e_tgl & PORTE_IN_PWR_OK_PIN_bm))
+    {
+        /* nothing changed */
+        if(0 == (port_e_tgl & PORTE_LDO_OK_PIN_bm))
+        {
+            return;
+        }
+
+        /* LDO turned on */
+        if (port_e_val & PORTE_LDO_OK_PIN_bm)
+        {
+            return;
+        }
+
+        /* LDO turned off */
+        /* TODO: sys_reset(); */ 
+
+        /* PSU not enabled */
+        if (0 == (port_e_val & PORTE_EN_PSU_PIN_bm))
+        {
+            return;
+        }
+        system_status_get()->pwr_err = true;
+    }
+    /* 12V turned off */
+    else if (0 == (port_e_val & PORTE_IN_PWR_OK_PIN_bm))
+    {
+        io_psu_disable();
+        system_status_get()->pwr_err =  true;
+        /* TODO: sys_reset(); */ 
+    }
+    /* 12V turned on*/
+    else
+    {
+        timer_tc_set_state(&system_timers_get()->ts_fpga, 1);
+        timer_tc_set_value_ms(&system_timers_get()->ts_fpga, 2000);
+        system_status_get()->pwr_err =  false;
+    }
+
+    io_led_system_fail_update();
+}

@@ -97,3 +97,21 @@ ISR(PORTF_INT0_vect)
 {
 	USART_ClearToSend(&USART_data);
 }
+
+/* console_print(
+    "MAC ADDRESS: %02X:%02X:%02X:%02X:%02X:%02X\r\n", 
+    p_ee_params->mac_addr[0],
+    p_ee_params->mac_addr[1],
+    p_ee_params->mac_addr[2],
+    p_ee_params->mac_addr[3],
+    p_ee_params->mac_addr[4],
+    p_ee_params->mac_addr[5]
+    );
+
+  console_print(
+    "IP ADDRESS: %d.%d.%d.%d\r\n", 
+    p_ee_params->ip_addr[0],
+    p_ee_params->ip_addr[1],
+    p_ee_params->ip_addr[2],
+    p_ee_params->ip_addr[3]
+    );*/

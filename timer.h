@@ -4,8 +4,8 @@
 
 struct timer_state
 {
-    volatile uint8_t state;
-    volatile uint16_t timer;    
+    volatile uint8_t status;
+    volatile uint16_t counter;    
 };
 
 void timer_init(void);

@@ -1,9 +1,6 @@
+#include "system.h"
 #include "timer.h"
 #include "drivers/TC_driver.h"
-
-struct timer_state ts_fpga = {0, 0};
-struct timer_state ts_attenuator = {0, 0};
-struct timer_state ts_si5338 = {0, 0};
 
 volatile uint16_t cnt = 1000;
 
@@ -21,23 +18,27 @@ void timer_init(void)
 
 void timer_tc_set_state(struct timer_state *p_ts, uint8_t state)
 {
-    p_ts->state = state;
+    p_ts->status = state;
 
     return;
 }
 
 void timer_tc_set_value_ms(struct timer_state *p_ts, uint16_t timer)
 {
-    p_ts->timer = timer;
+    p_ts->counter = timer;
 
     return;
 }
 
 ISR(TCC0_OVF_vect)
 {
+    /* Check FPGA status and timer */
+    
+
+    /* Dummy code */
     if(--cnt == 0)
     {
         cnt = 1000;
-        PORTA_OUTTGL = 0b00000001;
+        //PORTA_OUTTGL = 0b00000001;
     }
 }

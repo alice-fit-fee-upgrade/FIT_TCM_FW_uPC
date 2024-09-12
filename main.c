@@ -3,59 +3,39 @@
 #include <stdio.h>
 #include <stdbool.h>
 
-
 #include "avr_compiler.h"
 #include "drivers/clksys_driver.h"
 #include "drivers/eeprom_driver.h"
 #include "drivers/pmic_driver.h"
 
 #include "console.h"
+#include "fpga.h"
 #include "io.h"
-#include "timer.h"
+#include "system.h"
 
-extern struct timer_state ts_fpga;
-extern struct timer_state ts_attenuator;
-extern struct timer_state ts_si5338;
-
-struct eeprom_params {
-  uint8_t ip_addr[4];
-  uint8_t mac_addr[6];
-  int16_t a_side_phase;
-  int16_t c_side_phase;
-  int16_t laser_phase;
-  uint16_t attenuator_config;
-  uint8_t port_b_config;
-  uint8_t _res0;
-  int16_t vertex_time_low_th;
-  int16_t vertex_time_high_th;
-  uint16_t semicentral_lvl_a;
-  uint16_t semicentral_lvl_c;
-  uint16_t central_lvl_a;
-  uint16_t central_lvl_c;
-  uint16_t trigger_mode;
-  uint16_t board_sn;
-  uint8_t _res1;
-};
-
-struct eeprom_params *p_params = (struct eeprom_params *)MAPPED_EEPROM_START;
+extern bool fpga_comm_request;
 
 static void sysclk_init(void)
 {
-    CLKSYS_XOSC_Config(OSC_FRQRANGE_12TO16_gc, false, OSC_XOSCSEL_XTAL_16KCLK_gc);
-    CLKSYS_Enable(OSC_RC2MEN_bm | OSC_XOSCEN_bm);
-    do {} while (CLKSYS_IsReady(OSC_XOSCRDY_bm) == 0);
+  CLKSYS_XOSC_Config(OSC_FRQRANGE_12TO16_gc, false, OSC_XOSCSEL_XTAL_16KCLK_gc);
+  CLKSYS_Enable(OSC_RC2MEN_bm | OSC_XOSCEN_bm);
+  do
+  {
+  } while (CLKSYS_IsReady(OSC_XOSCRDY_bm) == 0);
 
-    /* PLL: 16MHz x 2 */
-    CLKSYS_PLL_Config(OSC_PLLSRC_XOSC_gc, 2);
-    CLKSYS_Enable(OSC_PLLEN_bm);
-    do {} while (CLKSYS_IsReady(OSC_PLLRDY_bm) == 0);
+  /* PLL: 16MHz x 2 */
+  CLKSYS_PLL_Config(OSC_PLLSRC_XOSC_gc, 2);
+  CLKSYS_Enable(OSC_PLLEN_bm);
+  do
+  {
+  } while (CLKSYS_IsReady(OSC_PLLRDY_bm) == 0);
 
-    CPU_CCP = CCP_IOREG_gc;
-    /* Set PLL as sysclk */
-    CLK_CTRL = CLK_SCLKSEL_PLL_gc;
-    CLKSYS_Disable(OSC_RC2MEN_bm);
-    
-    return;
+  CPU_CCP = CCP_IOREG_gc;
+  /* Set PLL as sysclk */
+  CLK_CTRL = CLK_SCLKSEL_PLL_gc;
+  CLKSYS_Disable(OSC_RC2MEN_bm);
+
+  return;
 }
 
 /*! \brief Main loop of the TCM ATxmega MCU code
@@ -89,20 +69,27 @@ int main(void)
   EEPROM_EnableMapping();
 
   /* Check 5V supply status */
-  if(io_is_5v_present())
+  if (io_is_12v_present())
   {
-      timer_tc_set_state(&ts_fpga, 1);
-      timer_tc_set_value_ms(&ts_fpga, 2000);
+    timer_tc_set_state(&system_timers_get()->ts_fpga, 1);
+    timer_tc_set_value_ms(&system_timers_get()->ts_fpga, 2000);
   }
   else
   {
-
+    system_status_get()->pwr_err = true;
+    io_led_system_fail_update();
   }
 
   /* Set attenuator timer */
-  timer_tc_set_value_ms(&ts_fpga, 1000);
+  timer_tc_set_value_ms(&system_timers_get()->ts_attenuator, 1000);
 
-  // TODO: Enable PORTE INTCTRL level LOW
+  /* Enable FPGA PORTE.0 INT1 level LOW */
+  fpga_enable_interrupt();
+
+  /* Enable PWR status INT0 level LOW */
+  io_enable_pwr_interrupt();
+
+  /* Enable console CTS interrupt level MED */
   console_cts_enable();
 
   /* Enable PMIC interrupt level low & med. */
@@ -110,43 +97,26 @@ int main(void)
   PMIC_EnableMediumLevel();
   sei();
 
-  // TODO: Set ADT7311
-  // TODO: Get settings from EEPROM
-  // TODO: Set PORTB according to EEPROM
+  /* TODO: Set ADT7311 */
 
-  /* Send welcome message */ 
+  /* Set attenuator PORTB according to EEPROM settings*/
+  io_attenuator_port_set(system_eeprom_get()->attenuator_portb_config);
+
+  /* Send welcome message */
   console_print("\r\nINR TCM control interface ready\r\n");
-
-  console_print(
-    "MAC ADDRESS: %02X:%02X:%02X:%02X:%02X:%02X\r\n", 
-    p_params->mac_addr[0],
-    p_params->mac_addr[1],
-    p_params->mac_addr[2],
-    p_params->mac_addr[3],
-    p_params->mac_addr[4],
-    p_params->mac_addr[5]
-    );
-
-  console_print(
-    "IP ADDRESS: %d.%d.%d.%d\r\n", 
-    p_params->ip_addr[0],
-    p_params->ip_addr[1],
-    p_params->ip_addr[2],
-    p_params->ip_addr[3]
-    );
-  
   console_rts_clr();
 
-  do 
+  do
   {
-      do 
+    do
+    {
+      if (fpga_comm_request)
       {
-          nop();
+        console_print("FPGA request!");
       }
-      while (true);
-    
-  }
-  while(true);
+    } while (true);
+
+  } while (true);
 
   /* Should never get here */
   return 0;

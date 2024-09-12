@@ -400,7 +400,7 @@ void TC0_SetCCDIntLevel( volatile TC0_t * tc, TC_CCDINTLVL_t intLevel )
 /*! \brief Resets the Timer/Counter 0.
  *
  *  This function will reset the Timer/Counter. After calling this function,
- *  the Timer/Counter will be in the same state as it would after a full
+ *  the Timer/Counter will be in the same status as it would after a full
  *  reset of the device.
  *
  *  \param tc  Timer/Counter 0 module instance.
@@ -418,7 +418,7 @@ void TC0_Reset( volatile TC0_t * tc )
 /*! \brief Resets the Timer/Counter 1.
  *
  *  This function will reset the Timer/Counter. After calling this function,
- *  the Timer/Counter will be in the same state as it would after a full
+ *  the Timer/Counter will be in the same status as it would after a full
  *  reset of the device.
  *
  *  \param tc  Timer/Counter 1 module instance.
