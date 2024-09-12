@@ -11,7 +11,9 @@ F_CPU = 32000000UL
 ## If you move either the current folder or the Library folder, you'll 
 ##  need to change this path to match.
 #LIBDIR = ../../AVR-Programming-Library # Not used
-DRVDIR = drivers
+DRV_DIR=drivers
+BUILD_DIR=build
+BIN_DIR=bin
 
 ##########------------------------------------------------------##########
 ##########                 Programmer Defaults                  ##########
@@ -51,9 +53,12 @@ TARGET = alice_tcm
 # Object files: will find all .c/.h files in current directory
 #  and in LIBDIR.  If you have any other (sub-)directories with code,
 #  you can add them in to SOURCES below in the wildcard statement.
-SOURCES=$(wildcard *.c $(LIBDIR)/*.c $(DRVDIR)/*.c)
-OBJECTS=$(SOURCES:.c=.o)
+SOURCES=$(wildcard *.c $(LIB_DIR)/*.c $(DRV_DIR)/*.c)
 HEADERS=$(SOURCES:.c=.h)
+# OBJECTS=$(SOURCES:.c=.o)
+# OBJECTS:=$(patsubst %.c,$(OBJ_DIR)/%.o,$(notdir $(SOURCES)))
+OBJECTS = $(addprefix $(BUILD_DIR)/,$(notdir $(addsuffix .o,$(basename $(sort $(SOURCES))))))
+
 
 ## Compilation options, type man avr-gcc if you're curious.
 CPPFLAGS = -DF_CPU=$(F_CPU) -DBAUD=$(BAUD) -I.
@@ -62,7 +67,7 @@ CFLAGS = -Os -g -std=gnu99 -Wall
 CFLAGS += -funsigned-char -funsigned-bitfields -fpack-struct -fshort-enums 
 ## Splits up object files per function
 CFLAGS += -ffunction-sections -fdata-sections 
-LDFLAGS = -Wl,-Map,$(TARGET).map 
+LDFLAGS = -Wl,-Map,$(BIN_DIR)/$(TARGET).map 
 ## Optional, but often ends up with smaller code
 LDFLAGS += -Wl,--gc-sections 
 ## Relax shrinks code even more, but makes disassembly messy
@@ -72,29 +77,41 @@ LDFLAGS += -Wl,--gc-sections
 TARGET_ARCH = -mmcu=$(MCU)
 
 ## Explicit pattern rules:
-##  To make .o files from .c files 
-%.o: %.c $(HEADERS) Makefile
-	 $(CC) $(CFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c -o $@ $<;
 
-$(TARGET).elf: $(OBJECTS)
+VPATH=drivers
+
+$(BUILD_DIR):
+	mkdir -p $(BUILD_DIR)
+
+$(BIN_DIR):
+	mkdir -p $(BIN_DIR)
+
+$(BUILD_DIR)/%.o: %.c | $(BUILD_DIR)
+#$(OBJECTS): $(SOURCES) Makefile | $(BUILD_DIR)
+	$(CC) $(CFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c $< -o $@ ;
+
+$(BIN_DIR)/$(TARGET).elf: $(OBJECTS) | $(BIN_DIR)
 	$(CC) $(LDFLAGS) $(TARGET_ARCH) $^ $(LDLIBS) -o $@
 
-%.hex: %.elf
+$(BIN_DIR)/%.hex: $(BIN_DIR)/%.elf | $(BIN_DIR)
 	 $(OBJCOPY) -j .text -j .data -O ihex $< $@
 
-%.eeprom: %.elf
+$(BIN_DIR)/%.eeprom: $(BIN_DIR)/%.elf | $(BIN_DIR)
 	$(OBJCOPY) -j .eeprom --change-section-lma .eeprom=0 -O ihex $< $@ 
 
-%.lst: %.elf
+$(BIN_DIR)/%.lst: $(BIN_DIR)/%.elf | $(BIN_DIR)
 	$(OBJDUMP) -S $< > $@
 
 ## These targets don't have files named after them
 .PHONY: all disassemble disasm eeprom size clean squeaky_clean flash fuses
 
-all: $(TARGET).hex 
+all: $(BIN_DIR)/$(TARGET).hex 
 
 debug:
 	@echo
+	@echo $(VPATH)
+	@echo $(BUILD_DIR)
+	@echo $(OBJECTS)
 	@echo "Source files:"   $(SOURCES)
 	@echo "MCU, F_CPU, BAUD:"  $(MCU), $(F_CPU), $(BAUD)
 	@echo	
@@ -112,10 +129,8 @@ size:  $(TARGET).elf
 	$(AVRSIZE) -C --mcu=$(MCU) $(TARGET).elf
 
 clean:
-	rm -f $(TARGET).elf $(TARGET).hex $(TARGET).obj \
-	$(TARGET).o $(TARGET).d $(TARGET).eep $(TARGET).lst \
-	$(TARGET).lss $(TARGET).sym $(TARGET).map $(TARGET)~ \
-	$(TARGET).eeprom
+	rm -rf $(BUILD_DIR) \
+	rm -rf $(BIN_DIR)
 
 squeaky_clean:
 	rm -f *.elf *.hex *.obj *.o *.d *.eep *.lst *.lss *.sym *.map *~ *.eeprom
