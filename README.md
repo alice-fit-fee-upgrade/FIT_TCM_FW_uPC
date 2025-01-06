@@ -14,13 +14,41 @@ All the values are coded using the following alphabet:
 ---
 ## Firmware
 ### Boot
-- port, timer counter, oscillator, interrupts, etc. settings
-- clear storage memory (0x2000 - 0x23b2)
-- 
-- check whether 5V is available. If so, set 4s. FPGA status (0x215b <= 1) and timer (0x215c). Otherwise, set GPIOR0 bit 1.
-- set attenuator timer (0x215e) to 2s.
+1. Ports, timer counter, oscillator, interrupts, etc. settings
+2. Clear storage memory (0x2000 - 0x23b2)
+3.  
+4. Check whether 5V is available. If so, set 4s. FPGA status (0x215b <= 1) and timer (0x215c). Otherwise, set GPIOR0 bit 1.
+5. Set attenuator timer (0x215e) to 2s.
+6. Set ADT7311 configuration
+7. Copy EEPROM settings to working memory
+8. Set attenuator port (X36) output pins (PB0-3) according to EEPROM settings
+9. Send "INR TCM control interface ready" to communication console
+
+#### ADT7311 startup
+At the very beginning the following data is sent to the temperature sensor:
+1. CMD 0x08 (reg 0x1) -> VAL 0x50 (0b01010000):  
+Set configuration register bits to:  
+[1:0] -> 00 : 1 fault (default)  
+[2] -> 0 : CT active low  
+[3] -> 0 : INT active low  
+[4] -> 1 : comparator mode  
+[6:5] -> 10 : 1 SPS operation mode  
+[7] -> 0 : 13-bit resolution mode  
+2. CMD 0x20 (reg 0x4) -> VAL 0x00 0x23:  
+Set temperature critical setpoint to 0x2300 (1120 * 0.0625 = 70)
+3. CMD 0x30 (reg 0x6) -> VAL 0x00 0x1E:  
+Set temperature high setpoint to 0x1E00 (960 * 0.0625 = 60)
+
+#### Attenuator startup
+Attenuator port (X36) apart from having Tx/Rx capabilities, also has some 4 additional pins.  
+Their current (saved in EEPROM) configuration is:
+- DD46A set to LOW
+- DD46B set to LOW
+- DD46C set to LOW
+- DD46D set to LOW
 
 #### Si5338 startup
+
 
 #### FPGA startup
 FPGA status is stored at 0x215b with starting value equal zero.
@@ -51,7 +79,7 @@ Some details about the peripherals the MCU ATxmega128a3 is communicating with.
 |9	|DD46D_AB	|PB3	|			|		| |
 |28	|DD45_ROUT	|PD2 	|			|		| |
 |29	|DD45_TIN	|PD3	|			|		| |
-|10	|Xmega_PB4	|PB4	| ???			|**X35**	| |		
+|10	|Xmega_PB4	|PB4	| ???			|**X35**	| |
 |16	|DD15_SDA	|PC0	| I2C SDA		|**Si5338 (x2)**| |
 |17	|DD15_SCL	|PC1	| I2C SCL		|		| |
 |18	|DD17_INTR	|PC2	| INT0 Si5338 (2) int.	| 		| |
@@ -86,24 +114,14 @@ Some details about the peripherals the MCU ATxmega128a3 is communicating with.
 |54	|NC		|PF6	| ---			|		| |
 |55	|NC		|PF7	| ---			|		| |
 
-### ADT7311
-Configuration:  
-- 0x50 = 0b01010000  
-- Fault queue: 00 = 1 fault (default)  
-- CT pin polarity: 0 = active low  
-- INT pin polarity: 0 = active low  
-- INT/CT mode: 1 = comparator mode  
-- Operation mode: 01 = one shot (240ms conversion)  
-- Resolution: 0 = 13 bit, sign bit + 12 bits  
-
 ### Si5338
-Switch flow:
+Switch flow:  
 
 | MEM 	| Stream| Substream	| CODE	| LABEL		| START	| Msg		|
 | :---	| :---	| :---		| :---	|:---		| :---	| :---		|
 | 0x25a6| 00	| 00		| 0x0117|caseD_0	| YES	| Reg 6 SEL	|
 | 0x25a8| 00	| 01		| 0x0122|caseD_2	| 	| Reg 6 WR 0xc	|
-| 0x25aa| 00	| 02		| 0x0145|caseD_4	| 	| Switch to other dev |
+| 0x25aa| 00	| 02		| 0x0145|caseD_4	|	| Switch to other dev |
 | 0x25ac| 00	| 03		| 0x014b|caseD_6	| 	| PORTF_INTFLAGS = 0b00000010; PORTF_INTCTRL = 0b00001010 	|
 | 0x25ae| 01	| 00		| 0x0153|caseD_8	| YES	| Reg 235 SEL (FCAL) |
 | 0x25b0| 01	| 01		| 0x0159|caseD_a	| 	| Set slave RD 	|
@@ -174,7 +192,9 @@ Switch flow:
 | 0x2161| 	| 1 	| clock source settings |
 | 0x2162| 	| 1 	| 16#18# settings |
 | 0x2163| 	| 2 	| Si5338 current msg stream |
-| 0x2165| 	| 2	| Si5338 msg to send	|
+| 0x2165| 	| 2	| Si5338 msg to send (addr)	|
+| 0x2167|	| 1	| 	|
+| 0x2168|	| 1	| Current slave addr. (0xE0 or 0xE2)	|
 | 	| 	| 	| 	|
 | 0x2173| 	| 16	| USART_D0 tx buffer 	|
 | 0x2183| 	| 2	| USART_D0 tx buffer head & tail pointers  |
@@ -188,7 +208,7 @@ Switch flow:
 | 0x2195|0x100C	| 2	| C-side phase (delay) 	|
 | 0x2197|0x100E	| 2	| Laser phase (delay) 	|
 | 0x2199|0x1010	| 2	| Attenuator settings	|
-| 0x219b|0x1012	| 1 	| Port B settings (PB4+PB7)	|
+| 0x219b|0x1012	| 1 	| Port B settings (PB0-3)	|
 | 0x219c|0x1015	| 1	| [UNUSED]	|
 | 0x219d|0x1013	| 2	| Vertex time low threshold	|
 | 0x219f|0x1016	| 2	| Vertex time high threshold	|
@@ -228,7 +248,7 @@ Switch flow:
 | SI 		| Set IP address |
 | SL 		| Set Laser phase (delay) |
 | SM 		| Set MAC address|
-| SS 		| Set switches (port B settings)	|
+| SS 		| Set switches (port B settings)|
 | STH 		| Set vertex time high threshold |
 | STL 		| Set vertex time low threshold |
 | STM 		| Set trigger mode |
@@ -242,5 +262,5 @@ Switch flow:
 
 ---
 ## NOTES
-PORTA_OUTSET 0x80 has some connection with PORTB_OUTCLR = 0x80
-PORTA_OUTSET 0xC0 has some connection with PORTB_OUTSET = 0x10
+- PORTA_OUTSET 0x80 has some connection with PORTB_OUTCLR = 0x80
+- PORTA_OUTSET 0xC0 has some connection with PORTB_OUTSET = 0x10
