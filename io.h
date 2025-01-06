@@ -13,12 +13,12 @@
 static inline bool io_is_12v_present(void)
 {
 
-    return PORT_GetPinValue(&PORTE, 2);
+    return PORT_GetPinValue(&PORTE, PORTE_IN_PWR_OK_PIN_bp);
 }
 
 static inline void io_led_system_fail_update()
 {
-    if (system_status_get()->pwr_err)
+    if (system_status_get()->b_sys_fail)
     {
         PORT_ClearOutputBit(&PORTA, 0);
     }
@@ -37,13 +37,13 @@ static inline void io_attenuator_port_set(uint8_t bit_mask)
 
 static inline void io_psu_enable()
 {
-    PORT_SetOutputBit(&PORTE, 2);
+    PORT_SetOutputBit(&PORTE, PORTE_EN_PSU_PIN_bp);
     return;
 }
 
 static inline void io_psu_disable()
 {
-    PORT_ClearOutputBit(&PORTE, 2);
+    PORT_ClearOutputBit(&PORTE, PORTE_EN_PSU_PIN_bp);
     return;
 }
 

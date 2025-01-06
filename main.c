@@ -11,9 +11,13 @@
 #include "console.h"
 #include "fpga.h"
 #include "io.h"
+#include "si5338.h"
 #include "system.h"
 
 extern bool fpga_comm_request;
+
+extern volatile bool b_report_rdy;
+extern volatile uint16_t report_cnt;
 
 static void sysclk_init(void)
 {
@@ -55,10 +59,9 @@ int main(void)
   sysclk_init();
   io_init();
 
-  TWIC_MASTER_BAUD = 0x23;
-  TWIC_MASTER_CTRLA = 0x48;
-  TWIC_MASTER_STATUS = 1;
+  si5338_init();
 
+  /* TODO: attenuator init*/
   USARTD0_BAUDCTRLB = 0x40;
   USARTD0_BAUDCTRLA = 0xc;
   USARTD0_CTRLC = 3;
@@ -71,12 +74,13 @@ int main(void)
   /* Check 5V supply status */
   if (io_is_12v_present())
   {
+    system_status_get()->b_sys_fail = false;
     timer_tc_set_state(&system_timers_get()->ts_fpga, 1);
     timer_tc_set_value_ms(&system_timers_get()->ts_fpga, 2000);
   }
   else
   {
-    system_status_get()->pwr_err = true;
+    system_status_get()->b_sys_fail = true;
     io_led_system_fail_update();
   }
 
@@ -84,7 +88,7 @@ int main(void)
   timer_tc_set_value_ms(&system_timers_get()->ts_attenuator, 1000);
 
   /* Enable FPGA PORTE.0 INT1 level LOW */
-  fpga_enable_interrupt();
+  fpga_req_intr_enable();
 
   /* Enable PWR status INT0 level LOW */
   io_enable_pwr_interrupt();
@@ -110,9 +114,15 @@ int main(void)
   {
     do
     {
-      if (fpga_comm_request)
+      if (b_report_rdy)
       {
-        console_print("FPGA request!");
+        b_report_rdy = false;
+        console_print("FPGA: %d, %d\r\n", system_timers_get()->ts_fpga.status, system_timers_get()->ts_fpga.counter);
+        console_print("Si5338: %d, %d\r\n\r\n", system_timers_get()->ts_si5338.status, system_timers_get()->ts_si5338.counter);
+        //uint16_t data;
+        //fpga_exchange_data(0xF2, &data);
+        //console_print("MSG: %x \r\n", data);
+        report_cnt = 250;
       }
     } while (true);
 

@@ -28,9 +28,12 @@ struct system_eeprom
 
 struct system_status
 {
-  bool pwr_err;
-  bool pwr_in_ok;
-  bool pwr_ldo_ok;
+  bool b_sys_fail;
+  bool b_si5338_fail;
+  bool b_pwr_in_ok;
+  bool b_pwr_ldo_ok;
+  bool b_fpga_done_ok;
+  bool b_clk_err;
   uint8_t porte_status;
 };
 
@@ -40,6 +43,10 @@ struct system_timers
     struct timer_state ts_attenuator;
     struct timer_state ts_si5338;
 };
+
+void system_init(void);
+void system_deinit(void);
+void system_reset(void);
 
 struct system_eeprom *system_eeprom_get(void);
 struct system_status *system_status_get(void);

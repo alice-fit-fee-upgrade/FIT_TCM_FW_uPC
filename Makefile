@@ -61,7 +61,7 @@ OBJECTS = $(addprefix $(BUILD_DIR)/,$(notdir $(addsuffix .o,$(basename $(sort $(
 
 
 ## Compilation options, type man avr-gcc if you're curious.
-CPPFLAGS = -DF_CPU=$(F_CPU) -DBAUD=$(BAUD) -I.
+CPPFLAGS = -DF_CPU=$(F_CPU) -I.
 CFLAGS = -Os -g -std=gnu99 -Wall
 ## Use short (8-bit) data types 
 CFLAGS += -funsigned-char -funsigned-bitfields -fpack-struct -fshort-enums 
@@ -113,7 +113,7 @@ debug:
 	@echo $(BUILD_DIR)
 	@echo $(OBJECTS)
 	@echo "Source files:"   $(SOURCES)
-	@echo "MCU, F_CPU, BAUD:"  $(MCU), $(F_CPU), $(BAUD)
+	@echo "MCU, F_CPU:"  $(MCU), $(F_CPU)
 	@echo	
 
 # Optionally create listing file from .elf
