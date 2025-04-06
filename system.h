@@ -44,6 +44,7 @@ struct system_timers
     struct timer_state ts_si5338;
 };
 
+void system_clock_init(void);
 void system_init(void);
 void system_deinit(void);
 void system_reset(void);

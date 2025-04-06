@@ -4,14 +4,19 @@
 #include <stdbool.h>
 
 #include "avr_compiler.h"
+
+#include "drivers/adt_spi_driver.h"
 #include "drivers/clksys_driver.h"
 #include "drivers/eeprom_driver.h"
 #include "drivers/pmic_driver.h"
 
-#include "console.h"
-#include "fpga.h"
+#include "devices/console.h"
+#include "devices/adt7311.h"
+#include "devices/attenuator.h"
+#include "devices/fpga.h"
+#include "devices/si5338.h"
+
 #include "io.h"
-#include "si5338.h"
 #include "system.h"
 
 extern bool fpga_comm_request;
@@ -19,28 +24,24 @@ extern bool fpga_comm_request;
 extern volatile bool b_report_rdy;
 extern volatile uint16_t report_cnt;
 
-static void sysclk_init(void)
+struct adt_spi_desc adt7311_spi_desc =
 {
-  CLKSYS_XOSC_Config(OSC_FRQRANGE_12TO16_gc, false, OSC_XOSCSEL_XTAL_16KCLK_gc);
-  CLKSYS_Enable(OSC_RC2MEN_bm | OSC_XOSCEN_bm);
-  do
-  {
-  } while (CLKSYS_IsReady(OSC_XOSCRDY_bm) == 0);
+  .cs_port = &PORTA,
+  .cs_pin = PIN4_bm,
+  .spi_port = &PORTA,
+  .miso_pin = PIN2_bp,
+  .mosi_pin = PIN3_bm,
+  .clk_pin = PIN1_bm
+};
 
-  /* PLL: 16MHz x 2 */
-  CLKSYS_PLL_Config(OSC_PLLSRC_XOSC_gc, 2);
-  CLKSYS_Enable(OSC_PLLEN_bm);
-  do
-  {
-  } while (CLKSYS_IsReady(OSC_PLLRDY_bm) == 0);
+uint8_t adt7311_config_reg = 
+  ((ADT7311_FLTQ_1_FAULT << ADT7311_CF_REG_FLTQ_bp) & ADT7311_CF_REG_FLTQ_bm) |\
+  ((ADT7311_CTPP_LO << ADT7311_CF_REG_CTPP_bp) & ADT7311_CF_REG_CTPP_bm) |\
+  ((ADT7311_INTPP_LO << ADT7311_CF_REG_INTPP_bp) & ADT7311_CF_REG_INTPP_bm) |\
+  ((ADT7311_ICMODE_COMP << ADT7311_CF_REG_ICMODE_bp) & ADT7311_CF_REG_ICMODE_bm) |\
+  ((ADT7311_OP_MODE_1_SPS << ADT7311_CF_REG_OPMODE_bp) & ADT7311_CF_REG_OPMODE_bm) |\
+  ((ADT7311_RES_13BIT << ADT7311_CF_REG_RES_bp) & ADT7311_CF_REG_RES_bm);
 
-  CPU_CCP = CCP_IOREG_gc;
-  /* Set PLL as sysclk */
-  CLK_CTRL = CLK_SCLKSEL_PLL_gc;
-  CLKSYS_Disable(OSC_RC2MEN_bm);
-
-  return;
-}
 
 /*! \brief Main loop of the TCM ATxmega MCU code
  *
@@ -56,17 +57,16 @@ static void sysclk_init(void)
  */
 int main(void)
 {
-  sysclk_init();
+  system_clock_init();
+
   io_init();
 
   si5338_init();
 
-  /* TODO: attenuator init*/
-  USARTD0_BAUDCTRLB = 0x40;
-  USARTD0_BAUDCTRLA = 0xc;
-  USARTD0_CTRLC = 3;
+  attenuator_init();
 
   console_init();
+
   timer_init();
 
   EEPROM_EnableMapping();
@@ -101,7 +101,7 @@ int main(void)
   PMIC_EnableMediumLevel();
   sei();
 
-  /* TODO: Set ADT7311 */
+  adt7311_init(&adt7311_spi_desc, adt7311_config_reg);
 
   /* Set attenuator PORTB according to EEPROM settings*/
   io_attenuator_port_set(system_eeprom_get()->attenuator_portb_config);
@@ -117,12 +117,16 @@ int main(void)
       if (b_report_rdy)
       {
         b_report_rdy = false;
-        console_print("FPGA: %d, %d\r\n", system_timers_get()->ts_fpga.status, system_timers_get()->ts_fpga.counter);
-        console_print("Si5338: %d, %d\r\n\r\n", system_timers_get()->ts_si5338.status, system_timers_get()->ts_si5338.counter);
+        console_print("FPGA: %d, %d\r\n", system_timers_get()->ts_fpga.state, system_timers_get()->ts_fpga.counter);
+        console_print("Si5338: %d, %d\r\n", system_timers_get()->ts_si5338.state, system_timers_get()->ts_si5338.counter);
         //uint16_t data;
         //fpga_exchange_data(0xF2, &data);
         //console_print("MSG: %x \r\n", data);
-        report_cnt = 250;
+        float temp = 0;
+        uint8_t temp_flags = 0;
+        temp = adt7311_temperature_get(&temp_flags);
+        console_print("TEMP: %f, flags: %x \r\n\r\n", temp, temp_flags);
+        report_cnt = 2000;
       }
     } while (true);
 

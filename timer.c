@@ -1,6 +1,6 @@
-#include "fpga.h"
+#include "devices/fpga.h"
 #include "io.h"
-#include "si5338.h"
+#include "devices/si5338.h"
 #include "timer.h"
 #include "drivers/TC_driver.h"
 
@@ -21,7 +21,7 @@ void timer_init(void)
 
 void timer_tc_set_state(struct timer_state *p_ts, uint8_t state)
 {
-    p_ts->status = state;
+    p_ts->state = state;
 
     return;
 }
@@ -36,27 +36,25 @@ void timer_tc_set_value_ms(struct timer_state *p_ts, uint16_t timer)
 ISR(TCC0_OVF_vect)
 {
     /* Temporary counter */
-    if (1 == report_cnt)
+    if (0 == report_cnt)
     {
         b_report_rdy = true;
     }
-    else if (0 == report_cnt)
-    {
-        
-    }
-    else
+    else if (report_cnt > 0)
     {
         --report_cnt;
     }
 
-    /* Check Si5338 status and timer */
+    /* Check Si5338 state and timer */
     struct timer_state *p_ts_si5338 = &system_timers_get()->ts_si5338;
-    switch (p_ts_si5338->status)
+    switch (p_ts_si5338->state)
     {
+        /* Do nothing, state 0 is a "nop" state */
         case 0:
         {
             break;
         }
+        /* State 1 is just waiting for state 2 to happen */
         case 1:
         {
             if (1 == --p_ts_si5338->counter)
@@ -65,6 +63,7 @@ ISR(TCC0_OVF_vect)
             }
             break;
         }
+        /*  */
         case 2:
         {
             timer_tc_set_state(p_ts_si5338, 0);
@@ -126,7 +125,7 @@ ISR(TCC0_OVF_vect)
             if (1 == p_ts_si5338->counter)
             {
                 bool b_fpga_timer_done = !!(system_timers_get()->ts_fpga.counter);
-                uint8_t fpga_status = system_timers_get()->ts_fpga.status;
+                uint8_t fpga_status = system_timers_get()->ts_fpga.state;
                 if(fpga_done_get() && ((0 == fpga_status) || ((5 == fpga_status) && b_fpga_timer_done)))
                 {
                     fpga_rst_set();
@@ -169,12 +168,14 @@ ISR(TCC0_OVF_vect)
 
     /* Check FPGA status and timer */
     struct timer_state *p_ts_fpga = &system_timers_get()->ts_fpga;
-    switch (p_ts_fpga->status)
+    switch (p_ts_fpga->state)
     {
+        /* Do nothing, state 0 is a "nop" state */
         case 0:
         {
             break;
         }
+        /* If 5V is present, then enable (EN_PSU) 2x LM21212AMHX-1 & 1x LD49150PT10R */
         case 1:
         {
             if (0 == --p_ts_fpga->counter)
@@ -193,6 +194,7 @@ ISR(TCC0_OVF_vect)
             }
             break;
         }
+        /*  */
         case 2:
         {
             if (system_status_get()->b_pwr_ldo_ok)

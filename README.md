@@ -196,6 +196,7 @@ Switch flow:
 | 0x2167|	| 1	| 	|
 | 0x2168|	| 1	| Current slave addr. (0xE0 or 0xE2)	|
 | 	| 	| 	| 	|
+| 0x216d|	| 6	| Copy of 0x2193 to 0x2198 data 	|
 | 0x2173| 	| 16	| USART_D0 tx buffer 	|
 | 0x2183| 	| 2	| USART_D0 tx buffer head & tail pointers  |
 | 0x2185| 	| 1	| USART_D0 status	|

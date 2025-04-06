@@ -12,6 +12,7 @@ volatile bool fpga_comm_request = false;
 SPI_Master_t spiMasterC;
 PORT_t *ssPort = &PORTD;
 
+
 void fpga_init()
 {
     PORT_SetPinsAsOutput(ssPort, PIN0_bm);
@@ -62,9 +63,9 @@ ISR(PORTD_INT0_vect)
         
         if (system_status_get()->b_si5338_fail)
         {
-            system_timers_get()->ts_si5338.status = 5;
+            system_timers_get()->ts_si5338.state = 5;
             system_timers_get()->ts_si5338.counter = 100;
-            system_timers_get()->ts_fpga.status = 4;
+            system_timers_get()->ts_fpga.state = 4;
         }
     }
     else

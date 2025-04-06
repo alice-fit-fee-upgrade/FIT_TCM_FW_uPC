@@ -12,6 +12,7 @@ F_CPU = 32000000UL
 ##  need to change this path to match.
 #LIBDIR = ../../AVR-Programming-Library # Not used
 DRV_DIR=drivers
+DEV_DIR=devices
 BUILD_DIR=build
 BIN_DIR=bin
 
@@ -53,16 +54,15 @@ TARGET = alice_tcm
 # Object files: will find all .c/.h files in current directory
 #  and in LIBDIR.  If you have any other (sub-)directories with code,
 #  you can add them in to SOURCES below in the wildcard statement.
-SOURCES=$(wildcard *.c $(LIB_DIR)/*.c $(DRV_DIR)/*.c)
+SOURCES=$(wildcard *.c $(LIB_DIR)/*.c $(DRV_DIR)/*.c $(DEV_DIR)/*.c)
 HEADERS=$(SOURCES:.c=.h)
 # OBJECTS=$(SOURCES:.c=.o)
 # OBJECTS:=$(patsubst %.c,$(OBJ_DIR)/%.o,$(notdir $(SOURCES)))
 OBJECTS = $(addprefix $(BUILD_DIR)/,$(notdir $(addsuffix .o,$(basename $(sort $(SOURCES))))))
 
-
 ## Compilation options, type man avr-gcc if you're curious.
 CPPFLAGS = -DF_CPU=$(F_CPU) -I.
-CFLAGS = -Os -g -std=gnu99 -Wall
+CFLAGS = -Os -g -std=c11 -Wall
 ## Use short (8-bit) data types 
 CFLAGS += -funsigned-char -funsigned-bitfields -fpack-struct -fshort-enums 
 ## Splits up object files per function
@@ -72,13 +72,13 @@ LDFLAGS = -Wl,-Map,$(BIN_DIR)/$(TARGET).map
 LDFLAGS += -Wl,--gc-sections 
 ## Relax shrinks code even more, but makes disassembly messy
 ## LDFLAGS += -Wl,--relax
-## LDFLAGS += -Wl,-u,vfprintf -lprintf_flt -lm  ## for floating-point printf
+LDFLAGS += -Wl,-u,vfprintf -lprintf_flt -lm  ## for floating-point printf
 ## LDFLAGS += -Wl,-u,vfprintf -lprintf_min      ## for smaller printf
 TARGET_ARCH = -mmcu=$(MCU)
 
 ## Explicit pattern rules:
 
-VPATH=drivers
+VPATH=drivers:devices
 
 $(BUILD_DIR):
 	mkdir -p $(BUILD_DIR)
@@ -89,6 +89,7 @@ $(BIN_DIR):
 $(BUILD_DIR)/%.o: %.c | $(BUILD_DIR)
 #$(OBJECTS): $(SOURCES) Makefile | $(BUILD_DIR)
 	$(CC) $(CFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c $< -o $@ ;
+	@echo "Compiled "$<" successfully!"
 
 $(BIN_DIR)/$(TARGET).elf: $(OBJECTS) | $(BIN_DIR)
 	$(CC) $(LDFLAGS) $(TARGET_ARCH) $^ $(LDLIBS) -o $@

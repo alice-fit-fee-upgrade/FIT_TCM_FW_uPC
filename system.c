@@ -2,14 +2,40 @@
 
 #include "drivers/port_driver.h"
 #include "drivers/spi_driver.h"
+#include "drivers/clksys_driver.h"
 
-#include "fpga.h"
-#include "si5338.h"
+#include "devices/fpga.h"
+#include "devices/si5338.h"
 #include "system.h"
 
 struct system_eeprom *p_ee_params = (struct system_eeprom *)MAPPED_EEPROM_START;
 struct system_status system_status = {0};
 struct system_timers system_timers = {0};
+
+void system_clock_init(void)
+{
+  CLKSYS_XOSC_Config(OSC_FRQRANGE_12TO16_gc, false, OSC_XOSCSEL_XTAL_16KCLK_gc);
+  CLKSYS_Enable(OSC_RC2MEN_bm | OSC_XOSCEN_bm);
+  do
+  {
+
+  } while (CLKSYS_IsReady(OSC_XOSCRDY_bm) == 0);
+
+  /* PLL: 16MHz x 2 */
+  CLKSYS_PLL_Config(OSC_PLLSRC_XOSC_gc, 2);
+  CLKSYS_Enable(OSC_PLLEN_bm);
+  do
+  {
+
+  } while (CLKSYS_IsReady(OSC_PLLRDY_bm) == 0);
+
+  CPU_CCP = CCP_IOREG_gc;
+  /* Set PLL as sysclk */
+  CLK_CTRL = CLK_SCLKSEL_PLL_gc;
+  CLKSYS_Disable(OSC_RC2MEN_bm);
+
+  return;
+}
 
 void system_init()
 {
@@ -102,7 +128,7 @@ void system_reset()
 
     //DAT_clk_frs = DAT_clk_frs & 0b00001110;
 
-    system_timers.ts_si5338.status = 1;
+    system_timers.ts_si5338.state = 1;
     system_timers.ts_si5338.counter = 100;
 
     return;
@@ -122,3 +148,4 @@ struct system_timers *system_timers_get(void)
 {
     return &system_timers;
 }
+
