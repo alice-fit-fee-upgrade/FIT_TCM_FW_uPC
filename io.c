@@ -33,7 +33,7 @@ void io_init(void)
     PORT_ConfigurePins(&PORTE, 0b00001010, false, false, 0, 0);
     PORT_ConfigurePins(&PORTE, 0b00000100, true, false, 0, 0);
     PORT_ConfigureInterrupt0(&PORTE, PORT_INT0LVL_OFF_gc, 0b00001010);
-    PORT_ConfigureInterrupt1(&PORTE, PORT_INT0LVL_OFF_gc, 0b00000001);
+    PORT_ConfigureInterrupt1(&PORTE, PORT_INT1LVL_OFF_gc, 0b00000001);
 
     // PORTF
     PORT_SetDirection(&PORTF, 0b00001001);
@@ -41,7 +41,7 @@ void io_init(void)
     PORT_ConfigurePins(&PORTF, 0b00110010, false, false, 0, 0);
     PORT_ConfigurePins(&PORTF, 0b11000000, false, false, PORT_OPC_PULLDOWN_gc, 0);
     PORT_ConfigureInterrupt0(&PORTF, PORT_INT0LVL_OFF_gc, 0b00000010);
-    PORT_ConfigureInterrupt1(&PORTF, PORT_INT0LVL_OFF_gc, 0b00110000);
+    PORT_ConfigureInterrupt1(&PORTF, PORT_INT1LVL_OFF_gc, 0b00110000);
 
     return;
 }
