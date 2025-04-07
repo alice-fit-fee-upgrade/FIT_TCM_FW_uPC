@@ -28,7 +28,8 @@ void console_init(void)
 
     USART_CTS_Read(&USART_data);
     
-    PORTF_INTCTRL = 0x2;
+    /* Switch on CTS interrupt */
+    PORTF_INTCTRL = ( PORTF_INTCTRL & ~PORT_INT0LVL_gm ) | PORT_INT0LVL_MED_gc;
     return;
 }
 
