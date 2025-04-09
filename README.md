@@ -123,7 +123,7 @@ Switch flow:
 | 0x25a8| 00	| 01		| 0x0122|caseD_2	| 	| Reg 6 WR 0xc	|
 | 0x25aa| 00	| 02		| 0x0145|caseD_4	|	| Switch to other dev |
 | 0x25ac| 00	| 03		| 0x014b|caseD_6	| 	| PORTF_INTFLAGS = 0b00000010; PORTF_INTCTRL = 0b00001010 	|
-| 0x25ae| 01	| 00		| 0x0153|caseD_8	| YES	| Reg 235 SEL (FCAL) |
+| 0x25ae| 01	| 00 (04)	| 0x0153|caseD_8	| YES	| Reg 235 SEL (FCAL) |
 | 0x25b0| 01	| 01		| 0x0159|caseD_a	| 	| Set slave RD 	|
 | 0x25b2| 01	| 02		| 0x0166|caseD_c	| 	| Reg 235 RD	|
 | 0x25b4| 01	| 03		| 0x016f|caseD_e	| 	| Reg 236 RD 	|
@@ -136,10 +136,10 @@ Switch flow:
 | 0x25c2| 01	| 0a		| 0x019a|caseD_1c	| 	| Reg 49 SEL	|
 | 0x25c4| 01	| 0b		| 0x01a0|caseD_1e	| 	| Reg 49 WR 0x80 or 0x90 |
 | 0x25c6| 01	| 0c		| 0x01a9|caseD_20	| 	| Reg 
-| 0x25c8| 02	| 00		| 0x01bd|caseD_22	| YES	|
+| 0x25c8| 02	| 00 (11)	| 0x01bd|caseD_22	| YES	|
 | 0x25ca| 02	| 01		| 0x01cd|caseD_24	| 	|
 | 0x25cc| 02	| 02		| 0x01b3|caseD_26	| 	|
-| 0x25ce| 03	| 00		| 0x01d7|caseD_28	| YES	| Reg 241 SEL
+| 0x25ce| 03	| 00 (14)	| 0x01d7|caseD_28	| YES	| Reg 241 SEL
 | 0x25d0| 03	| 01		| 0x01dd|caseD_2a	| 	|
 | 0x25d2| 03	| 02		| 0x01e5|caseD_2c	| 	|
 | 0x25d4| 03	| 03		| 0x01eb|caseD_2e	| 	|
@@ -159,7 +159,7 @@ Switch flow:
 | 0x25f0| 03	| 11		| 0x025f|caseD_4a	| 	|
 | 0x25f2| 03	| 12		| 0x0265|caseD_4c	| YES 	|
 | 0x25f4| 03	| 13		| 0x026b|caseD_4e	| 	|
-| 0x25f6| 03	| 14		| 0x0203|caseD_50	| 	|
+| 0x25f6| 03	| 14 (29)	| 0x0203|caseD_50	| 	|
 | 0x25f8| 04	| 00		| 0x0285|caseD_52	| YES	| Reg = 241
 | 0x25fa| 04	| 01		| 0x028b|caseD_54	| 	| Val = 0x65
 | 0x25fc| 04	| 02		| 0x0291|caseD_56	| 	| ?
@@ -191,11 +191,9 @@ Switch flow:
 | 0x2160| 	| 1	| ?? 	| 
 | 0x2161| 	| 1 	| clock source settings |
 | 0x2162| 	| 1 	| 16#18# settings |
-| 0x2163| 	| 2 	| Si5338 current msg stream |
-| 0x2165| 	| 2	| Si5338 msg to send (addr)	|
-| 0x2167|	| 1	| 	|
-| 0x2168|	| 1	| Current slave addr. (0xE0 or 0xE2)	|
-| 	| 	| 	| 	|
+| 0x2163| 	| 1 	| Si5338 current msg stream |
+| 0x2164| 	| 1 	| Si5338 current msg step |
+| 0x2165| 	| 8	| Si5338 temporary data	|
 | 0x216d|	| 6	| Copy of 0x2193 to 0x2198 data 	|
 | 0x2173| 	| 16	| USART_D0 tx buffer 	|
 | 0x2183| 	| 2	| USART_D0 tx buffer head & tail pointers  |
@@ -237,7 +235,7 @@ Switch flow:
 |:---: 		|:---: |
 | AC\rxxx 	| Send xxx msg to UART_D0, till ESC is present |
 | CA\r		| Clear alarms|
-| CL x\r 	| x=0 or x=1,  setting PORTF interrupt behavior |
+| CL x\r 	| x=0 or x=1, change clock source, setting PORTF interrupt behavior |
 | CP\r		| get PMA0..7 link status |
 | ON or OF	| EEPROM erase? |
 | PA		| Flash ATxmega with new firmware |

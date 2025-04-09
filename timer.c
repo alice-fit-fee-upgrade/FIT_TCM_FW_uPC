@@ -54,7 +54,7 @@ ISR(TCC0_OVF_vect)
         {
             break;
         }
-        /* State 1 is just waiting for state 2 to happen */
+        /* State 1 is just waiting for state 2 to happen - called from system_restart() only */
         case 1:
         {
             if (1 == --p_ts_si5338->counter)
@@ -63,38 +63,49 @@ ISR(TCC0_OVF_vect)
             }
             break;
         }
-        /*  */
+        /* Step 1 initialization */
         case 2:
         {
             timer_tc_set_state(p_ts_si5338, 0);
             /* TODO: FUN_code_000571(); */
-            si5338_state_get()->case_sec_state = 0x12;
-            if (0 == si5338_state_get()->case_pri_state)
+            si5338_state_get()->step = 0x12; // restart step only?
+
+            if (SI5338_STREAM_INIT == si5338_state_get()->stream)
             {
-                si5338_state_get()->case_sec_state = 0x00;
+                si5338_state_get()->step = 0;
 
                 // 0x00 + 0x00
 
             }
-            si5338_state_get()->case_pri_state = 0x03;
+            si5338_state_get()->stream = SI5338_STREAM_CONFIG;
+            si5338_state_get()->slave_cur = SI5338_SL0_ADDR;
             // DAT_mem_2165 = 0xe0;
-            TWIC_MASTER_ADDR = 0xE0;
-            TWIC_MASTER_CTRLA = 0x58;
+            //TWIC_MASTER_ADDR = 0xE0;
+            //TWIC_MASTER_CTRLA = 0x58;
+            /* ID read operation to initiate interrupt driven configuration */
+            uint8_t data[] = {0x00};
+            TWI_MasterWriteRead(&TWIC, SI5338_SL0_ADDR, data, 1, 1);
             break;
         }
+        /* Step 2 initialization called automatically after previous step is successful */
         case 3:
         {
             if (1 == --p_ts_si5338->counter)
             {
                 timer_tc_set_state(p_ts_si5338, 0);
-                si5338_state_get()->case_pri_state = 0x04;
-                si5338_state_get()->case_sec_state = 0x00;
+                si5338_state_get()->stream = SI5338_STREAM_RESTART;
+                si5338_state_get()->slave_cur = SI5338_SL0_ADDR;
+                si5338_state_get()->step = 0;
                 // DAT_mem_2165 = 0xe0;
-                TWIC_MASTER_ADDR = 0xE0;
-                TWIC_MASTER_CTRLA = 0x58;
+                //TWIC_MASTER_ADDR = 0xE0;
+                //TWIC_MASTER_CTRLA = 0x58;
+                /* ID read operation to initiate interrupt driven configuration */
+                uint8_t data[] = {0x00};
+                TWI_MasterWriteRead(&TWIC, SI5338_SL0_ADDR, data, 1, 1);
             }
             break;
         }
+        /* Step 3 initialization called automatically after previous step is successful */
         case 4:
         {
             uint8_t portc_val = PORT_GetPortValue(&PORTC);
@@ -103,11 +114,16 @@ ISR(TCC0_OVF_vect)
             // bVar6 = 0;
             if ((portc_val & 0b00001100) == 0) 
             {
-                si5338_state_get()->case_pri_state = 0x01;
-                si5338_state_get()->case_sec_state = 0x00;
+                si5338_state_get()->stream = 0x04; // new four, old one
+                si5338_state_get()->step = 0x00;
                 // DAT_mem_2165 = 0xe0;
-                TWIC_MASTER_ADDR = 0xE0;
-                TWIC_MASTER_CTRLA = 0x58;
+                //TWIC_MASTER_ADDR = 0xE0;
+                //TWIC_MASTER_CTRLA = 0x58;
+
+                /* ID read operation to initiate interrupt driven configuration */
+                uint8_t data[] = {0x00};
+                TWI_MasterWriteRead(&TWIC, SI5338_SL0_ADDR, data, 1, 1);
+
                 system_status_get()->b_si5338_fail = false;
                 timer_tc_set_state(p_ts_si5338, 5);
                 timer_tc_set_value_ms(p_ts_si5338, 75);
@@ -140,8 +156,8 @@ ISR(TCC0_OVF_vect)
         }
         case 6:
         {
-            uint8_t data = 0;
-            // fpga_send_msg_t1(0x7f,data);
+            uint16_t data = 0;
+            //fpga_exchange_data(0xF2, &data);
             if ((data & 0b00001111) == 0b00000011) 
             {
                 PORTE_INTFLAGS = 2;

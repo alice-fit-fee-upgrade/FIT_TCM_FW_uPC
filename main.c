@@ -107,7 +107,7 @@ int main(void)
   io_attenuator_port_set(system_eeprom_get()->attenuator_portb_config);
 
   /* Send welcome message */
-  console_print("\r\nINR TCM control interface ready\r\n");
+  console_print("\r\nWUT TCM control interface ready\r\n");
   console_rts_clr();
 
   do
@@ -119,14 +119,17 @@ int main(void)
         b_report_rdy = false;
         console_print("FPGA: %d, %d\r\n", system_timers_get()->ts_fpga.state, system_timers_get()->ts_fpga.counter);
         console_print("Si5338: %d, %d\r\n", system_timers_get()->ts_si5338.state, system_timers_get()->ts_si5338.counter);
-        //uint16_t data;
-        //fpga_exchange_data(0xF2, &data);
-        //console_print("MSG: %x \r\n", data);
+        //if (fpga_done_get())
+        //{
+        //  uint16_t data;
+        //  fpga_exchange_data(0xF2, &data);
+        //  console_print("MSG: %x \r\n", data);
+        //}
         float temp = 0;
         uint8_t temp_flags = 0;
         temp = adt7311_temperature_get(&temp_flags);
         console_print("TEMP: %f, flags: %x \r\n\r\n", temp, temp_flags);
-        report_cnt = 2000;
+        report_cnt = 1000;
       }
     } while (true);
 

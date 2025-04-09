@@ -4,6 +4,8 @@
 #include "drivers/spi_driver.h"
 #include "drivers/clksys_driver.h"
 
+#include "devices/console.h"
+#include "devices/attenuator.h"
 #include "devices/fpga.h"
 #include "devices/si5338.h"
 #include "system.h"
@@ -39,50 +41,37 @@ void system_clock_init(void)
 
 void system_init()
 {
-    /* PORTB */
+    /* Set FPGA_RST high, configure SPI lines */
     fpga_rst_set();
     PORT_SetPinsAsOutput(&PORTB, 0b10000000);
-    
-    /* PORTC */
     PORT_SetPinsAsOutput(&PORTC, 0b10110000);
-
-    /* PORTD */
     fpga_cs_deselect();
-    PORT_SetPinsAsOutput(&PORTD, 0b00001001);
-    /* TODO: Attenuator settings*/
-    /*
-    USARTD0_CTRLB = 0x18;
-    USARTD0_CTRLA = 0x10;
-    */
+    PORT_SetPinsAsOutput(&PORTD, 0b00000001);
+    
+    /* Enable attenuator communication */
+    attenuator_uart_enable();
 
     /* Configure FPGA SPI */
     fpga_init();
 
-    // PORTC
     /* TODO: Si5338 settings */
-    
-    TWIC_MASTER_STATUS = 1;
-    si5338_state_get()->case_pri_state = 0;
-    si5338_state_get()->case_sec_state = 0;
-    si5338_state_get()->msg = 0x06;
-
-    /*DAT_mem_2163 = 0;
-    DAT_mem_2164 = 0;
-    DAT_mem_2165 = 0xfe;
-    DAT_mem_2166 = 0x25;*/
-
-    /* TODO: DAT_mem_2168 = 0xe0;*/
-
+    si5338_bus_status_set(TWI_MASTER_BUSSTATE_IDLE_gc);
+    si5338_state_get()->stream = SI5338_STREAM_INIT;
+    si5338_state_get()->step = 0;
+    si5338_state_get()->slave_cur = SI5338_SL0_ADDR;
     system_status_get()->b_si5338_fail = false;
+    
     /*
+    ZERO SI5338 ERRORS
     bVar1 = GPIO_GPIOR0;
     GPIO_GPIOR0 = bVar1 & 0b11000111;
     */
+    /* Dummy read operation to initiate interrupt driven configuration */
+    uint8_t data[] = {0x00};
+    TWI_MasterWriteRead(&TWIC, SI5338_SL0_ADDR, data, 1, 1);
 
-    //TWIC_MASTER_ADDR = 0xE0;
-    //TWIC_MASTER_CTRLA = 0x58;
-    //si5338_twic_master_ctrla_setup();
-    
+    console_print("System init complete!\r\n");
+
     return;
 }
 
@@ -118,7 +107,7 @@ void system_deinit()
     return;
 }
 
-void system_reset()
+void system_restart()
 {
     system_status.b_si5338_fail = true;
     PORTC_INTCTRL = 0;

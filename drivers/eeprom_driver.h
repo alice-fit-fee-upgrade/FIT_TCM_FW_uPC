@@ -61,7 +61,6 @@
 
 #include "avr_compiler.h"
 
-#define MAPPED_EEPROM_START 	(0x1000)
 #define EEPROM_PAGESIZE 		(32)
 #define EEPROM(_pageAddr, _byteAddr) \
 	((uint8_t *) MAPPED_EEPROM_START)[_pageAddr*EEPROM_PAGESIZE + _byteAddr]
@@ -111,7 +110,7 @@
  *  \note The CMDEX bit must be set within 4 clock cycles after setting the
  *        protection byte in the CCP register.
  */
-#define NVM_EXEC()	asm("push r30"      "\n\t"	\
+#define NVM_EXEC()	__asm__("push r30"      "\n\t"	\
 			    "push r31"      "\n\t"	\
     			    "push r16"      "\n\t"	\
     			    "push r18"      "\n\t"	\

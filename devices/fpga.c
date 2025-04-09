@@ -4,6 +4,8 @@
 
 #include "drivers/spi_driver.h"
 
+#include "devices/console.h"
+
 #include "fpga.h"
 #include "si5338.h"
 
@@ -32,21 +34,22 @@ void fpga_init()
 
 void fpga_exchange_data(uint8_t addr, uint16_t *p_data)
 {
+    SPIC.CTRL = 0xd1;
     SPI_MasterSSLow(ssPort, PIN0_bm);
 
-    spiMasterC.module->DATA = (addr >> 2) | 0x80;
-    while(!(spiMasterC.module->STATUS & SPI_IF_bm)) {}
+    console_print("fpga1\r\n");
+    SPI_MasterTransceiveByte(&spiMasterC, (addr >> 2) | 0x80);
 
-    spiMasterC.module->DATA = ((addr >> 1) << 7) | (uint8_t)((addr << 7 ) >> 1);
-    while(!(spiMasterC.module->STATUS & SPI_IF_bm)) {}
+    console_print("fpga2\r\n");
+    SPI_MasterTransceiveByte(&spiMasterC, ((addr >> 1) << 7) | (uint8_t)((addr << 7 ) >> 1));
 
-    spiMasterC.module->DATA = (uint8_t)((*p_data >> 8) & 0xFF);
-    while(!(spiMasterC.module->STATUS & SPI_IF_bm)) {}
+    console_print("fpga3\r\n");
+    SPI_MasterTransceiveByte(&spiMasterC, (uint8_t)((*p_data >> 8) & 0xFF));
 
-    spiMasterC.module->DATA = (uint8_t)(*p_data & 0xFF);
-    while(!(spiMasterC.module->STATUS & SPI_IF_bm)) {}
+    console_print("fpga4\r\n");
+    SPI_MasterTransceiveByte(&spiMasterC, (uint8_t)(*p_data & 0xFF));
 
-    *p_data = spiMasterC.module->DATA;
+    //*p_data = spiMasterC.module->DATA;
 
     SPI_MasterSSHigh(ssPort, PIN0_bm);
 
@@ -80,7 +83,7 @@ ISR(PORTD_INT0_vect)
 
 ISR(PORTE_INT1_vect)
 {
-    uint16_t data;
+    uint16_t data = 0 ;
     //fpga_exchange_data(0xF2, &data);
     /* NOT in reset state */
     if (0 == (data & 0x800))
