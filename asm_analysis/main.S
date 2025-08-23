@@ -7,7 +7,7 @@
 ;************************************************************************************************
 
 .org 0x0000
-	rjmp    main                        ; 0 RESET                        
+	jmp    main                        ; 0 RESET                        
               
 .org (PORTC_INT0_vect << 1)
     rjmp    PORTC_INT0_vect_isr         ; 2 External Interrupt 0
@@ -343,7 +343,7 @@ caseD_2c:
     rjmp        LAB_code_00029e                         
 case_23:                      
 caseD_2e:                     
-    lds         R16,DAT_clk_frs                         ;= ??
+    lds         R16,0x2162                         ;= ??
     ldi         R17,0xb                                 
     andi        R16,0x6                                 
     brbs        CPU_Z_bp, LAB_code_0001f1                    
@@ -355,7 +355,7 @@ LAB_code_0001f1:
     rjmp        LAB_code_00029e                         
 case_24:                      
 caseD_30:                     
-    lds         R16,DAT_clk_frs                         ;= ??
+    lds         R16,0x2162                         ;= ??
     ldi         R17,0x8                                 
     andi        R16,0x6                                 
     brbs        CPU_Z_bp, LAB_code_0001fc                    
@@ -502,8 +502,8 @@ LAB_code_000275:
     ldi         R16,0x3                                 
     ldi         R17,0x19                                
 LAB_code_000277:              
-    sts         DAT_mem_2159,R16                        ;= ??
-    sts         DAT_mem_215a,R17                        ;= ??
+    sts         0x2159,R16                        ;= ??
+    sts         0x215a,R17                        ;= ??
     ldi         R16,0x48                                
     sts         TWIC_MASTER_CTRLA,R16                   ;= ??
     ldi         R16,0x3                                 
@@ -556,6 +556,7 @@ LAB_code_00029e:
 ;*                                           FUNCTION                                           *
 ;************************************************************************************************
 ;undefined2 timer_overflow_int(void)
+.org (0x002a8 << 1)
 TCC0_OVF_vect_isr:
     push        ZH                                     
     in          ZH,CPU_SREG                                
@@ -599,13 +600,13 @@ LAB_code_0002cb:
     eor         R16,R16                                 
     st          Z,R16                                   
     rcall       FUN_code_000571                         ;undefined FUN_code_000571(void)
-    lds         R17,DAT_mem_2163                        ;= ??
+    lds         R17,0x2163                        ;= ??
     ldi         R16,0x3                                 
-    sts         DAT_mem_2163,R16                        ;= ??
+    sts         0x2163,R16                        ;= ??
     ldi         R16,0xe0                                
-    sts         DAT_mem_2165,R16                        ;= ??
+    sts         0x2165,R16                        ;= ??
     eor         R16,R16                                 
-    sts         DAT_mem_2166,R16                        ;= ??
+    sts         0x2166,R16                        ;= ??
     ldi         R16,0x12                                
     and         R17,R17                                 
     brbc        CPU_Z_bp, LAB_code_0002e3                    
@@ -615,7 +616,7 @@ LAB_code_0002cb:
     ldi         R17,0x58                                
     sts         TWIC_MASTER_CTRLA,R17                   ;= ??
 LAB_code_0002e3:              
-    sts         DAT_mem_2164,R16                        ;= ??
+    sts         0x2164,R16                        ;= ??
     rjmp        LAB_code_000363                         
 LAB_code_0002e6:              
     ldd         R17,Z+0x1                               
@@ -626,11 +627,11 @@ LAB_code_0002ea:
     eor         R16,R16                                 
     st          Z,R16                                   
     ldi         R16,0x4                                 
-    sts         DAT_mem_2163,R16                        ;= ??
+    sts         0x2163,R16                        ;= ??
     eor         R16,R16                                 
-    sts         DAT_mem_2164,R16                        ;= ??
+    sts         0x2164,R16                        ;= ??
     ldi         R16,0xe0                                
-    sts         DAT_mem_2165,R16                        ;= ??
+    sts         0x2165,R16                        ;= ??
     rcall       si5338_twic_master_ctrla_setup          ;undefined si5338_twic_master_ctrla_s...
     rjmp        LAB_code_000363                         
 LAB_code_0002f7:              
@@ -646,11 +647,11 @@ LAB_code_0002f7:
     brbc        CPU_Z_bp, LAB_code_000314                    
     ldi         R18,0x1                                 
     ldi         R16,0x1                                 
-    sts         DAT_mem_2163,R16                        ;= ??
+    sts         0x2163,R16                        ;= ??
     eor         R16,R16                                 
-    sts         DAT_mem_2164,R16                        ;= ??
+    sts         0x2164,R16                        ;= ??
     ldi         R16,0xe0                                
-    sts         DAT_mem_2165,R16                        ;= ??
+    sts         0x2165,R16                        ;= ??
     rcall       si5338_twic_master_ctrla_setup          ;undefined si5338_twic_master_ctrla_s...
     cbi         GPIO_GPIOR0,0x3                         
     ldi         R16,0x4b                                
@@ -662,10 +663,10 @@ LAB_code_000314:
 LAB_code_000315:              
     st          Z,R16                                   
     cli                                                 
-    lds         R16,DAT_clk_frs                         ;= ??
+    lds         R16,0x2162                         ;= ??
     andi        R16,0xe                                 
     or          R16,R18                                 
-    sts         DAT_clk_frs,R16                         ;= ??
+    sts         0x2162,R16                         ;= ??
     bset        CPU_I_bp                                    
     rjmp        LAB_code_000363                         
 LAB_code_00031f:              
@@ -705,9 +706,9 @@ LAB_code_000335:
     ldi         R16,0x9                                 
     sts         PORTE_INTCTRL,R16                       ;= ??
     ldi         R18,0x18                                
-    lds         R17,DAT_clk_frs                         ;= ??
+    lds         R17,0x2162                         ;= ??
     ori         R17,0x10                                
-    lds         R16,DAT_mem_2188                        ;= ??
+    lds         R16,0x2188                        ;= ??
     cli                                                 
     call        fpga_send_msg_t2                        ;void fpga_send_msg_t2(undefined para...
     bset        CPU_I_bp                                    
@@ -715,9 +716,9 @@ LAB_code_000335:
     rjmp        LAB_code_000357                         
 LAB_code_00034f:              
     cli                                                 
-    lds         R16,DAT_b_porte_1_5v_present            ;= ??
+    lds         R16,0x2157            ;= ??
     ori         R16,0x80                                
-    sts         DAT_b_porte_1_5v_present,R16            ;= ??
+    sts         0x2157,R16            ;= ??
     bset        CPU_I_bp                                    
     ldi         R16,0x40                                
 LAB_code_000357:              
@@ -745,11 +746,11 @@ LAB_code_000363:
     brbc        CPU_Z_bp, LAB_code_000384                    
     sbiw        R24,0x1                              
     brbc        CPU_Z_bp, LAB_code_0003a2                    
-    lds         R16,DAT_mem_21ad                        ;= ??
+    lds         R16,0x21ad                        ;= ??
     and         R16,R16                                 
     brbs        CPU_Z_bp, LAB_code_0003a4                    
     cli                                                 
-    lds         R16,DAT_b_porte_1_5v_present            ;= ??
+    lds         R16,0x2157            ;= ??
     andi        R16,0x7                                 
     cpi         R16,0x1                                 
     brbc        CPU_Z_bp, LAB_code_000380                    
@@ -769,7 +770,7 @@ LAB_code_000380:
 LAB_code_000384:              
     cpi         R16,0x2                                 
     brbc        CPU_Z_bp, LAB_code_0003a5                    
-    lds         R16,DAT_b_porte_1_5v_present            ;= ??
+    lds         R16,0x2157            ;= ??
     sbrc        R16,0x3                                 
     rjmp        LAB_code_000396                         
     sbiw        R24,0x1                              
@@ -792,7 +793,7 @@ LAB_code_000396:
     ldi         R25,0x3                                 
     rcall       FUN_code_0006b7                         ;undefined FUN_code_0006b7(void)
     ldi         R16,0x1f                                
-    sts         DAT_mem_2185,R16                        ;= ??
+    sts         0x2185,R16                        ;= ??
     ldi         R16,0x3                                 
     st          Z,R16                                   
 LAB_code_0003a2:              
@@ -833,11 +834,11 @@ LAB_code_0003b7:
     eor         R16,R16                                 
     std         Z+0x2,R16                               
     cli                                                 
-    lds         R16,DAT_b_porte_1_5v_present            ;= ??
+    lds         R16,0x2157            ;= ??
     ori         R16,0x10                                
-    sts         DAT_b_porte_1_5v_present,R16            ;= ??
+    sts         0x2157,R16            ;= ??
     call        fpga_send_mcu_ts                        ;undefined fpga_send_mcu_ts(void)
-    call        fpga_send_msg_t3                        ;undefined fpga_send_msg_t3(void)
+    call        fpga_send_ip_addr                        ;undefined fpga_send_ip_addr(void)
     bset        CPU_I_bp                                    
     rjmp        LAB_code_0003eb                         
 LAB_code_0003d5:              
@@ -900,7 +901,7 @@ LAB_code_000406:
     sts         PORTA_OUTTGL,R16                        ;= ??
 LAB_code_00040b:              
     bset        CPU_I_bp                                    
-    lds         R16,DAT_mem_2185                        ;= ??
+    lds         R16,0x2185                        ;= ??
     sbrs        R16,0x4                                 
     rjmp        LAB_code_00043b                         
     cpi         R16,0x90                                
@@ -914,8 +915,8 @@ LAB_code_000418:
     eor         R16,R16                                 
     sts         USARTD0_CTRLB,R16                       ;= ??
     sts         USARTD0_CTRLA,R16                       ;= ??
-    lds         R16,DAT_mem_2199                        ;= ??
-    lds         R17,DAT_mem_219a                        ;= ??
+    lds         R16,0x2199                        ;= ??
+    lds         R17,0x219a                        ;= ??
     ori         R17,0x80                                
     ldi         R18,0x13                                
     cli                                                 
@@ -934,12 +935,12 @@ LAB_code_000429:
     ldi         R16,0x98                                
     rjmp        LAB_code_000439                         
 LAB_code_000433:              
-    sts         DAT_mem_2185,R16                        ;= ??
+    sts         0x2185,R16                        ;= ??
     ldi         R16,0xd                                 
     call        USARTD0_send_msg                        ;undefined USARTD0_send_msg(void)
     rjmp        LAB_code_00043b                         
 LAB_code_000439:              
-    sts         DAT_mem_2185,R16                        ;= ??
+    sts         0x2185,R16                        ;= ??
 LAB_code_00043b:              
     ldi         R24,0xe8                                
     ldi         R25,0x3                                 
@@ -965,14 +966,14 @@ LAB_code_00044d:
     ldi         R17,0x2                                 
 LAB_code_000450:              
     cli                                                 
-    lds         R16,DAT_b_porte_1_5v_present            ;= ??
+    lds         R16,0x2157            ;= ??
     mov         R18,R16                                 
     andi        R18,0x6                                 
     eor         R18,R17                                 
     brbs        CPU_Z_bp, LAB_code_000467                    
     andi        R16,0xf9                                
     or          R16,R17                                 
-    sts         DAT_b_porte_1_5v_present,R16            ;= ??
+    sts         0x2157,R16            ;= ??
     sbic        GPIO_GPIOR0,0x1                         
     rjmp        LAB_code_000466                         
     cpi         R17,0x6                                 
@@ -1008,7 +1009,7 @@ caseD_f2:
 caseD_f6:                     
     std         Z+0x6,R17                               
     cli                                                 
-    lds         R18,DAT_b_porte_1_5v_present            ;= ??
+    lds         R18,0x2157            ;= ??
     sbrs        R18,0x4                                 
     rjmp        LAB_code_00047e                         
     ldi         R18,0x15                                
@@ -1020,7 +1021,7 @@ LAB_code_00047f:
     std         Z+0x4,R25                               
     sbis        GPIO_GPIOR0,0x5                         
     rjmp        LAB_code_0004c2                         
-    lds         R16,DAT_clk_frs                         ;= ??
+    lds         R16,0x2162                         ;= ??
     andi        R16,0x1                                 
     brbc        CPU_Z_bp, LAB_code_000488                    
     rjmp        LAB_code_0004c2                         
@@ -1051,10 +1052,10 @@ LAB_code_00049b:
     andi        R16,0x30                                
     brbc        CPU_Z_bp, LAB_code_0004c1                    
     ldi         R16,0x2                                 
-    sts         DAT_mem_2163,R16                        ;= ??
+    sts         0x2163,R16                        ;= ??
     eor         R16,R16                                 
-    sts         DAT_mem_2164,R16                        ;= ??
-    sts         DAT_mem_2165,R18                        ;= ??
+    sts         0x2164,R16                        ;= ??
+    sts         0x2165,R18                        ;= ??
     ldi         R16,0xe0                                
     sts         TWIC_MASTER_ADDR,R16                    ;= ??
     ldi         R16,0x58                                
@@ -1066,10 +1067,10 @@ LAB_code_0004b0:
     st          -Z,R25                                  
     st          -Z,R24                                  
     rcall       FUN_code_0004d3                         ;undefined FUN_code_0004d3(void)
-    lds         R17,DAT_mem_2188                        ;= ??
+    lds         R17,0x2188                        ;= ??
     cp          R16,R17                                 
     brbs        CPU_Z_bp, LAB_code_0004c1                    
-    sts         DAT_mem_2188,R16                        ;= ??
+    sts         0x2188,R16                        ;= ??
     eor         R17,R17                                 
     ldi         R18,0x18                                
     call        fpga_send_msg_t2                        ;void fpga_send_msg_t2(undefined para...
@@ -1103,6 +1104,8 @@ LAB_code_0004c2:
 ;*                                           FUNCTION                                           *
 ;************************************************************************************************
 ;undefined FUN_code_0004d3(void)
+.org (0x04d3 << 1)
+FUN_code_0004d3:
     ldi         ZL,0x6d                                
     ldi         ZH,0x21                                
     ld          R19,Z                                   
@@ -1120,6 +1123,8 @@ LAB_code_0004c2:
 ;*                                           FUNCTION                                           *
 ;************************************************************************************************
 ;undefined FUN_code_0004e0(void)
+.org (0x04e0 << 1)
+FUN_code_0004e0:
     push        R18                                     
     push        R17                                     
     push        R16                                     
@@ -1134,7 +1139,7 @@ LAB_code_0004e9:
     ld          R17,Y+                                  
     cpi         R18,0x13                                
     brbc        CPU_Z_bp, LAB_code_0004f5                    
-    lds         ZL,DAT_mem_2185                        ;= ??
+    lds         ZL,0x2185                        ;= ??
     sbrc        ZL,0x4                                 
     rjmp        LAB_code_0004f4                         
     andi        ZL,0xc0                                
@@ -1165,8 +1170,8 @@ LAB_code_0004fd:
     cli                                                 
     call        fpga_send_msg_t2                        ;void fpga_send_msg_t2(undefined para...
     bset        CPU_I_bp                                    
-    lds         R16,DAT_mem_2160                        ;= ??
-    lds         R17,DAT_mem_2161                        ;= ??
+    lds         R16,0x2160                        ;= ??
+    lds         R17,0x2161                        ;= ??
     ldi         R18,0x15                                
     cli                                                 
     call        fpga_send_msg_t2                        ;void fpga_send_msg_t2(undefined para...
@@ -1182,6 +1187,7 @@ LAB_code_0004fd:
 ;*                                           FUNCTION                                           *
 ;************************************************************************************************
 ;undefined fpga_done_int(void)
+.org (0x051d << 1)
 PORTD_INT0_vect_isr:
     push        ZH                                     
     in          ZH,CPU_SREG                                
@@ -1189,9 +1195,9 @@ PORTD_INT0_vect_isr:
     lds         R16,PORTD_IN                            ;= ??
     bst         R16,0b0000000000000101                   
     cli                                                 
-    lds         R16,DAT_b_porte_1_5v_present            ;= ??
+    lds         R16,0x2157            ;= ??
     bld         R16,0x4                                 
-    sts         DAT_b_porte_1_5v_present,R16            ;= ??
+    sts         0x2157,R16            ;= ??
     bset        CPU_I_bp                                    
     brbc        CPU_T_bp, LAB_code_00053c
     ldi         R16,0x80                                
@@ -1200,11 +1206,11 @@ PORTD_INT0_vect_isr:
     rjmp        LAB_code_00054d                         
     cli                                                 
     ldi         R16,0x5                                 
-    sts         DAT_mem_2159,R16                        ;= ??
+    sts         0x2159,R16                        ;= ??
     ldi         R16,0x64                                
-    sts         DAT_mem_215a,R16                        ;= ??
+    sts         0x215a,R16                        ;= ??
     ldi         R16,0x4                                 
-    sts         DAT_mem_215b,R16                        ;= ??
+    sts         0x215b,R16                        ;= ??
     bset        CPU_I_bp                                    
     rjmp        LAB_code_00054d                         
 LAB_code_00053c:              
@@ -1213,10 +1219,10 @@ LAB_code_00053c:
     ldi         R16,0x10                                
     sts         PORTB_OUTSET,R16                        ;= ??
     eor         R16,R16                                 
-    sts         DAT_mem_2158,R16                        ;= ??
-    lds         R16,DAT_b_porte_1_5v_present            ;= ??
+    sts         0x2158,R16                        ;= ??
+    lds         R16,0x2157            ;= ??
     andi        R16,0x7f                                
-    sts         DAT_b_porte_1_5v_present,R16            ;= ??
+    sts         0x2157,R16            ;= ??
     ldi         R16,0xc0                                
     sts         PORTA_OUTSET,R16                        ;= ??
 LAB_code_00054d:              
@@ -1231,6 +1237,7 @@ LAB_code_00054d:
 ;*  the Si53301 input clocks is not present                                                     *
 ;************************************************************************************************
 ;undefined si53301_clk_not_present(void)
+.org (0x0551 << 1)
 PORTF_INT1_vect_isr:
     push        ZH                                     
     in          ZH,CPU_SREG                                
@@ -1244,6 +1251,8 @@ PORTF_INT1_vect_isr:
 ;*                                           FUNCTION                                           *
 ;************************************************************************************************
 ;undefined reset_system(void)
+.org (0x0559 << 1)
+reset_system:
     sbi         GPIO_GPIOR0,0x3                         
     eor         R16,R16                                 
     sts         PORTC_INTCTRL,R16                       ;= ??
@@ -1252,18 +1261,20 @@ PORTF_INT1_vect_isr:
     ldi         R16,0x80                                
     sts         PORTA_OUTSET,R16                        ;= ??
     sts         PORTB_OUTCLR,R16                        ;= ??
-    lds         R16,DAT_clk_frs                         ;= ??
+    lds         R16,0x2162                         ;= ??
     andi        R16,0xe                                 
-    sts         DAT_clk_frs,R16                         ;= ??
+    sts         0x2162,R16                         ;= ??
     ldi         R16,0x64                                
-    sts         DAT_mem_215a,R16                        ;= ??
+    sts         0x215a,R16                        ;= ??
     ldi         R16,0x1                                 
-    sts         DAT_mem_2159,R16                        ;= ??
+    sts         0x2159,R16                        ;= ??
     ret                                                 
 ;************************************************************************************************
 ;*                                           FUNCTION                                           *
 ;************************************************************************************************
 ;undefined FUN_code_000571(void)
+.org (0x0571 << 1)
+FUN_code_000571:
     push        R0                                      
     push        R1                                      
     push        R18                                     
@@ -1302,9 +1313,9 @@ LAB_code_00058b:
     cpi         YL,0x99                                
     brbc        CPU_Z_bp, LAB_code_000586                    
     rcall       FUN_code_0004d3                         ;undefined FUN_code_0004d3(void)
-    sts         DAT_mem_2188,R16                        ;= ??
+    sts         0x2188,R16                        ;= ??
     cbi         GPIO_GPIOR0,0x5                         
-    lds         R16,DAT_clk_frs                         ;= ??
+    lds         R16,0x2162                         ;= ??
     sbrc        R16,0x3                                 
     rjmp        LAB_code_0005b3                         
     andi        R16,0x1                                 
@@ -1322,8 +1333,8 @@ LAB_code_0005a5:
     ldi         R17,0x10                                
     sts         PORTC_OUTSET,R17                        ;= ??
 LAB_code_0005ab:              
-    lds         R17,DAT_clk_frs                         ;= ??
-    sts         DAT_clk_frs,R16                         ;= ??
+    lds         R17,0x2162                         ;= ??
+    sts         0x2162,R16                         ;= ??
     eor         R17,R16                                 
     andi        R17,0x6                                 
     brbc        CPU_Z_bp, LAB_code_0005b3                    
@@ -1357,6 +1368,7 @@ LAB_code_0005c1:
 ;*                                @brief Catch Si5338 LOS or LOL                                *
 ;************************************************************************************************
 ;undefined si5338_int(void)
+.org (0x05ca << 1)
 PORTC_INT0_vect_isr:
     push        ZH                                     
     in          ZH,CPU_SREG                                
@@ -1375,18 +1387,18 @@ LAB_code_0005d7:
     sbis        GPIO_GPIOR0,0x3                         
     rjmp        LAB_code_0005e5                         
     ldi         R16,0x1                                 
-    sts         DAT_mem_2163,R16                        ;= ??
+    sts         0x2163,R16                        ;= ??
     eor         R16,R16                                 
-    sts         DAT_mem_2164,R16                        ;= ??
+    sts         0x2164,R16                        ;= ??
     ldi         R16,0xe0                                
-    sts         DAT_mem_2165,R16                        ;= ??
+    sts         0x2165,R16                        ;= ??
     rcall       si5338_twic_master_ctrla_setup          ;undefined si5338_twic_master_ctrla_s...
     cbi         GPIO_GPIOR0,0x3                         
 LAB_code_0005e5:              
-    lds         R16,DAT_clk_frs                         ;= ??
+    lds         R16,0x2162                         ;= ??
     andi        R16,0xe                                 
     or          R16,R19                                 
-    sts         DAT_clk_frs,R16                         ;= ??
+    sts         0x2162,R16                         ;= ??
     ldi         R18,0x5                                 
     and         R19,R19                                 
     brbc        CPU_Z_bp, LAB_code_0005f7                    
@@ -1397,9 +1409,9 @@ LAB_code_0005e5:
     sts         PORTB_OUTCLR,R16                        ;= ??
     eor         R18,R18                                 
 LAB_code_0005f7:              
-    sts         DAT_mem_2159,R18                        ;= ??
+    sts         0x2159,R18                        ;= ??
     ldi         R16,0x64                                
-    sts         DAT_mem_215a,R16                        ;= ??
+    sts         0x215a,R16                        ;= ??
     pop         R20                                     
     pop         R19                                     
     pop         R18                                     
@@ -1412,6 +1424,7 @@ LAB_code_0005f7:
 ;*                                           FUNCTION                                           *
 ;************************************************************************************************
 ;undefined 5V_present_or_Si53301_v_fault(void)
+.org (0x0604 << 1)
 PORTE_INT0_vect_isr:
     push        ZH                                     
     in          ZH,CPU_SREG                                
@@ -1426,11 +1439,11 @@ PORTE_INT0_vect_isr:
     bst         R16,0x3                                 
     bld         R17,0x3                                 
     bst         R16,0x2                                 
-    lds         R16,DAT_b_porte_1_5v_present            ;= ??
+    lds         R16,0x2157            ;= ??
     mov         R18,R16                                 
     andi        R16,0xf6                                
     or          R16,R17                                 
-    sts         DAT_b_porte_1_5v_present,R16            ;= ??
+    sts         0x2157,R16            ;= ??
     eor         R18,R17                                 
     sbrs        R18,0x0                                 
     rjmp        LAB_code_00062f                         
@@ -1439,17 +1452,17 @@ PORTE_INT0_vect_isr:
     ldi         R16,0x4                                 
     sts         PORTE_OUTCLR,R16                        ;= ??
     sbi         GPIO_GPIOR0,0x1                         
-    rcall       system_reset_2                          ;undefined system_reset_2(void)
+    rcall       system_deinit                          ;undefined system_deinit(void)
     rjmp        LAB_code_000636                         
 caseD_66:                     
     ldi         R16,0x1                                 
 caseD_68:                     
-    sts         DAT_mem_215b,R16                        ;= ??
+    sts         0x215b,R16                        ;= ??
 caseD_6c:                     
     ldi         R16,0xd0                                
-    sts         DAT_mem_215c,R16                        ;= ??
+    sts         0x215c,R16                        ;= ??
     ldi         R16,0x7                                 
-    sts         DAT_mem_215d,R16                        ;= ??
+    sts         0x215d,R16                        ;= ??
     cbi         GPIO_GPIOR0,0x1                         
     rjmp        LAB_code_000636                         
 LAB_code_00062f:              
@@ -1457,7 +1470,7 @@ LAB_code_00062f:
     rjmp        LAB_code_000637                         
     sbrc        R17,0x3                                 
     rjmp        LAB_code_000637                         
-    rcall       system_reset_2                          ;undefined system_reset_2(void)
+    rcall       system_deinit                          ;undefined system_deinit(void)
     brbc        CPU_T_bp, LAB_code_000637
     sbi         GPIO_GPIOR0,0x1                         
 LAB_code_000636:              
@@ -1473,6 +1486,7 @@ LAB_code_000637:
 ;*                                           FUNCTION                                           *
 ;************************************************************************************************
 ;void fpga_comm_request_int(void)
+.org (0x063d << 1)
 PORTE_INT1_vect_isr:
     push        ZH                                     
     in          ZH,CPU_SREG                                
@@ -1493,22 +1507,22 @@ LAB_code_00064c:
     ldi         R17,0x8                                 
 LAB_code_00064e:              
     sts         PORTF_INTCTRL,R16                       ;= ??
-    sts         DAT_clk_frs,R17                         ;= ??
+    sts         0x2162,R17                         ;= ??
     rcall       reset_system                            ;undefined reset_system(void)
     rjmp        LAB_code_000663                         
 LAB_code_000654:              
     sbrs        R17,0x1                                 
     rjmp        LAB_code_00065b                         
-    lds         R18,DAT_fpga_comm_request               ;= ??
+    lds         R18,0x2006               ;= ??
     ori         R18,0x1                                 
-    sts         DAT_fpga_comm_request,R18               ;= ??
+    sts         0x2006,R18               ;= ??
 LAB_code_00065b:              
     swap        R16                                     
     andi        R16,0x7                                 
-    lds         R17,DAT_mem_2158                        ;= ??
+    lds         R17,0x2158                        ;= ??
     andi        R17,0xfa                                
     or          R16,R17                                 
-    sts         DAT_mem_2158,R16                        ;= ??
+    sts         0x2158,R16                        ;= ??
 LAB_code_000663:              
     pop         R18                                     
     pop         R17                                     
@@ -1520,6 +1534,8 @@ LAB_code_000663:
 ;*                         @brief set GPIOR0 status and set/clr VD8 LED                         *
 ;************************************************************************************************
 ;undefined set_status_and_set_VD8_led(void)
+.org (0x0669 << 1)
+set_status_and_set_VD8_led:
     sbic        GPIO_GPIOR0,0x1                         
     rjmp        LAB_code_000670                         
     cbi         GPIO_GPIOR0,0x0                         
@@ -1534,15 +1550,17 @@ LAB_code_000670:
 ;************************************************************************************************
 ;*                                           FUNCTION                                           *
 ;************************************************************************************************
-;undefined system_reset_2(void)
+;undefined system_deinit(void)
+.org (0x0675 << 1)
+system_deinit:
     eor         R16,R16                                 
-    sts         DAT_mem_215c,R16                        ;= ??
-    sts         DAT_mem_215d,R16                        ;= ??
-    sts         DAT_mem_215b,R16                        ;= ??
-    sts         DAT_fpga_comm_request,R16               ;= ??
-    sts         DAT_mem_2185,R16                        ;= ??
-    sts         DAT_mem_2159,R16                        ;= ??
-    sts         DAT_clk_frs,R16                         ;= ??
+    sts         0x215c,R16                        ;= ??
+    sts         0x215d,R16                        ;= ??
+    sts         0x215b,R16                        ;= ??
+    sts         0x2006,R16               ;= ??
+    sts         0x2185,R16                        ;= ??
+    sts         0x2159,R16                        ;= ??
+    sts         0x2162,R16                         ;= ??
     ldi         R16,0x1                                 
     sts         PORTE_INTCTRL,R16                       ;= ??
     ldi         R16,0x2                                 
@@ -1557,7 +1575,7 @@ LAB_code_000670:
     ldi         R16,0x10                                
     sts         PORTB_OUTSET,R16                        ;= ??
     eor         R16,R16                                 
-    sts         SPIC,R16                                ;= ??
+    sts         SPIC_CTRL,R16                                ;= ??
     ldi         R16,0xb0                                
     sts         PORTC_DIRCLR,R16                        ;= ??
     ldi         R16,0x9                                 
@@ -1566,9 +1584,9 @@ LAB_code_000670:
     sts         PORTD_OUTCLR,R16                        ;= ??
     ldi         R16,0x30                                
     sts         PORTF_DIRCLR,R16                        ;= ??
-    lds         R16,DAT_b_porte_1_5v_present            ;= ??
+    lds         R16,0x2157            ;= ??
     andi        R16,0xef                                
-    sts         DAT_b_porte_1_5v_present,R16            ;= ??
+    sts         0x2157,R16            ;= ??
     ldi         R16,0xa0                                
     sts         PORTA_OUTSET,R16                        ;= ??
     ldi         R16,0x48                                
@@ -1580,6 +1598,8 @@ LAB_code_000670:
 ;*                                           FUNCTION                                           *
 ;************************************************************************************************
 ;undefined FUN_code_0006b7(void)
+.org (0x06b7 << 1)
+FUN_code_0006b7:
     push        YL                                     
     push        YH                                     
     ldi         R16,0x80                                
@@ -1597,7 +1617,7 @@ LAB_code_000670:
     ldi         R16,0x10                                
     sts         USARTD0_CTRLA,R16                       ;= ??
     ldi         R16,0xd1                                
-    sts         SPIC,R16                                ;= ??
+    sts         SPIC_CTRL,R16                                ;= ??
     ldi         R16,0x1                                 
     sts         TWIC_MASTER_STATUS,R16                  ;= ??
     eor         R16,R16                                 
@@ -1621,7 +1641,9 @@ LAB_code_000670:
 ;************************************************************************************************
 ;*                                           FUNCTION                                           *
 ;************************************************************************************************
-;undefined si5338_twic_master_ctrla_setup(void)
+;undefined si5338_init_transmission(void)
+.org (0x06e6 << 1)
+si5338_twic_master_ctrla_setup:
     sts         TWIC_MASTER_ADDR,R16                    ;= ??
     ldi         R16,0x58                                
     sts         TWIC_MASTER_CTRLA,R16                   ;= ??
@@ -1633,6 +1655,7 @@ LAB_code_000670:
 ;*  any is present                                                                              *
 ;************************************************************************************************
 ;undefined usartf0_cts_int(void)
+.org (0x06ec << 1)
 PORTF_INT0_vect_isr:
     push        ZH                                     
     in          ZH,CPU_SREG                                
@@ -1663,7 +1686,7 @@ PORTF_INT0_vect_isr:
     add         ZL,R16                                 
     adc         ZH,R17                                 
     ld          R17,Z                                   
-    sts         USARTF0,R17                             ;= ??
+    sts         USARTF0_DATA,R17                             ;= ??
     ldi         ZL,0x2                                 
     ldi         ZH,0x20                                
     st          Z,R16                                   
@@ -1688,6 +1711,7 @@ LAB_code_000716:
 ;*                       @brief Send next byte to attenuator via USART D0                       *
 ;************************************************************************************************
 ;undefined USARTD0_DRE(void)
+.org (0x0720 << 1)
 USARTD0_DRE_vect_isr:
     push        ZH                                     
     in          ZH,CPU_SREG                                
@@ -1717,7 +1741,7 @@ LAB_code_000734:
     add         ZL,R16                                 
     adc         ZH,R17                                 
     ld          R17,Z                                   
-    sts         USARTD0,R17                             ;= ??
+    sts         USARTD0_DATA,R17                             ;= ??
     ldi         ZL,0x83                                
     ldi         ZH,0x21                                
     st          Z,R16                                   
@@ -1735,6 +1759,7 @@ LAB_code_000741:
 ;*                                           FUNCTION                                           *
 ;************************************************************************************************
 ;undefined usartd0_rx_int(void)
+.org (0x074a << 1)
 USARTD0_RXC_vect_isr:
     push        ZH                                     
     in          ZH,CPU_SREG                                
@@ -1745,10 +1770,10 @@ USARTD0_RXC_vect_isr:
     push        R17                                     
     push        R16                                     
     lds         R19,USARTD0_STATUS                      ;= ??
-    lds         R16,USARTD0                             ;= ??
+    lds         R16,USARTD0_DATA                             ;= ??
     sbrc        R19,0x4                                 
     rjmp        LAB_code_000792                         
-    lds         R19,DAT_mem_2185                        ;= ??
+    lds         R19,0x2185                        ;= ??
     sbrc        R19,0x5                                 
     call        usartf0_send_msg_2                      ;undefined usartf0_send_msg_2(void)
     mov         R18,R19                                 
@@ -1777,10 +1802,10 @@ LAB_code_000772:
     sbrc        R18,0x7                                 
     rjmp        LAB_code_000792                         
     cli                                                 
-    lds         R16,DAT_mem_2199                        ;= ??
-    lds         R17,DAT_mem_219a                        ;= ??
-    lds         R18,DAT_mem_2186                        ;= ??
-    lds         R19,DAT_mem_2187                        ;= ??
+    lds         R16,0x2199                        ;= ??
+    lds         R17,0x219a                        ;= ??
+    lds         R18,0x2186                        ;= ??
+    lds         R19,0x2187                        ;= ??
     cp          R16,R18                                 
     cpc         R17,R19                                 
     brbc        CPU_Z_bp, LAB_code_000785                    
@@ -1790,8 +1815,8 @@ LAB_code_000772:
     eor         R19,R19                                 
     rjmp        LAB_code_000790                         
 LAB_code_000785:              
-    sts         DAT_mem_2186,R16                        ;= ??
-    sts         DAT_mem_2187,R17                        ;= ??
+    sts         0x2186,R16                        ;= ??
+    sts         0x2187,R17                        ;= ??
     bset        CPU_I_bp                                    
     call        attenuator_set_steps                    ;undefined attenuator_set_steps(void)
     ldi         R19,0x48                                
@@ -1800,7 +1825,7 @@ LAB_code_00078e:
     andi        R18,0xf0                                
     or          R19,R18                                 
 LAB_code_000790:              
-    sts         DAT_mem_2185,R19                        ;= ??
+    sts         0x2185,R19                        ;= ??
 LAB_code_000792:              
     pop         R16                                     
     pop         R17                                     
@@ -1817,6 +1842,7 @@ LAB_code_000792:
 ;*  Send bytes when ready                                                                       *
 ;************************************************************************************************
 ;undefined usart_f0_dre_int(void)
+.org (0x079b << 1)
 USARTF0_DRE_vect_isr:
     push        ZH                                     
     in          ZH,CPU_SREG                                
@@ -1848,7 +1874,7 @@ LAB_code_0007b2:
     add         ZL,R16                                 
     adc         ZH,R17                                 
     ld          R17,Z                                   
-    sts         USARTF0,R17                             ;= ??
+    sts         USARTF0_DATA,R17                             ;= ??
     ldi         ZL,0x2                                 
     ldi         ZH,0x20                                
     st          Z,R16                                   
@@ -1868,6 +1894,7 @@ LAB_code_0007be:
 ;*  Store incoming bytes from USARTF0                                                           *
 ;************************************************************************************************
 ;undefined usart_f0_rx_int(void)
+.org (0x07c7 << 1)
 USARTF0_RXC_vect_isr:
     push        ZH                                     
     in          ZH,CPU_SREG                                
@@ -1890,12 +1917,12 @@ USARTF0_RXC_vect_isr:
     brbc        CPU_Z_bp, usart_f0_rx_buffer_full_endif      
     ldi         R18,0x1                                 
     sts         PORTF_OUTSET,R18                        ;= ??
-    lds         R18,DAT_usart_f0_new_line               ;= ??
+    lds         R18,0x2005               ;= ??
     ori         R18,0x80                                
-    sts         DAT_usart_f0_new_line,R18               ;= ??
+    sts         0x2005,R18               ;= ??
 usart_f0_rx_buffer_full_endif:
     lds         R19,USARTF0_STATUS                      ;= ??
-    lds         R18,USARTF0                             ;= ??
+    lds         R18,USARTF0_DATA                             ;= ??
     sbrc        R19,0x4                                 
     rjmp        usart_f0_rx_ferr_endif                  
     cp          R16,R17                                 
@@ -1909,9 +1936,9 @@ usart_f0_rx_buffer_full_endif:
     st          Z,R18                                   
     cpi         R18,0xd                                 
     brbc        CPU_Z_bp, usart_f0_rx_ferr_endif             
-    lds         R16,DAT_usart_f0_new_line               ;= ??
+    lds         R16,0x2005               ;= ??
     inc         R16                                     
-    sts         DAT_usart_f0_new_line,R16               ;= ??
+    sts         0x2005,R16               ;= ??
 usart_f0_rx_ferr_endif:       
     pop         R16                                     
     pop         R17                                     
@@ -1936,10 +1963,12 @@ usart_f0_rx_ferr_endif:
 ;*    b. parsing incoming USART msgs                                                            *
 ;************************************************************************************************
 ;undefined main(void)
+.org (0x0801 << 1)
+main:
     ldi         R16,0xcb                                
     sts         OSC_XOSCCTRL,R16                        ;= ??
     ldi         R16,0x9                                 
-    sts         OSC,R16                                 ;= ??
+    sts         OSC_XOSCCTRL,R16                                 ;= ??
 ;wait for OSC
 LAB_code_000807:              
     lds         R17,OSC_STATUS                          ;= ??
@@ -1948,7 +1977,7 @@ LAB_code_000807:
     ldi         R16,0xc2                                
     sts         OSC_PLLCTRL,R16                         ;= ??
     ldi         R16,0x19                                
-    sts         OSC,R16                                 ;= ??
+    sts         OSC_XOSCCTRL,R16                                 ;= ??
 ;wait for OSC
 LAB_code_000811:              
     lds         R17,OSC_STATUS                          ;= ??
@@ -1957,13 +1986,13 @@ LAB_code_000811:
     ldi         R17,0xd8                                
     ldi         R16,0x4                                 
     sts         CPU_CCP,R17                             ;= ??
-    sts         CLK,R16                                 ;= ??
+    sts         CLK_CTRL,R16                                 ;= ??
     ldi         R16,0x18                                
-    sts         OSC,R16                                 ;= ??
+    sts         OSC_XOSCCTRL,R16                                 ;= ??
     ser         R25                                     
-    out         SPL,R25                                 
+    out         CPU_SPL,R25                                 
     ldi         R25,0x3f                                
-    out         SPH,R25                                 
+    out         CPU_SPH,R25                                 
     ldi         R16,0b000000000000000011111011
     sts         PORTA_DIRSET,R16                        ;= ??
     ldi         R16,0b000000000000000011110011          
@@ -2058,12 +2087,12 @@ LAB_code_000811:
     sts         USARTF0_CTRLA,R16                       ;= ??
     ldi         R16,0b000000000000000000000110
 ;Prescaler Clk/256
-    sts         TCC0,R16                                ;= ??
+    sts         TCC0_CTRLA,R16                                ;= ??
     ldi         R16,0x7d                                
 ;Period 125
     sts         TCC0_PER,R16                            ;= ??
     ldi         R16,0x0                                 
-    sts         DAT_mem_0827,R16                        ;= ??
+    sts         0x0827,R16                        ;= ??
     ldi         R16,0x0                                 
     sts         TCC0_CTRLB,R16                          ;= ??
     ldi         R16,0x0                                 
@@ -2090,12 +2119,12 @@ LAB_code_0008cc:
     lds         R16,PORTF_IN                            ;= ??
     sbrs        R16,0x1                                 
     inc         R25                                     
-    sts         DAT_b_portf_1_set,R25                   ;= ??
+    sts         0x2004,R25                   ;= ??
     lds         R16,PORTE_IN                            ;= ??
     bst         R16,0x1                                 
     eor         R16,R16                                 
     bld         R16,0x0                                 
-    sts         DAT_b_porte_1_5v_present,R16            ;= ??
+    sts         0x2157,R16            ;= ??
     brbs        CPU_T_bp, LAB_code_0008e3
     sbi         GPIO_GPIOR0,0x1                         
     ldi         R16,0x1                                 
@@ -2103,16 +2132,16 @@ LAB_code_0008cc:
     rjmp        LAB_code_0008ec                         
 LAB_code_0008e3:              
     ldi         R16,0x1                                 
-    sts         DAT_mem_215b,R16                        ;= ??
+    sts         0x215b,R16                        ;= ??
     ldi         R16,0xd0                                
-    sts         DAT_mem_215c,R16                        ;= ??
+    sts         0x215c,R16                        ;= ??
     ldi         R16,0x7                                 
-    sts         DAT_mem_215d,R16                        ;= ??
+    sts         0x215d,R16                        ;= ??
 LAB_code_0008ec:              
     ldi         R16,0xe8                                
-    sts         DAT_mem_215e,R16                        ;= ??
+    sts         0x215e,R16                        ;= ??
     ldi         R16,0x3                                 
-    sts         DAT_mem_215f,R16                        ;= ??
+    sts         0x215f,R16                        ;= ??
     ldi         R16,0x1                                 
     sts         PORTE_INTCTRL,R16                       ;= ??
     ldi         R16,0x2                                 
@@ -2152,9 +2181,9 @@ LAB_code_00090c:
     cpc         ZH,R17                                 
     brbc        CPU_Z_bp, LAB_code_00090c                    
     ser         R16                                     
-    sts         DAT_mem_2186,R16                        ;= ??
-    sts         DAT_mem_2187,R16                        ;= ??
-    lds         R16,DAT_portb_setup                     ;= ??
+    sts         0x2186,R16                        ;= ??
+    sts         0x2187,R16                        ;= ??
+    lds         R16,0x219b                     ;= ??
     andi        R16,0xf                                 
 ;; Set PB0, PB3 according to EEPROM settings
     lds         R17,PORTB_OUT                           ;= ??
@@ -2169,12 +2198,12 @@ LAB_code_00090c:
     ldi         R16,0x1                                 
     sts         PORTF_OUTCLR,R16                        ;= ??
 LAB_code_000927:              
-    lds         R16,DAT_fpga_comm_request               ;= ??
+    lds         R16,0x2006               ;= ??
     and         R16,R16                                 
     brbs        CPU_Z_bp, LAB_code_00092c                    
     rcall       fpga_exchange_data                      ;undefined fpga_exchange_data(void)
 LAB_code_00092c:              
-    lds         R16,DAT_usart_f0_new_line               ;= ??
+    lds         R16,0x2005               ;= ??
     and         R16,R16                                 
     brbs        CPU_Z_bp, LAB_code_000927                    
     rcall       usart_f0_parse_prompt                   ;undefined usart_f0_parse_prompt(void)
@@ -2183,9 +2212,11 @@ LAB_code_00092c:
 ;*                                           FUNCTION                                           *
 ;************************************************************************************************
 ;undefined fpga_exchange_data(void)
+.org (0x0932 << 1)
+fpga_exchange_data:
     eor         R16,R16                                 
     cli                                                 
-    sts         DAT_fpga_comm_request,R16               ;= ??
+    sts         0x2006,R16               ;= ??
     ldi         YL,0x93                                
     ldi         YH,0x21                                
     ldi         R18,0xf8                                
@@ -2202,7 +2233,7 @@ LAB_code_00093f:
     mov         R15,R16                                 
 LAB_code_000943:              
     lsr         R15                                     
-    brbs        CPU_C_bp, AB_code_000947                    
+    brbs        CPU_C_bp, LAB_code_000947                    
     adiw        Y,0x2                                   
     rjmp        LAB_code_0009b0                         
 LAB_code_000947:              
@@ -2258,19 +2289,19 @@ LAB_code_000972:
     ldd         R21,Y+0x1                               
     st          Y+,R16                                  
     st          Y+,R17                                  
-    lds         R24,DAT_mem_2185                        ;= ??
+    lds         R24,0x2185                        ;= ??
     ldi         R25,0xdf                                
     and         R25,R24                                 
     brbc        CPU_Z_bp, LAB_code_00098a                    
     cp          R16,R20                                 
     cpc         R17,R21                                 
     brbs        CPU_Z_bp, LAB_code_000993                    
-    sts         DAT_mem_2186,R16                        ;= ??
-    sts         DAT_mem_2187,R17                        ;= ??
+    sts         0x2186,R16                        ;= ??
+    sts         0x2187,R17                        ;= ??
     bset        CPU_I_bp                                    
     call        attenuator_set_steps                    ;undefined attenuator_set_steps(void)
     ori         R24,0x48                                
-    sts         DAT_mem_2185,R24                        ;= ??
+    sts         0x2185,R24                        ;= ??
     rjmp        LAB_code_00098d                         
 LAB_code_00098a:              
     brbc        CPU_N_bp, LAB_code_00098d                    
@@ -2327,8 +2358,10 @@ LAB_code_0009b4:
 ;*  section "USART F0 commands"                                                                 *
 ;************************************************************************************************
 ;undefined usart_f0_parse_prompt(void)
+.org (0x09b5 << 1)
+usart_f0_parse_prompt:
     andi        R16,0x7f                                
-    sts         DAT_usart_f0_new_line,R16               ;= ??
+    sts         0x2005,R16               ;= ??
     call        usart_f0_get_next_byte_with_5f          ;undefined usart_f0_get_next_byte_wit...
     cpi         R16,0x41                                
     brbc        CPU_Z_bp, LAB_code_0009c1                    
@@ -2342,7 +2375,7 @@ LAB_code_0009c1:
     call        usart_f0_get_next_byte_with_5f          ;undefined usart_f0_get_next_byte_wit...
     cpi         R16,0x41                                
     brbc        CPU_Z_bp, LAB_code_0009c8                    
-    rjmp        resolve_ca_msg                          ;undefined resolve_ca_msg(void)
+    rjmp        clear_alarms                          ;undefined clear_alarms(void)
 LAB_code_0009c8:              
     cpi         R16,0x4c                                
     brbc        CPU_Z_bp, LAB_code_0009cb                    
@@ -2484,12 +2517,12 @@ LAB_code_000a38:
     call        usart_f0_get_next_byte_with_5f          ;undefined usart_f0_get_next_byte_wit...
     cpi         R16,0xd                                 
     brbc        CPU_Z_bp, usart_f0_collect_msg_line_2        
-    lds         R16,DAT_mem_21ad                        ;= ??
+    lds         R16,0x21ad                        ;= ??
     cp          R16,R20                                 
     brbc        CPU_Z_bp, LAB_code_000a41                    
     rjmp        LAB_code_000efe                         
 LAB_code_000a41:              
-    sts         DAT_mem_21ad,R20                        ;= ??
+    sts         0x21ad,R20                        ;= ??
     lds         R16,NVM_STATUS                          ;= ??
     sbrc        R16,0x7                                 
     rjmp        LAB_code_000a41                         
@@ -2510,7 +2543,7 @@ LAB_code_000a52:
     st          Y,R20                                   
     ldi         R16,0x35                                
     sts         NVM_CMD,R16                             ;= ??
-    sts         NVM,YL                                 ;= ??
+    sts         NVM_ADDR0,YL                                 ;= ??
     sts         NVM_ADDR1,YH                           ;= ??
     ldi         R16,0x1                                 
     ldi         R17,0xd8                                
@@ -2527,16 +2560,16 @@ LAB_code_000a68:
     ldi         R16,0x4                                 
     sts         PORTE_OUTCLR,R16                        ;= ??
 LAB_code_000a71:              
-    lds         R16,DAT_b_porte_1_5v_present            ;= ??
+    lds         R16,0x2157            ;= ??
     sbrc        R16,0x3                                 
     rjmp        LAB_code_000a71                         
     cli                                                 
     ldi         R16,0x1                                 
-    sts         DAT_mem_215b,R16                        ;= ??
+    sts         0x215b,R16                        ;= ??
     ldi         R16,0xd0                                
-    sts         DAT_mem_215c,R16                        ;= ??
+    sts         0x215c,R16                        ;= ??
     ldi         R16,0x7                                 
-    sts         DAT_mem_215d,R16                        ;= ??
+    sts         0x215d,R16                        ;= ??
     cbi         GPIO_GPIOR0,0x1                         
     ldi         R16,0x41                                
     sts         PORTA_OUTSET,R16                        ;= ??
@@ -2553,9 +2586,9 @@ LAB_code_000a88:
     cpi         R16,0xd                                 
     brbc        CPU_Z_bp, LAB_code_000a87                    
     cli                                                 
-    lds         R16,DAT_mem_2185                        ;= ??
+    lds         R16,0x2185                        ;= ??
     ori         R16,0x20                                
-    sts         DAT_mem_2185,R16                        ;= ??
+    sts         0x2185,R16                        ;= ??
     bset        CPU_I_bp                                    
 usart_f0_parse_prompt_while_not_esc:
     call        usart_f0_get_next_byte_with_5f          ;undefined usart_f0_get_next_byte_wit...
@@ -2565,9 +2598,9 @@ usart_f0_parse_prompt_while_not_esc:
     rjmp        usart_f0_parse_prompt_while_not_esc     
 usart_f0_parse_prompt_while_not_esc_end:
     cli                                                 
-    lds         R16,DAT_mem_2185                        ;= ??
+    lds         R16,0x2185                        ;= ??
     andi        R16,0xdf                                
-    sts         DAT_mem_2185,R16                        ;= ??
+    sts         0x2185,R16                        ;= ??
     bset        CPU_I_bp                                    
     rjmp        LAB_code_000efe                         
 LAB_code_000aa2:              
@@ -2600,7 +2633,7 @@ LAB_code_000ab6:
     rcall       usart_f0_get_next_byte_with_5f          ;undefined usart_f0_get_next_byte_wit...
     cpi         R16,0xd                                 
     brbc        CPU_Z_bp, LAB_code_000ad6                    
-    lds         R16,DAT_clk_frs                         ;= ??
+    lds         R16,0x2162                         ;= ??
     cpi         R20,0x31                                
     brbs        CPU_Z_bp, LAB_code_000aca                    
     cpi         R20,0x30                                
@@ -2619,7 +2652,7 @@ LAB_code_000aca:
     ldi         R17,0x8                                 
 LAB_code_000acf:              
     sts         PORTF_INTCTRL,R16                       ;= ??
-    sts         DAT_clk_frs,R17                         ;= ??
+    sts         0x2162,R17                         ;= ??
     rcall       reset_system                            ;undefined reset_system(void)
     bset        CPU_I_bp                                    
     rjmp        LAB_code_000efe                         
@@ -2637,8 +2670,8 @@ LAB_code_000ad7:
     brbc        CPU_C_bp, LAB_code_000ae1                    
     ret                                                 
 LAB_code_000ae1:              
-    sts         DAT_mem_21ab,R20                      ;= ??
-    sts         DAT_mem_21ac,R21                   
+    sts         0x21ab,R20                      ;= ??
+    sts         0x21ac,R21                   
     ldi         R18,0x17                                
     movw        R16,R20                           
     cli                                                 
@@ -2669,8 +2702,8 @@ LAB_code_000aeb:
     cpc         R5,R22                                  
     brbs        CPU_C_bp, LAB_code_000ad6                    
     cli                                                 
-    sts         RAMPZ,R22                               
-    rcall       system_reset_2                          ;undefined system_reset_2(void)
+    sts         CPU_RAMPZ,R22                               
+    rcall       system_deinit                          ;undefined system_deinit(void)
     eor         R16,R16                                 
     sts         PORTE_INTCTRL,R16                       ;= ??
     sts         TCC0_INTCTRLA,R16                       ;= ??
@@ -2692,6 +2725,8 @@ LAB_code_000aeb:
 ;*                                           FUNCTION                                           *
 ;************************************************************************************************
 ;undefined unlock_programming(void)
+.org (0x0b1f << 1)
+unlock_programming:
     rcall       usart_f0_get_next_byte_with_5f          ;undefined usart_f0_get_next_byte_wit...
     cpi         R16,0xd                                 
     brbc        CPU_Z_bp, LAB_code_000b2f                    
@@ -2718,6 +2753,8 @@ LAB_code_000b31:
 ;*                                           FUNCTION                                           *
 ;************************************************************************************************
 ;undefined fpga_firmware_update(void)
+.org (0x0b32 << 1)
+fpga_firmware_update:
     rcall       unlock_programming                      ;undefined unlock_programming(void)
     brbs        CPU_C_bp, LAB_code_000b31                    
     ldi         R16,0x2                                 
@@ -2727,7 +2764,7 @@ LAB_code_000b31:
     ldi         R16,0xb0                                
     sts         PORTE_DIRSET,R16                        ;= ??
     ldi         R16,0x50                                
-    sts         SPIE,R16                                ;= ??
+    sts         SPIE_CTRL,R16                                ;= ??
     eor         R16,R16                                 
     ldi         XL,0xae                                
     ldi         XH,0x23                                
@@ -2762,7 +2799,7 @@ LAB_code_000b5c:
     mov         R18,R1                                  
     mov         R19,R2                                  
     ldi         R16,0x1                                 
-    rcall       usart_f0_send_msg                       ;undefined usart_f0_send_msg(void)
+    rcall       usart_f0_send_buf                       ;undefined usart_f0_send_msg(void)
     sub         R17,R20                                 
     sbc         R18,R21                                 
     sbc         R19,R22                                 
@@ -2773,8 +2810,8 @@ LAB_code_000b5c:
     brbs        CPU_Z_bp, LAB_code_000b6a                    
     eor         R17,R17                                 
 LAB_code_000b6a:              
-    lds         R24,DAT_mem_23ae                        ;= ??
-    lds         R25,DAT_mem_23af                        ;= ??
+    lds         R24,0x23ae                        ;= ??
+    lds         R25,0x23af                        ;= ??
 LAB_code_000b6e:              
     ldi         XL,0xae                                
     ldi         XH,0x21                                
@@ -2786,8 +2823,8 @@ LAB_code_000b6e:
     andi        R25,0x1                                 
     dec         R17                                     
     brbc        CPU_Z_bp, LAB_code_000b6e                    
-    sts         DAT_mem_23ae,R24                        ;= ??
-    sts         DAT_mem_23af,R25                        ;= ??
+    sts         0x23ae,R24                        ;= ??
+    sts         0x23af,R25                        ;= ??
     rcall       FUN_code_000be7                         ;undefined FUN_code_000be7(void)
     rcall       FUN_code_000ba3                         ;undefined FUN_code_000ba3(void)
     brbs        CPU_C_bp, LAB_code_000b83                    
@@ -2810,25 +2847,27 @@ LAB_code_000b83:
     eor         R16,R16                                 
     sts         PORTC_INTCTRL,R16                       ;= ??
     sts         PORTD_INTCTRL,R16                       ;= ??
-    sts         SPIE,R16                                ;= ??
+    sts         SPIE_CTRL,R16                                ;= ??
     ldi         R16,0xb0                                
     sts         PORTE_DIRCLR,R16                        ;= ??
     cbi         GPIO_GPIOR0,0x1                         
     ldi         R16,0x1                                 
     sts         PORTA_OUTSET,R16                        ;= ??
     ldi         R16,0x2                                 
-    sts         DAT_mem_215b,R16                        ;= ??
+    sts         0x215b,R16                        ;= ??
     bset        CPU_I_bp                                    
     rjmp        LAB_code_000efe                         
 ;************************************************************************************************
 ;*                                           FUNCTION                                           *
 ;************************************************************************************************
 ;undefined FUN_code_000ba3(void)
+.org (0x0ba3 << 1)
+FUN_code_000ba3:
     rcall       fpga_set_write_mode                     ;undefined fpga_set_write_mode(void)
     ldi         R16,0x2                                 
     rcall       fpga_write_mem                          ;undefined fpga_write_mem(undefined2 ...
-    lds         R24,DAT_mem_23b0                        ;= ??
-    lds         R25,DAT_mem_23b1                        ;= ??
+    lds         R24,0x23b0                        ;= ??
+    lds         R25,0x23b1                        ;= ??
 LAB_code_000baa:              
     ldi         XL,0xae                                
     ldi         XH,0x21                                
@@ -2846,8 +2885,8 @@ LAB_code_000bb3:
     cpc         R1,R21                                  
     cpc         R2,R22                                  
     brbc        CPU_Z_bp, LAB_code_000bc4                    
-    sts         DAT_mem_23b0,R24                        ;= ??
-    sts         DAT_mem_23b1,R25                        ;= ??
+    sts         0x23b0,R24                        ;= ??
+    sts         0x23b1,R25                        ;= ??
     ldi         R16,0x10                                
     sts         PORTE_OUTSET,R16                        ;= ??
     bset        CPU_C_bp                                    
@@ -2858,8 +2897,8 @@ LAB_code_000bc4:
     sbci        R22,0xff                                
     and         R20,R20                                 
     brbc        CPU_Z_bp, LAB_code_000baa                    
-    sts         DAT_mem_23b0,R24                        ;= ??
-    sts         DAT_mem_23b1,R25                        ;= ??
+    sts         0x23b0,R24                        ;= ??
+    sts         0x23b1,R25                        ;= ??
     ldi         R16,0x10                                
     sts         PORTE_OUTSET,R16                        ;= ??
     clc                                                 
@@ -2868,6 +2907,8 @@ LAB_code_000bc4:
 ;*                                           FUNCTION                                           *
 ;************************************************************************************************
 ;undefined FUN_code_000bd2(void)
+.org (0x0bd2 << 1)
+FUN_code_000bd2:
     rcall       fpga_set_write_mode                     ;undefined fpga_set_write_mode(void)
     ldi         R16,0xd8                                
     rcall       fpga_write_mem                          ;undefined fpga_write_mem(undefined2 ...
@@ -2878,6 +2919,8 @@ LAB_code_000bc4:
 ;*                                           FUNCTION                                           *
 ;************************************************************************************************
 ;undefined fpga_set_write_mode(void)
+.org (0x0bd9 << 1)
+fpga_set_write_mode:
     ldi         R16,0x10                                
     sts         PORTE_OUTCLR,R16                        ;= ??
     ldi         R16,0x6                                 
@@ -2893,6 +2936,8 @@ LAB_code_000bdf:
 ;*                                           FUNCTION                                           *
 ;************************************************************************************************
 ;undefined FUN_code_000be7(void)
+.org (0x0be7 << 1)
+FUN_code_000be7:
     ldi         R24,0x40                                
     ldi         R25,0x6                                 
 LAB_code_000be9:              
@@ -2921,9 +2966,8 @@ LAB_code_000bf7:
 ;*                                           FUNCTION                                           *
 ;************************************************************************************************
 ;undefined FUN_code_000c03(undefined2 param_1, undefined2 param_2, undefined2 param_3)
-          ;param_1       undefined2      R25R24                      
-          ;param_2       undefined2      R23R22                      
-          ;param_3       undefined2      R21R20                      
+.org (0x0c03 << 1)
+FUN_code_000c03:           
     ldi         R16,0x10                                
     sts         PORTE_OUTCLR,R16                        ;= ??
 caseD_58:                     
@@ -2980,11 +3024,8 @@ LAB_code_000c3a:
 ;*                                           FUNCTION                                           *
 ;************************************************************************************************
 ;undefined FUN_code_000c3c(undefined2 param_1, undefined2 param_2, undefined2 param_3, undefined2 param_4, undefined2 param_5)
-          ;param_1       undefined2      R25R24                      
-          ;param_2       undefined2      R23R22                      
-          ;param_3       undefined2      R21R20                      
-          ;param_4       undefined2      R19R18                      
-          ;param_5       undefined2      R17R16                      
+.org (0x0c3c << 1)                 
+FUN_code_000c3c:
     ldi         R20,0x8                             
 LAB_code_000c3d:              
     add         R18,R18
@@ -3011,11 +3052,8 @@ LAB_code_000c4b:
 ;*                                           FUNCTION                                           *
 ;************************************************************************************************
 ;undefined fpga_write_mem(undefined2 param_1, undefined param_2, undefined2 param_3, undefined2 param_4, undefined unaff_R16)
-          ;param_1       undefined2      R25R24                      
-          ;param_2       undefined          R22                      
-          ;param_3       undefined2      R21R20                      
-          ;param_4       undefined2      R19R18                      
-          ;unaff_R16     undefined          R16                      
+.org (0x0c4e << 1)
+fpga_write_mem:
     ldi         R17,0x10                                
     sts         PORTE_OUTCLR,R17                        ;= ??
     sts         SPIE_DATA,R16                     ;= ??
@@ -3043,6 +3081,8 @@ LAB_code_000c65:
 ;*                                           FUNCTION                                           *
 ;************************************************************************************************
 ;undefined fpga_get_fl_type_and_code_size(void)
+.org (0x0c6a << 1)
+fpga_get_fl_type_and_code_size:
     ldi         R16,0x10                                
     sts         PORTE_OUTCLR,R16                        ;= ??
     ldi         R16,0x9f                                
@@ -3080,6 +3120,8 @@ LAB_code_000c91:
 ;*                                           FUNCTION                                           *
 ;************************************************************************************************
 ;undefined usart_f0_send_system_params(void)
+.org (0x0c92 << 1)
+usart_f0_send_system_params:
     rcall       usart_f0_get_next_byte_with_5f          ;undefined usart_f0_get_next_byte_wit...
     cpi         R16,0xd                                 
     brbc        CPU_Z_bp, LAB_code_000c91                    
@@ -3089,22 +3131,22 @@ LAB_code_000c91:
     ld          R17,Y+                                  
     rcall       usartf0_send_signed_16                  ;undefined usartf0_send_signed_16(void)
     ldi         R16,0x20                                
-    rcall       usart_f0_send_msg                       ;undefined usart_f0_send_msg(void)
+    rcall       usart_f0_send_buf                       ;undefined usart_f0_send_buf(void)
     ld          R16,Y+                                  
     ld          R17,Y+                                  
     rcall       usartf0_send_signed_16                  ;undefined usartf0_send_signed_16(void)
     ldi         R16,0x20                                
-    rcall       usart_f0_send_msg                       ;undefined usart_f0_send_msg(void)
+    rcall       usart_f0_send_buf                       ;undefined usart_f0_send_buf(void)
     ld          R16,Y+                                  
     ld          R17,Y+                                  
     rcall       usartf0_send_signed_16                  ;undefined usartf0_send_signed_16(void)
     ldi         R16,0x20                                
-    rcall       usart_f0_send_msg                       ;undefined usart_f0_send_msg(void)
+    rcall       usart_f0_send_buf                       ;undefined usart_f0_send_buf(void)
     ld          R16,Y+                                  
     ld          R17,Y+                                  
     rcall       usartf0_send_attenuator_settings        ;undefined usartf0_send_attenuator_se...
     ldi         R16,0x20                                
-    rcall       usart_f0_send_msg                       ;undefined usart_f0_send_msg(void)
+    rcall       usart_f0_send_buf                       ;undefined usart_f0_send_buf(void)
     ld          R16,Y+                                  
     eor         R17,R17                                 
     rcall       usart_f0_send_32bit_hex_value           ;undefined usart_f0_send_32bit_hex_va...
@@ -3114,32 +3156,32 @@ LAB_code_000c91:
     ld          R17,Y+                                  
     rcall       usartf0_send_signed_16                  ;undefined usartf0_send_signed_16(void)
     ldi         R16,0x20                                
-    rcall       usart_f0_send_msg                       ;undefined usart_f0_send_msg(void)
+    rcall       usart_f0_send_buf                       ;undefined usart_f0_send_buf(void)
     ld          R16,Y+                                  
     ld          R17,Y+                                  
     rcall       usartf0_send_signed_16                  ;undefined usartf0_send_signed_16(void)
     ldi         R16,0x20                                
-    rcall       usart_f0_send_msg                       ;undefined usart_f0_send_msg(void)
+    rcall       usart_f0_send_buf                       ;undefined usart_f0_send_buf(void)
     ld          R16,Y+                                  
     ld          R17,Y+                                  
     rcall       usartf0_send_unsigned_16                ;undefined usartf0_send_unsigned_16(v...
     ldi         R16,0x20                                
-    rcall       usart_f0_send_msg                       ;undefined usart_f0_send_msg(void)
+    rcall       usart_f0_send_buf                       ;undefined usart_f0_send_buf(void)
     ld          R16,Y+                                  
     ld          R17,Y+                                  
     rcall       usartf0_send_unsigned_16                ;undefined usartf0_send_unsigned_16(v...
     ldi         R16,0x20                                
-    rcall       usart_f0_send_msg                       ;undefined usart_f0_send_msg(void)
+    rcall       usart_f0_send_buf                       ;undefined usart_f0_send_buf(void)
     ld          R16,Y+                                  
     ld          R17,Y+                                  
     rcall       usartf0_send_unsigned_16                ;undefined usartf0_send_unsigned_16(v...
     ldi         R16,0x20                                
-    rcall       usart_f0_send_msg                       ;undefined usart_f0_send_msg(void)
+    rcall       usart_f0_send_buf                       ;undefined usart_f0_send_buf(void)
     ld          R16,Y+                                  
     ld          R17,Y+                                  
     rcall       usartf0_send_unsigned_16                ;undefined usartf0_send_unsigned_16(v...
     ldi         R16,0x20                                
-    rcall       usart_f0_send_msg                       ;undefined usart_f0_send_msg(void)
+    rcall       usart_f0_send_buf                       ;undefined usart_f0_send_buf(void)
     ld          R16,Y+                                  
     eor         R17,R17                                 
     rcall       usart_f0_send_32bit_hex_value           ;undefined usart_f0_send_32bit_hex_va...
@@ -3149,6 +3191,8 @@ LAB_code_000c91:
 ;*                                           FUNCTION                                           *
 ;************************************************************************************************
 ;undefined fpga_set_semicentral_lvl_a(void)
+.org (0x0cd3 << 1)
+fpga_set_semicentral_lvl_a:
     ldi         YL,0xa1                                
     ldi         YH,0x21                                
     ldi         R18,0x2                                 
@@ -3157,6 +3201,8 @@ LAB_code_000c91:
 ;*                                           FUNCTION                                           *
 ;************************************************************************************************
 ;undefined fpga_set_semicentral_lvl_c(void)
+.org (0x0cd7 << 1)
+fpga_set_semicentral_lvl_c:
     ldi         YL,0xa3                                
     ldi         YH,0x21                                
     ldi         R18,0x3                                 
@@ -3165,6 +3211,8 @@ LAB_code_000c91:
 ;*                                           FUNCTION                                           *
 ;************************************************************************************************
 ;undefined fpga_set_central_lvl_a(void)
+.org (0x0cdb << 1)
+fpga_set_central_lvl_a:
     ldi         YL,0xa5                                
     ldi         YH,0x21                                
     ldi         R18,0x4                                 
@@ -3173,6 +3221,8 @@ LAB_code_000c91:
 ;*                                           FUNCTION                                           *
 ;************************************************************************************************
 ;undefined fpga_set_central_lvl_c(void)
+.org (0x0cdf << 1)
+fpga_set_central_lvl_c:
     ldi         YL,0xa7                                
     ldi         YH,0x21                                
     ldi         R18,0x5                                 
@@ -3199,6 +3249,8 @@ LAB_code_000cec:
 ;*                                           FUNCTION                                           *
 ;************************************************************************************************
 ;undefined fpga_set_vertex_time_high_th(void)
+.org (0x0cf3 << 1)
+fpga_set_vertex_time_high_th:
     ldi         YL,0x9f                                
     ldi         YH,0x21                                
     ldi         R18,0x1                                 
@@ -3207,6 +3259,8 @@ LAB_code_000cec:
 ;*                                           FUNCTION                                           *
 ;************************************************************************************************
 ;undefined fpga_set_vertex_time_low_th(void)
+.org (0x0cf7 << 1)
+fpga_set_vertex_time_low_th:
     ldi         YL,0x9d                                
     ldi         YH,0x21                                
     ldi         R18,0x0                                 
@@ -3243,6 +3297,8 @@ LAB_code_000d13:
 ;*                                           FUNCTION                                           *
 ;************************************************************************************************
 ;undefined save_settings_to_eeprom(void)
+.org (0x0d14 << 1)
+save_settings_to_eeprom:
     rcall       usart_f0_get_next_byte_with_5f          ;undefined usart_f0_get_next_byte_wit...
     cpi         R16,0xd                                 
     brbc        CPU_Z_bp, LAB_code_000d13                    
@@ -3293,11 +3349,13 @@ LAB_code_000d40:
 ;*                                           FUNCTION                                           *
 ;************************************************************************************************
 ;undefined FUN_code_000d42(void)
+.org (0x0d42 << 1)
+FUN_code_000d42:
     and         R19,R19                                 
     brbs        CPU_Z_bp, LAB_code_000d58                    
     ldi         R16,0x35                                
     sts         NVM_CMD,R16                             ;= ??
-    sts         NVM,YL                                 ;= ??
+    sts         NVM_ADDR0,YL                                 ;= ??
     sts         NVM_ADDR1,YH                           ;= ??
     ldi         R16,0x1                                 
     ldi         R17,0xd8                                
@@ -3318,14 +3376,16 @@ LAB_code_000d59:
 ;*                                           FUNCTION                                           *
 ;************************************************************************************************
 ;undefined usart_f0_send_system_status(void)
+.org (0x0d5a << 1)
+usart_f0_send_system_status:
     rcall       usart_f0_get_next_byte_with_5f          ;undefined usart_f0_get_next_byte_wit...
     cpi         R16,0xd                                 
     brbc        CPU_Z_bp, LAB_code_000d59                    
     ldi         ZL,0x54                                
     ldi         ZH,0x2b                                
     rcall       usart_f0_send_msg                       ;undefined usart_f0_send_msg(void)
-    lds         R16,DAT_mem_21ab                      ;= ??
-    lds         R17,DAT_mem_21ac                   
+    lds         R16,0x21ab                      ;= ??
+    lds         R17,0x21ac                   
     rcall       usart_f0_send_32bit_hex_value           ;undefined usart_f0_send_32bit_hex_va...
     ldi         ZL,0x60                                
     ldi         ZH,0x2b                                
@@ -3343,9 +3403,9 @@ LAB_code_000d59:
     ldi         ZH,0x29                                
     rcall       usart_f0_send_msg                       ;undefined usart_f0_send_msg(void)
     cli                                                 
-    lds         R18,DAT_b_porte_1_5v_present            ;= ??
-    lds         R16,DAT_mem_2160                        ;= ??
-    lds         R17,DAT_mem_2161                        ;= ??
+    lds         R18,0x2157            ;= ??
+    lds         R16,0x2160                        ;= ??
+    lds         R17,0x2161                        ;= ??
     lds         R20,PORTE_IN                            ;= ??
     bset        CPU_I_bp                                    
     ldi         ZL,0xce                                
@@ -3405,7 +3465,7 @@ LAB_code_000dae:
     ldi         ZL,0x5e                                
     ldi         ZH,0x2a                                
     rcall       usart_f0_send_msg                       ;undefined usart_f0_send_msg(void)
-    lds         R19,DAT_clk_frs                         ;= ??
+    lds         R19,0x2162                         ;= ??
     ldi         ZL,0x6c                                
     ldi         ZH,0x2a                                
     sbrc        R19,0x1                                 
@@ -3442,7 +3502,7 @@ LAB_code_000dcd:
     ldi         ZH,0x2a                                
     rjmp        LAB_code_000da0                         
 LAB_code_000dd5:              
-    lds         R20,DAT_mem_2158                        ;= ??
+    lds         R20,0x2158                        ;= ??
     ldi         ZL,0xd0                                
     ldi         ZH,0x2a                                
     rcall       usart_f0_send_msg                       ;undefined usart_f0_send_msg(void)
@@ -3484,15 +3544,15 @@ LAB_code_000df4:
     ldd         R16,Z+0x2                               
     rcall       send_usartf0_ipaddr_octet               ;undefined send_usartf0_ipaddr_octet(...
     ldi         R16,0x2e                                
-    rcall       usart_f0_send_msg                       ;undefined usart_f0_send_msg(void)
+    rcall       usart_f0_send_buf                       ;undefined usart_f0_send_msg(void)
     ldd         R16,Z+0x3                               
     rcall       send_usartf0_ipaddr_octet               ;undefined send_usartf0_ipaddr_octet(...
     ldi         R16,0x2e                                
-    rcall       usart_f0_send_msg                       ;undefined usart_f0_send_msg(void)
+    rcall       usart_f0_send_buf                       ;undefined usart_f0_send_msg(void)
     ld          R16,Z                                   
     rcall       send_usartf0_ipaddr_octet               ;undefined send_usartf0_ipaddr_octet(...
     ldi         R16,0x2e                                
-    rcall       usart_f0_send_msg                       ;undefined usart_f0_send_msg(void)
+    rcall       usart_f0_send_buf                       ;undefined usart_f0_send_msg(void)
     ldd         R16,Z+0x1                               
     rcall       send_usartf0_ipaddr_octet               ;undefined send_usartf0_ipaddr_octet(...
     ldi         ZL,0x1e                                
@@ -3507,7 +3567,7 @@ LAB_code_000e0c:
     cpi         ZL,0x8d                                
     brbs        CPU_Z_bp, LAB_code_000e15                    
     ldi         R16,0x3a                                
-    rcall       usart_f0_send_msg                       ;undefined usart_f0_send_msg(void)
+    rcall       usart_f0_send_buf                       ;undefined usart_f0_send_msg(void)
     rjmp        LAB_code_000e0c                         
 LAB_code_000e15:              
     ldi         ZL,0xba                                
@@ -3519,18 +3579,20 @@ LAB_code_000e19:
 ;************************************************************************************************
 ;*                                           FUNCTION                                           *
 ;************************************************************************************************
-;undefined resolve_ca_msg(void)
+;undefined clear_alarms(void)
+.org (0x0e1a << 1)
+clear_alarms:
     rcall       usart_f0_get_next_byte_with_5f          ;undefined usart_f0_get_next_byte_wit...
     cpi         R16,0xd                                 
     brbc        CPU_Z_bp, LAB_code_000e19                    
     cli                                                 
-    lds         R16,DAT_b_porte_1_5v_present            ;= ??
+    lds         R16,0x2157            ;= ??
     in          R17,GPIO_GPIOR0                         
     andi        R17,0x3                                 
     brbc        CPU_Z_bp, LAB_code_000e2c                    
-    lds         R16,DAT_mem_2158                        ;= ??
+    lds         R16,0x2158                        ;= ??
     andi        R16,0xfd                                
-    sts         DAT_mem_2158,R16                        ;= ??
+    sts         0x2158,R16                        ;= ??
     bset        CPU_I_bp                                    
     ldi         ZL,0x3e                                
     ldi         ZH,0x2a                                
@@ -3545,20 +3607,20 @@ LAB_code_000e2c:
     rjmp        LAB_code_000e4f                         
 LAB_code_000e33:              
     cli                                                 
-    lds         R16,DAT_b_porte_1_5v_present            ;= ??
+    lds         R16,0x2157            ;= ??
 caseD_86:                     
     andi        R16,0x1f                                
-    sts         DAT_b_porte_1_5v_present,R16            ;= ??
+    sts         0x2157,R16            ;= ??
     eor         R16,R16                                 
-    sts         DAT_mem_2158,R16                        ;= ??
+    sts         0x2158,R16                        ;= ??
     ldi         R16,0x1                                 
-    sts         DAT_mem_215b,R16                        ;= ??
+    sts         0x215b,R16                        ;= ??
     ldi         R16,0b000000000000000000000100
     sts         PORTE_OUTCLR,R16                        ;= ??
     ldi         R16,0xd0                                
-    sts         DAT_mem_215c,R16                        ;= ??
+    sts         0x215c,R16                        ;= ??
     ldi         R16,0x7                                 
-    sts         DAT_mem_215d,R16                        ;= ??
+    sts         0x215d,R16                        ;= ??
     cbi         GPIO_GPIOR0,0x1                         
     ldi         R16,0b000000000000000001000001
     sts         PORTA_OUTSET,R16                        ;= ??
@@ -3575,6 +3637,8 @@ LAB_code_000e51:
 ;*                                           FUNCTION                                           *
 ;************************************************************************************************
 ;undefined fpga_set_IP_addr(void)
+.org (0x0e52 << 1)
+fpga_set_IP_addr:
     rcall       usart_f0_get_next_byte_with_5f          ;undefined usart_f0_get_next_byte_wit...
     cpi         R16,0x20                                
     brbc        CPU_Z_bp, LAB_code_000e51                    
@@ -3616,13 +3680,15 @@ LAB_code_000e73:
     st          Z+,R0                                   
     st          Z,R1                                    
     cli                                                 
-    rcall       fpga_send_msg_t3                        ;undefined fpga_send_msg_t3(void)
+    rcall       fpga_send_ip_addr                        ;undefined fpga_send_ip_addr(void)
     bset        CPU_I_bp                                    
     rjmp        LAB_code_000efe                         
 ;************************************************************************************************
 ;*                                           FUNCTION                                           *
 ;************************************************************************************************
 ;undefined fpga_set_mac_addr(void)
+.org (0x0e7d << 1)
+fpga_set_mac_addr:
     rcall       usart_f0_get_next_byte_with_5f          ;undefined usart_f0_get_next_byte_wit...
     cpi         R16,0x20                                
     brbc        CPU_Z_bp, LAB_code_000e51                    
@@ -3653,7 +3719,7 @@ LAB_code_000e91:
     st          Z+,R1                                   
     st          Z+,R0                                   
     cli                                                 
-    rcall       fpga_send_msg_t3                        ;undefined fpga_send_msg_t3(void)
+    rcall       fpga_send_ip_addr                        ;undefined fpga_send_ip_addr(void)
     bset        CPU_I_bp                                    
     rjmp        LAB_code_000efe                         
 LAB_code_000e9d:              
@@ -3662,6 +3728,8 @@ LAB_code_000e9d:
 ;*                                           FUNCTION                                           *
 ;************************************************************************************************
 ;undefined fpga_set_trigger_mode(void)
+.org (0x0e9e << 1)
+fpga_set_trigger_mode:
     rcall       usart_f0_get_next_byte_with_5f          ;undefined usart_f0_get_next_byte_wit...
     cpi         R16,0x20                                
     brbc        CPU_Z_bp, LAB_code_000e9d                    
@@ -3675,7 +3743,7 @@ LAB_code_000e9d:
     brbc        CPU_C_bp, LAB_code_000eaa                    
     ret                                                 
 LAB_code_000eaa:              
-    sts         DAT_mem_21a9,R20                        ;= ??
+    sts         0x21a9,R20                        ;= ??
     mov         R16,R20                                 
     ldi         R18,0x6                                 
     eor         R17,R17                                 
@@ -3687,6 +3755,8 @@ LAB_code_000eaa:
 ;*                                           FUNCTION                                           *
 ;************************************************************************************************
 ;undefined fpga_set_switches(void)
+.org (0x0eb3 << 1)
+fpga_set_switches:
     rcall       usart_f0_get_next_byte_with_5f          ;undefined usart_f0_get_next_byte_wit...
     cpi         R16,0x20                                
     brbc        CPU_Z_bp, LAB_code_000ed9                    
@@ -3710,7 +3780,7 @@ LAB_code_000ec0:
     brbc        CPU_C_bp, LAB_code_000ec8                    
     ret                                                 
 LAB_code_000ec8:              
-    sts         DAT_portb_setup,R20                     ;= ??
+    sts         0x219b,R20                     ;= ??
     mov         R16,R20                                 
     cli                                                 
     lds         R17,PORTB_OUT                           ;= ??
@@ -3730,6 +3800,8 @@ LAB_code_000ed9:
 ;*                                           FUNCTION                                           *
 ;************************************************************************************************
 ;undefined fpga_set_laser_phase(void)
+.org (0x0eda << 1)
+fpga_set_laser_phase:
     ldi         YL,0x97                                
     ldi         YH,0x21                                
     ldi         R18,0x12                                
@@ -3738,6 +3810,8 @@ LAB_code_000ed9:
 ;*                                           FUNCTION                                           *
 ;************************************************************************************************
 ;undefined fpga_set_c_side_phase(void)
+.org (0x0ede << 1)
+fpga_set_c_side_phase:
     ldi         YL,0x95                                
     ldi         YH,0x21                                
     ldi         R18,0x11                                
@@ -3746,6 +3820,8 @@ LAB_code_000ed9:
 ;*                                           FUNCTION                                           *
 ;************************************************************************************************
 ;undefined fpga_set_a_side_phase(void)
+.org (0x0ee2 << 1)
+fpga_set_a_side_phase:
     ldi         YL,0x93                                
     ldi         YH,0x21                                
     ldi         R18,0x10                                
@@ -3790,6 +3866,8 @@ LAB_code_000f03:
 ;*                                           FUNCTION                                           *
 ;************************************************************************************************
 ;undefined set_attenuator_steps(void)
+.org (0x0f04 << 1)
+set_attenuator_steps:
     rcall       usart_f0_get_next_byte_with_5f          ;undefined usart_f0_get_next_byte_wit...
     cpi         R16,0x20                                
     brbc        CPU_Z_bp, LAB_code_000f02                    
@@ -3816,7 +3894,7 @@ LAB_code_000f0e:
     st          Y,R20                                   
     std         Y+0x1,R21                               
     movw        R16,R20                           
-    lds         R18,DAT_mem_2185                        ;= ??
+    lds         R18,0x2185                        ;= ??
     and         R18,R18                                 
     brbs        CPU_Z_bp, LAB_code_000f2a                    
     brbc        CPU_N_bp, LAB_code_000f2e                    
@@ -3829,8 +3907,8 @@ LAB_code_000f0e:
     rcall       usart_f0_send_msg                       ;undefined usart_f0_send_msg(void)
     ret                                                 
 LAB_code_000f2a:              
-    sts         DAT_mem_2186,R20                        ;= ??
-    sts         DAT_mem_2187,R21                        ;= ??
+    sts         0x2186,R20                        ;= ??
+    sts         0x2187,R21                        ;= ??
 LAB_code_000f2e:              
     ori         R17,0x40                                
     ldi         R18,0x13                                
@@ -3840,7 +3918,7 @@ LAB_code_000f2e:
     mov         R17,R21                                 
     rcall       attenuator_set_steps                    ;undefined attenuator_set_steps(void)
     ldi         R16,0x48                                
-    sts         DAT_mem_2185,R16                        ;= ??
+    sts         0x2185,R16                        ;= ??
 LAB_code_000f37:              
     bset        CPU_I_bp                                    
     rjmp        LAB_code_000efe                         
@@ -3848,8 +3926,10 @@ LAB_code_000f37:
 ;*                                           FUNCTION                                           *
 ;************************************************************************************************
 ;undefined is_fpga_ready(void)
+.org (0x0f39 << 1)
+is_fpga_ready:
     clc                                                 
-    lds         R16,DAT_b_porte_1_5v_present            ;= ??
+    lds         R16,0x2157            ;= ??
     sbrc        R16,0x4                                 
     ret                                                 
 ;; Send "FPGA not ready"
@@ -3857,97 +3937,33 @@ LAB_code_000f37:
     ldi         ZH,0x2a                                
     rcall       usart_f0_send_msg                       ;undefined usart_f0_send_msg(void)
     bset        CPU_C_bp                                    
-    ret                                                 
-    align       align(1)                                
-    ??          27h    '                                
-    ??          24h    $                                
-    ??          9Fh                                     
-    ??          07h                                     
-    ??          FCh                                     
-    ??          13h                                     
-    ??          94h                                     
-    ??          01h                                     
-    ??          2Dh    -                                
-    ??          34h    4                                
-    ??          9Fh                                     
-    ??          00h                                     
-    ??          0Dh                                     
-    ??          11h                                     
-    ??          1Dh                                     
-    ??          52h    R                                
-    ??          03h                                     
-    ??          00h                                     
-    ??          0Dh                                     
-    ??          11h                                     
-    ??          1Dh                                     
-    ??          53h    S                                
-    ??          03h                                     
-    ??          10h                                     
-    ??          0Dh                                     
-    ??          08h                                     
-    ??          95h                                     
-    ??          11h                                     
-    ??          27h    '                                
-    ??          24h    $                                
-    ??          9Fh                                     
-    ??          07h                                     
-    ??          FCh                                     
-    ??          13h                                     
-    ??          94h                                     
-    ??          01h                                     
-    ??          2Dh    -                                
-    ??          34h    4                                
-    ??          9Fh                                     
-    ??          00h                                     
-    ??          0Dh                                     
-    ??          11h                                     
-    ??          1Dh                                     
-    ??          25h    %                                
-    ??          9Fh                                     
-    ??          00h                                     
-    ??          0Dh                                     
-    ??          11h                                     
-    ??          1Dh                                     
-    ??          35h    5                                
-    ??          9Fh                                     
-    ??          11h                                     
-    ??          20h                                     
-    ??          19h                                     
-    ??          F4h                                     
-    ??          10h                                     
-    ??          0Dh                                     
-    ??          08h                                     
-    ??          F0h                                     
-    ??          08h                                     
-    ??          95h                                     
-    ??          0Fh                                     
-    ??          EFh                                     
-    ??          1Fh                                     
-    ??          EFh                                     
-    ??          08h                                     
-    ??          95h                                     
+    ret                          
+
+.org (0xf43 << 1)
+	.byte       0x11, 0x27, 0x24, 0x9f, 0x07, 0xfc, 0x13, 0x94, 0x01, 0x2d, 0x34, 0x9f, 0x00, 0x0d, 0x11, 0x1d, 0x52, 0x03, 0x00, 0x0d, 0x11, 0x1d, 0x53, 0x03, 0x10, 0x0d, 0x08, 0x95, 0x11, 0x27, 0x24, 0x9f, 0x07, 0xfc, 0x13, 0x94, 0x01, 0x2d, 0x34, 0x9f, 0x00, 0x0d, 0x11, 0x1d, 0x25, 0x9f, 0x00, 0x0d, 0x11, 0x1d, 0x35, 0x9f, 0x11, 0x20, 0x19, 0xf4, 0x10, 0x0d, 0x08, 0xf0, 0x08, 0x95, 0x0f, 0xef, 0x1f, 0xef, 0x08, 0x95
+    
 ;************************************************************************************************
 ;*  @brief set fpga setting (type 2)                                                            *
 ;*                                                                                              *
 ;*  This function sends 2B of data to FPGA                                                      *
 ;*  without reading back                                                                        *
 ;************************************************************************************************
-;void fpga_send_msg_t2(undefined param_1, undefined2 param_2)
-          ;param_1       undefined          R18                      
-          ;param_2       undefined2      R17R16                      
-    push        param_1                                 
+;void fpga_send_msg_t2(undefined param_1, undefined2 param_2)    
+.org (0x0f65 << 1)
+fpga_send_msg_t2:
+    push        R18                                 
     push        R21                                     
     push        R22                                     
     ldi         R22,0xd1                                
-    sts         SPIC,R22                                ;= ??
+    sts         SPIC_CTRL,R22                                ;= ??
     eor         R21,R21                                 
-    lsr         param_1                                 
+    lsr         R18
     ror         R21                                     
-    lsr         param_1                                 
+    lsr         R18
     ror         R21                                     
     ldi         R22,0x1                                 
     sts         PORTD_OUTCLR,R22                        ;= ??
-    sts         SPIC_DATA,param_1                       ;= ??
+    sts         SPIC_DATA,R18                       ;= ??
 fpga_send_msg_t2_st_ready_1:  
     lds         R22,SPIC_STATUS                         ;= ??
     sbrs        R22,0x7                                 
@@ -3957,12 +3973,12 @@ fpga_send_msg_t2_st_ready_2:
     lds         R22,SPIC_STATUS                         ;= ??
     sbrs        R22,0x7                                 
     rjmp        fpga_send_msg_t2_st_ready_2             
-    sts         SPIC_DATA,param_2                       ;= ??
+    sts         SPIC_DATA,R17                       ;= ??
 fpga_send_msg_t2_st_ready_3:  
     lds         R22,SPIC_STATUS                         ;= ??
     sbrs        R22,0x7                                 
     rjmp        fpga_send_msg_t2_st_ready_3             
-    sts         SPIC_DATA,param_2                       ;= ??
+    sts         SPIC_DATA,R16                       ;= ??
 fpga_send_msg_t2_st_ready_4:  
     lds         R22,SPIC_STATUS                         ;= ??
     sbrs        R22,0x7                                 
@@ -3971,68 +3987,67 @@ fpga_send_msg_t2_st_ready_4:
     sts         PORTD_OUTSET,R22                        ;= ??
     pop         R22                                     
     pop         R21                                     
-    pop         param_1                                 
+    pop         R18                                 
     ret                                                 
 ;************************************************************************************************
 ;*                                           FUNCTION                                           *
 ;************************************************************************************************
 ;undefined fpga_send_msg_t1(undefined2 param_1, undefined2 param_2, undefined2 param_3, byte param_4, undefined2 param_5)
-          ;param_1       undefined2      R25R24                      
-          ;param_2       undefined2      R23R22                      
-          ;param_3       undefined2      R21R20                      
-          ;param_4       byte               R18                      
-          ;param_5       undefined2      R17R16                      
-    push        param_4                                 
-    push        param_3                                 
-    push        param_2                                 
-    ldi         param_2,0xd1                            
-    sts         SPIC,param_2                            ;= ??
-    ldi         param_2,0x1                             
-    lsr         param_4                                 
-    ror         param_3                                 
-    lsr         param_4                                 
-    ror         param_3                                 
-    ori         param_4,0x80                            
-    sts         PORTD_OUTCLR,param_2                    ;= ??
-    sts         SPIC_DATA,param_4                       ;= ??
+.org (0x0f92 << 1)
+fpga_send_msg_t1:
+    push        R18                              
+    push        R21
+    push        R22
+    ldi         R22,0xd1                            
+    sts         SPIC_CTRL,R22
+    ldi         R22,0x1                             
+    lsr         R18
+    ror         R21
+    lsr         R18
+    ror         R21
+    ori         R18,0x80                            
+    sts         PORTD_OUTCLR,R22
+    sts         SPIC_DATA,R18
 LAB_code_000fa2:              
-    lds         param_2,SPIC_STATUS                     ;= ??
-    sbrs        param_2,0x7                             
+    lds         R22,SPIC_STATUS                     ;= ??
+    sbrs        R22,0x7                             
     rjmp        LAB_code_000fa2                         
-    sts         SPIC_DATA,param_3                       ;= ??
+    sts         SPIC_DATA,R21
 LAB_code_000fa8:              
-    lds         param_2,SPIC_STATUS                     ;= ??
-    sbrs        param_2,0x7                             
+    lds         R22,SPIC_STATUS                     ;= ??
+    sbrs        R22,0x7                             
     rjmp        LAB_code_000fa8                         
-    sts         SPIC_DATA,param_5                       ;= ??
+    sts         SPIC_DATA,R17
 LAB_code_000fae:              
-    lds         param_2,SPIC_STATUS                     ;= ??
-    sbrs        param_2,0x7                             
+    lds         R22,SPIC_STATUS                     ;= ??
+    sbrs        R22,0x7                             
     rjmp        LAB_code_000fae                         
-    lds         param_5,SPIC_DATA                       ;= ??
-    sts         SPIC_DATA,param_5                       ;= ??
+    lds         R17,SPIC_DATA                       ;= ??
+    sts         SPIC_DATA,R16
 LAB_code_000fb6:              
-    lds         param_2,SPIC_STATUS                     ;= ??
-    sbrs        param_2,0x7                             
+    lds         R22,SPIC_STATUS                     ;= ??
+    sbrs        R22,0x7                             
     rjmp        LAB_code_000fb6                         
-    lds         param_5,SPIC_DATA                       ;= ??
-    ldi         param_2,0x1                             
-    sts         PORTD_OUTSET,param_2                    ;= ??
-    pop         param_2                                 
-    pop         param_3                                 
-    pop         param_4                                 
+    lds         R16,SPIC_DATA                       ;= ??
+    ldi         R22,0x1                             
+    sts         PORTD_OUTSET,R22
+    pop         R22
+    pop         R21
+    pop         R18
     ret                                                 
 ;************************************************************************************************
 ;*                                           FUNCTION                                           *
 ;************************************************************************************************
-;undefined fpga_send_msg_t3(void)
+;undefined fpga_send_ip_addr(void)
+.org (0x0fc3 << 1)
+fpga_send_ip_addr:
     push        R18                                     
     push        R21                                     
     push        R22                                     
     ldi         YL,0x89                                
     ldi         YH,0x21                                
     ldi         R22,0xd1                                
-    sts         SPIC,R22                                ;= ??
+    sts         SPIC_CTRL,R22                                ;= ??
     ldi         R18,0x3c                                
     eor         R21,R21                                 
     ldi         R22,0x1                                 
@@ -4066,6 +4081,8 @@ LAB_code_000fdf:
 ;*                                           FUNCTION                                           *
 ;************************************************************************************************
 ;undefined fpga_send_mcu_ts(void)
+.org (0x0fec << 1)
+fpga_send_mcu_ts:
     push        R18                                     
     push        R21                                     
     push        R22                                     
@@ -4074,7 +4091,7 @@ LAB_code_000fdf:
     ldi         ZL,0x7c                                
     ldi         ZH,0x2b                                
     ldi         R22,0xd1                                
-    sts         SPIC,R22                                ;= ??
+    sts         SPIC_CTRL,R22                                ;= ??
     ldi         R18,0x3d                                
     ldi         R21,0x40                                
     ldi         R22,0x1                                 
@@ -4116,6 +4133,8 @@ LAB_code_001011:
 ;*                                           FUNCTION                                           *
 ;************************************************************************************************
 ;undefined adt7311_send_1_byte(void)
+.org (0x1020 << 1)
+adt7311_send_1_byte:
     push        R16                                     
     push        R17                                     
     push        R18                                     
@@ -4137,6 +4156,8 @@ LAB_code_001011:
 ;*                                           FUNCTION                                           *
 ;************************************************************************************************
 ;undefined adt7311_send_2_bytes(void)
+.org (0x1033 << 1)
+adt7311_send_2_bytes:
     push        R16                                     
 caseD_82:                     
     push        R17                                     
@@ -4163,6 +4184,8 @@ caseD_98:
 ;*                                           FUNCTION                                           *
 ;************************************************************************************************
 ;undefined adt7311_clear_faults(void)
+.org (0x1049 << 1)
+adt7311_clear_faults:
     ldi         R16,0x10                                
 caseD_ae:                     
     sts         PORTA_OUTCLR,R16                        ;= ??
@@ -4182,6 +4205,8 @@ caseD_c4:
 ;*                                           FUNCTION                                           *
 ;************************************************************************************************
 ;undefined FUN_code_001058(void)
+.org (0x1058 << 1)
+FUN_code_001058:
     ldi         R18,0x8                                 
 LAB_code_001059:              
     ldi         R17,0x8                                 
@@ -4204,6 +4229,8 @@ LAB_code_001059:
 ;*                                           FUNCTION                                           *
 ;************************************************************************************************
 ;undefined FUN_code_00106e(void)
+.org (0x106e << 1)
+FUN_code_00106e:
     push        R22                                     
     push        R17                                     
     push        R18                                     
@@ -4254,63 +4281,60 @@ LAB_code_001092:
 ;*                        @brief Get integer value from USART F0 console                        *
 ;************************************************************************************************
 ;undefined5 usart_f0_get_integer(undefined2 param_1, undefined param_2, undefined2 param_3, undefined2 param_4, char unaff_R16)
-          ;param_1       undefined2      R25R24                      
-          ;param_2       undefined          R22                      
-          ;param_3       undefined2      R21R20                      
-          ;param_4       undefined2      R19R18                      
-          ;unaff_R16     char               R16                      
-    push        param_2                                 
+.org (0x1098 << 1)
+usart_f0_get_integer:
+    push        R22
     push        R17                                     
-    push        param_4                                 
-    push        param_4                                 
+    push        r18
+    push        R19
     push        R1                                      
     push        R0                                      
-    eor         param_4,param_4                         
+    eor         R18,R18
     ldi         R17,0xa                                 
-    eor         param_4,param_4                         
-    eor         param_3,param_3                         
-    eor         param_3,param_3                         
+    eor         R19,R19
+    eor         R20,R20
+    eor         R21,R21
 LAB_code_0010a3:              
     rcall       usart_f0_get_next_byte_with_5f          ;undefined usart_f0_get_next_byte_wit...
-    and         param_4,param_4                         
+    and         R18,R18
     brbc        CPU_Z_bp, LAB_code_0010ab                    
-    cpi         unaff_R16,0x2d                          
-    brbc       CPU_Z_bp,  LAB_code_0010ab                    
-    inc         param_4                                 
-    inc         param_4                                 
+    cpi         R16,0x2d                          
+    brbc        CPU_Z_bp,  LAB_code_0010ab                    
+    inc         R19
+    inc         R18
     rjmp        LAB_code_0010a3                         
 LAB_code_0010ab:              
-    inc         param_4                                 
-    cpi         unaff_R16,0x30                          
+    inc         R18
+    cpi         R16,0x30                          
     brbs        CPU_S_bp, LAB_code_0010bf                    
-    cpi         unaff_R16,0x3a                          
+    cpi         R16,0x3a                          
     brbc        CPU_S_bp, LAB_code_0010bf                    
-    mov         param_2,unaff_R16                       
-    subi        param_2,0x30                            
-    mul         param_3,R17                             
-    add         R0,param_2                              
-    eor         param_2,param_2                         
-    adc         R1,param_2                              
-    mov         param_2,param_3                         
-    mov         param_3,R1                              
-    mov         param_3,R0                              
-    mul         R17,param_2                             
+    mov         R22,R16                       
+    subi        R22,0x30                            
+    mul         R20,R17                             
+    add         R0,R22
+    eor         R22,R22
+    adc         R1,R22
+    mov         R22,R21
+    mov         R21,R1                              
+    mov         R20,R0                              
+    mul         R17,R22
     and         R1,R1                                   
     brbc        CPU_Z_bp, LAB_code_0010cc                    
-    add         param_3,R0                              
+    add         R21,R0                              
     brbc        CPU_C_bp, LAB_code_0010a3                    
     rjmp        LAB_code_0010cc                         
 LAB_code_0010bf:              
-    cpi         param_4,0x1                             
+    cpi         R18,0x1                             
     brbs        CPU_Z_bp, LAB_code_0010cc                    
-    and         param_4,param_4                         
+    and         R19,R19
     brbs        CPU_Z_bp, LAB_code_0010ca                    
-    cpi         param_4,0x2                             
+    cpi         R18,0x2                             
     brbs        CPU_Z_bp, LAB_code_0010cc                    
-    eor         param_4,param_4                         
-    neg         param_3                                 
-    adc         param_3,param_4                         
-    neg         param_3                                 
+    eor         R19,R19
+    neg         R20                                 
+    adc         R21,R19
+    neg         R21                                 
     brbc        CPU_N_bp, LAB_code_0010cc                    
 LAB_code_0010ca:              
     clc                                                 
@@ -4320,15 +4344,17 @@ LAB_code_0010cc:
 LAB_code_0010cd:              
     pop         R0                                      
     pop         R1                                      
-    pop         param_4                                 
-    pop         param_4                                 
+    pop         R19
+    pop         R18
     pop         R17                                     
-    pop         param_2                                 
+    pop         R22
     ret                                                 
 ;************************************************************************************************
 ;*                                           FUNCTION                                           *
 ;************************************************************************************************
 ;undefined usart_f0_get_next_hex_value(void)
+.org (0x10d4 << 1)
+usart_f0_get_next_hex_value:
     push        R22                                     
     push        R18                                     
     eor         R18,R18                                 
@@ -4376,6 +4402,8 @@ LAB_code_0010f7:
 ;*                             @brief USARTF0 send 32-bit hex value                             *
 ;************************************************************************************************
 ;undefined usart_f0_send_32bit_hex_value(void)
+.org (0x10fa << 1)
+usart_f0_send_32bit_hex_value:
     push        R16                                     
     push        R17                                     
     push        R18                                     
@@ -4403,18 +4431,22 @@ LAB_code_0010f7:
 ;*  and sends it. Only bits [3..0] are send.                                                    *
 ;************************************************************************************************
 ;undefined usart_f0_send_hex_digit(void)
+.org (0x110e << 1)
+usart_f0_send_hex_digit:
     andi        R16,0xf                                 
     subi        R16,0xd0                                
     cpi         R16,0x3a                                
     brbs        CPU_C_bp, LAB_code_001113                    
     subi        R16,0xf9                                
 LAB_code_001113:              
-    rcall       usart_f0_send_msg                       ;undefined usart_f0_send_msg(void)
+    rcall       usart_f0_send_buf                       ;undefined usart_f0_send_buf(void)
     ret                                                 
 ;************************************************************************************************
 ;*                                           FUNCTION                                           *
 ;************************************************************************************************
 ;undefined usartf0_send_attenuator_settings(void)
+.org (0x1115 << 1)
+usartf0_send_attenuator_settings:
     push        R20                                     
     ldi         R20,0x2                                 
     bset        CPU_C_bp                                    
@@ -4423,22 +4455,22 @@ LAB_code_001113:
 ;*                                           FUNCTION                                           *
 ;************************************************************************************************
 ;undefined uartf0_send_temperature(void)
+.org (0x1119 << 1)
+uartf0_send_temperature:
     push        R20                                     
     ldi         R20,0x1                                 
     bset        CPU_C_bp                                    
-    rjmp        LAB_code_001128                         
-    ??          4Fh    O                                
-    ??          93h                                     
-    ??          43h    C                                
-    ??          E0h                                     
-    ??          08h                                     
-    ??          94h                                     
-    ??          07h                                     
-    ??          C0h                                     
+    rjmp        LAB_code_001128
+
+.org (0x111d << 1)
+	.byte 		0x4f, 0x93, 0x43, 0xe0, 0x08, 0x94, 0x07, 0xc0	                    
+
 ;************************************************************************************************
 ;*                                           FUNCTION                                           *
 ;************************************************************************************************
 ;undefined usartf0_send_signed_16(void)
+.org (0x1121 << 1)
+usartf0_send_signed_16:
     push        R20                                     
     eor         R20,R20                                 
     bset        CPU_C_bp                                    
@@ -4447,6 +4479,8 @@ LAB_code_001113:
 ;*                                           FUNCTION                                           *
 ;************************************************************************************************
 ;undefined usartf0_send_unsigned_16(void)
+.org (0x1125 << 1)
+usartf0_send_unsigned_16:
     push        R20                                     
     eor         R20,R20                                 
     clc                                                 
@@ -4554,7 +4588,7 @@ LAB_code_00117d:
     ld          R16,Z+                                  
     and         R16,R16                                 
     brbs        CPU_Z_bp, LAB_code_001182                    
-    rcall       usart_f0_send_msg                       ;undefined usart_f0_send_msg(void)
+    rcall       usart_f0_send_buf                       ;undefined usart_f0_send_buf(void)
     rjmp        LAB_code_00117d                         
 LAB_code_001182:              
     pop         ZH                                     
@@ -4572,6 +4606,8 @@ LAB_code_001182:
 ;*                        @brief Set attenuator steps from HOME position                        *
 ;************************************************************************************************
 ;undefined attenuator_set_steps(void)
+.org (0x118d << 1)
+attenuator_set_steps:
     push        R14                                     
     push        R16                                     
     push        R17                                     
@@ -4638,6 +4674,8 @@ LAB_code_0011b8:
 ;*                                 @brief Send IP address octet                                 *
 ;************************************************************************************************
 ;undefined send_usartf0_ipaddr_octet(void)
+.org (0x11c6 << 1)
+send_usartf0_ipaddr_octet:
     push        R14                                     
     push        R16                                     
     push        R18                                     
@@ -4678,7 +4716,7 @@ LAB_code_0011e6:
     ld          R16,Z+                                  
     and         R16,R16                                 
     brbs        CPU_Z_bp, LAB_code_0011eb                    
-    rcall       usart_f0_send_msg                       ;undefined usart_f0_send_msg(void)
+    rcall       usart_f0_send_buf                       ;undefined usart_f0_send_buf(void)
     rjmp        LAB_code_0011e6                         
 LAB_code_0011eb:              
     pop         ZH                                     
@@ -4691,6 +4729,8 @@ LAB_code_0011eb:
 ;*                                           FUNCTION                                           *
 ;************************************************************************************************
 ;undefined usart_f0_send_cr(void)
+.org (0x11f1 << 1)
+usart_f0_send_cr:
     ldi         ZL,0xba                                
     ldi         ZH,0x29                                
     rcall       usart_f0_send_msg                       ;undefined usart_f0_send_msg(void)
@@ -4701,12 +4741,14 @@ LAB_code_0011eb:
 ;*  This function sends string from mem. via USART_F0                                           *
 ;************************************************************************************************
 ;undefined usart_f0_send_msg(void)
+.org (0x11f5 << 1)
+usart_f0_send_msg:
     push        R16                                     
 LAB_code_0011f6:              
     lpm         R16,Z+                                  
     and         R16,R16                                 
     brbs        CPU_Z_bp, LAB_code_0011fb                    
-    rcall       usart_f0_send_msg                       ;undefined usart_f0_send_msg(void)
+    rcall       usart_f0_send_buf                       ;undefined usart_f0_send_buf(void)
     rjmp        LAB_code_0011f6                         
 LAB_code_0011fb:              
     pop         R16                                     
@@ -4715,13 +4757,17 @@ LAB_code_0011fb:
 ;*                                           FUNCTION                                           *
 ;************************************************************************************************
 ;undefined uart_f0_get_next_byte(void)
+.org (0x11fd << 1)
+uart_f0_get_next_byte:
     push        R19                                     
     ldi         R19,0x1                                 
-    rjmp        usart_f0_get_next_byte_with_5f::usart...
+    rjmp        usart_f0_get_next_byte_entry
 ;************************************************************************************************
 ;*                        @brief Read byte from USARTF0 console and 0x5F                        *
 ;************************************************************************************************
 ;undefined usart_f0_get_next_byte_with_5f(void)
+.org (0x1200 << 1)
+usart_f0_get_next_byte_with_5f:
     push        R19                                     
     eor         R19,R19                                 
 usart_f0_get_next_byte_entry: 
@@ -4757,12 +4803,12 @@ LAB_code_00121c:
     add         ZL,R17                                 
     adc         ZH,R18                                 
     ld          R18,Z                                   
-    sts         DAT_mem_2000,R17                        ;= ??
+    sts         0x2000,R17                        ;= ??
     cpi         R18,0xd                                 
     brbc        CPU_Z_bp, LAB_code_00122b                    
-    lds         R17,DAT_usart_f0_new_line               ;= ??
+    lds         R17,0x2005               ;= ??
     dec         R17                                     
-    sts         DAT_usart_f0_new_line,R17               ;= ??
+    sts         0x2005,R17               ;= ??
 LAB_code_00122b:              
     cpi         R18,0x60                                
     brbs        CPU_S_bp, usart_f0_get_next_byte_exit        
@@ -4782,6 +4828,8 @@ usart_f0_get_next_byte_exit:
 ;*                       @brief Send buffered message to USARTF0 console                        *
 ;************************************************************************************************
 ;undefined usartf0_send_msg_2(void)
+.org (0x1238 << 1)
+usartf0_send_msg_2:
     push        ZH                                     
     push        ZL                                     
     push        R20                                     
@@ -4816,7 +4864,7 @@ LAB_code_001251:
     lds         R20,USARTF0_STATUS                      ;= ??
     sbrs        R20,0x5                                 
     rjmp        LAB_code_001247                         
-    sts         USARTF0,R16                             ;= ??
+    sts         USARTF0_DATA,R16                             ;= ??
     lds         R20,USARTF0_CTRLA                       ;= ??
     ori         R20,0x2                                 
     sts         USARTF0_CTRLA,R20                       ;= ??
@@ -4831,7 +4879,9 @@ LAB_code_001260:
 ;************************************************************************************************
 ;*                       @brief Send buffered message to USARTF0 console                        *
 ;************************************************************************************************
-;undefined usart_f0_send_msg(void)
+;undefined usart_f0_send_buf(void)
+.org (0x1267 << 1)
+usart_f0_send_buf:
     push        ZH                                     
     push        ZL                                     
     push        R20                                     
@@ -4872,7 +4922,7 @@ LAB_code_001285:
     lds         R20,USARTF0_STATUS                      ;= ??
     sbrs        R20,0x5                                 
     rjmp        LAB_code_00127a                         
-    sts         USARTF0,R16                             ;= ??
+    sts         USARTF0_DATA,R16                             ;= ??
     lds         R20,USARTF0_CTRLA                       ;= ??
     ori         R20,0x2                                 
     sts         USARTF0_CTRLA,R20                       ;= ??
@@ -4889,6 +4939,8 @@ LAB_code_001295:
 ;*                           @brieg Send buffered attenuator message                            *
 ;************************************************************************************************
 ;undefined USARTD0_send_msg(void)
+.org (0x129c << 1)
+USARTD0_send_msg:
     push        ZH                                     
     push        ZL                                     
     push        R20                                     
@@ -4927,7 +4979,7 @@ LAB_code_0012ba:
     lds         R20,USARTD0_STATUS                      ;= ??
     sbrs        R20,0x5                                 
     rjmp        LAB_code_0012af                         
-    sts         USARTD0,R16                             ;= ??
+    sts         USARTD0_DATA,R16                             ;= ??
     lds         R20,USARTD0_CTRLA                       ;= ??
     ori         R20,0x1                                 
     sts         USARTD0_CTRLA,R20                       ;= ??
@@ -4939,11 +4991,130 @@ LAB_code_0012c8:
     pop         ZL                                     
     pop         ZH                                     
     ret                                                 
-                                   
+
+.org (0x12ce << 1)
+    .byte       0x00, 0x04, 0x04, 0x0d, 0x11, 0x03, 0x14, 0x15, 0x29, 0x03, 0x17, 0x01, 0x22, 0x01, 0x45, 0x01, 0x4b, 0x01, 0x53, 0x01, 0x59, 0x01, 0x66, 0x01, 0x6f, 0x01, 0x74, 0x01, 0x83, 0x01, 0x89, 0x01, 0x8c, 0x01, 0x8f, 0x01, 0x94, 0x01, 0x9a, 0x01, 0xa0, 0x01, 0xa9, 0x01, 0xbd, 0x01, 0xcd, 0x01, 0xb3, 0x01, 0xd7, 0x01, 0xdd, 0x01, 0xe5, 0x01, 0xeb, 0x01, 0xf6, 0x01, 0x07, 0x02, 0x0d, 0x02, 0x13, 0x02, 0x20, 0x02, 0x26, 0x02, 0x2c, 0x02, 0x35, 0x02, 0x3b, 0x02, 0x41, 0x02, 0x4a, 0x02, 0x50, 0x02, 0x56, 0x02, 0x5f, 0x02, 0x65, 0x02, 0x6b, 0x02, 0x03, 0x02, 0x85, 0x02, 0x8b, 0x02, 0x91, 0x02, 0x06, 0x0c, 0x1e, 0x40, 0x1f, 0xc0, 0x20, 0xc0, 0x21, 0xc0, 0x22, 0xc0, 0x23, 0x00, 0x24, 0x06, 0x25, 0x06, 0x26, 0x06, 0x27, 0x06, 0x28, 0x63, 0x29, 0x0c, 0x2a, 0x23, 0x2d, 0x00, 0x2e, 0x00, 0x2f, 0x14, 0x30, 0xa2, 0x31, 0x00, 0x32, 0xc4, 0x33, 0x07, 0x34, 0x10, 0x35, 0x00, 0x36, 0x0e, 0x37, 0x00, 0x38, 0x00, 0x39, 0x00, 0x3a, 0x00, 0x3b, 0x01, 0x3c, 0x00, 0x3d, 0x00, 0x3e, 0x00, 0x3f, 0x10, 0x40, 0x00, 0x41, 0x1e, 0x42, 0x00, 0x43, 0x00, 0x44, 0x00, 0x45, 0x00, 0x46, 0x01, 0x47, 0x00, 0x48, 0x00, 0x49, 0x00, 0x4a, 0x10, 0x4b, 0x00, 0x4c, 0x1e, 0x4d, 0x00, 0x4e, 0x00, 0x4f, 0x00, 0x50, 0x00, 0x51, 0x01, 0x52, 0x00, 0x53, 0x00, 0x54, 0x00, 0x55, 0x10, 0x56, 0x00, 0x57, 0x1e, 0x58, 0x00, 0x59, 0x00, 0x5a, 0x00, 0x5b, 0x00, 0x5c, 0x01, 0x5d, 0x00, 0x5e, 0x00, 0x5f, 0x00, 0x61, 0x00, 0x62, 0x1e, 0x63, 0x00, 0x64, 0x00, 0x65, 0x00, 0x66, 0x00, 0x67, 0x01, 0x68, 0x00, 0x69, 0x00, 0x6a, 0x80, 0x6d, 0x04, 0x6e, 0xc0, 0x71, 0x04, 0x72, 0xc0, 0x75, 0x04, 0x76, 0xc0, 0x77, 0x00, 0x78, 0x00, 0x79, 0x00, 0x7a, 0xc0, 0x7b, 0x00, 0x7c, 0x00, 0x7d, 0x00, 0x7e, 0x00, 0x7f, 0x00, 0x80, 0x00, 0x81, 0x00, 0x82, 0x00, 0x83, 0x00, 0x84, 0x00, 0x85, 0x00, 0x86, 0x00, 0x87, 0x00, 0x88, 0x00, 0x89, 0x00, 0x8a, 0x00, 0x8b, 0x00, 0x8c, 0x00, 0x8d, 0x00, 0x8e, 0x00, 0x8f, 0x00, 0x90, 0x00, 0x98, 0x00, 0x99, 0x00, 0x9a, 0x00, 0x9b, 0x00, 0x9c, 0x00, 0x9d, 0x00, 0x9e, 0x00, 0x9f, 0x00, 0xa0, 0x00, 0xa1, 0x00, 0xa2, 0x00, 0xa3, 0x00, 0xa4, 0x00, 0xa5, 0x00, 0xa6, 0x00, 0xa7, 0x00, 0xa8, 0x00, 0xa9, 0x00, 0xaa, 0x00, 0xab, 0x00, 0xac, 0x00, 0xad, 0x00, 0xae, 0x00, 0xaf, 0x00, 0xb0, 0x00, 0xb1, 0x00, 0xb2, 0x00, 0xb3, 0x00, 0xb4, 0x00, 0xb5, 0x00, 0xb6, 0x00, 0xb7, 0x00, 0xb8, 0x00, 0xb9, 0x00, 0xba, 0x00, 0xbb, 0x00, 0xbc, 0x00, 0xbd, 0x00, 0xbe, 0x00, 0xbf, 0x00, 0xc0, 0x00, 0xc1, 0x00, 0xc2, 0x00, 0xc3, 0x00, 0xc4, 0x00, 0xc5, 0x00, 0xc6, 0x00, 0xc7, 0x00, 0xc8, 0x00, 0xc9, 0x00, 0xca, 0x00, 0xcb, 0x00, 0xcc, 0x00, 0xcd, 0x00, 0xce, 0x00, 0xcf, 0x00, 0xd0, 0x00, 0xd1, 0x00, 0xd2, 0x00, 0xd3, 0x00, 0xd4, 0x00, 0xd5, 0x00, 0xd6, 0x00, 0xd7, 0x00, 0xd8, 0x00, 0xd9, 0x00, 0xff, 0x01, 0x1f, 0x00, 0x20, 0x00, 0x21, 0x01, 0x22, 0x00, 0x23, 0x00, 0x24, 0x90, 0x25, 0x31, 0x26, 0x00, 0x27, 0x00, 0x28, 0x01, 0x29, 0x00, 0x2a, 0x00, 0x2b, 0x00, 0x2f, 0x00, 0x30, 0x00, 0x31, 0x01, 0x32, 0x00, 0x33, 0x00, 0x34, 0x90, 0x35, 0x31, 0x36, 0x00, 0x37, 0x00, 0x38, 0x01, 0x39, 0x00, 0x3a, 0x00, 0x3b, 0x00, 0x3f, 0x00, 0x40, 0x00, 0x41, 0x01, 0x42, 0x00, 0x43, 0x00, 0x44, 0x90, 0x45, 0x31, 0x46, 0x00, 0x47, 0x00, 0x48, 0x01, 0x49, 0x00, 0x4a, 0x00, 0x4b, 0x00, 0x4f, 0x00, 0x50, 0x00, 0x51, 0x00, 0x52, 0x00, 0x53, 0x00, 0x54, 0x90, 0x55, 0x31, 0x56, 0x00, 0x57, 0x00, 0x58, 0x01, 0x59, 0x00, 0x5a, 0x00, 0x5b, 0x00, 0xff, 0x00, 0x06, 0x0c, 0x1e, 0x40, 0x1f, 0xc0, 0x20, 0xe3, 0x21, 0xe3, 0x22, 0xc0, 0x23, 0x00, 0x24, 0x06, 0x25, 0x00, 0x26, 0x00, 0x27, 0x06, 0x28, 0x63, 0x29, 0x0c, 0x2a, 0x23, 0x2d, 0x00, 0x2e, 0x00, 0x2f, 0x14, 0x30, 0x9d, 0x31, 0x10, 0x32, 0xc5, 0x33, 0x07, 0x34, 0x10, 0x35, 0x00, 0x36, 0x04, 0x37, 0x00, 0x38, 0x00, 0x39, 0x00, 0x3a, 0x00, 0x3b, 0x01, 0x3c, 0x00, 0x3d, 0x00, 0x3e, 0x00, 0x3f, 0x10, 0x40, 0x00, 0x41, 0x00, 0x42, 0x00, 0x43, 0x00, 0x44, 0x00, 0x45, 0x00, 0x46, 0x01, 0x47, 0x00, 0x48, 0x00, 0x49, 0x00, 0x4a, 0x10, 0x4b, 0x00, 0x4c, 0x00, 0x4d, 0x00, 0x4e, 0x00, 0x4f, 0x00, 0x50, 0x00, 0x51, 0x00, 0x52, 0x00, 0x53, 0x00, 0x54, 0x00, 0x55, 0x10, 0x56, 0x00, 0x57, 0x1c, 0x58, 0x00, 0x59, 0x00, 0x5a, 0x00, 0x5b, 0x00, 0x5c, 0x01, 0x5d, 0x00, 0x5e, 0x00, 0x5f, 0x00, 0x61, 0x00, 0x62, 0x1c, 0x63, 0x00, 0x64, 0x00, 0x65, 0x00, 0x66, 0x00, 0x67, 0x01, 0x68, 0x00, 0x69, 0x00, 0x6a, 0x80, 0x6b, 0x00, 0x6c, 0x00, 0x6d, 0x00, 0x6e, 0xc0, 0x6f, 0x00, 0x70, 0x00, 0x71, 0x00, 0x72, 0xc0, 0x73, 0x00, 0x74, 0x80, 0x75, 0x00, 0x76, 0xc0, 0x77, 0x00, 0x78, 0x00, 0x79, 0x00, 0x7a, 0xc0, 0x7b, 0x00, 0x7c, 0x00, 0x7d, 0x00, 0x7e, 0x00, 0x7f, 0x00, 0x80, 0x00, 0x81, 0x00, 0x82, 0x00, 0x83, 0x00, 0x84, 0x00, 0x85, 0x00, 0x86, 0x00, 0x87, 0x00, 0x88, 0x00, 0x89, 0x00, 0x8a, 0x00, 0x8b, 0x00, 0x8c, 0x00, 0x8d, 0x00, 0x8e, 0x00, 0x8f, 0x00, 0x90, 0x00, 0x98, 0x00, 0x99, 0x00, 0x9a, 0x00, 0x9b, 0x00, 0x9c, 0x00, 0x9d, 0x00, 0x9e, 0x00, 0x9f, 0x00, 0xa0, 0x00, 0xa1, 0x00, 0xa2, 0x00, 0xa3, 0x00, 0xa4, 0x00, 0xa5, 0x00, 0xa6, 0x00, 0xa7, 0x00, 0xa8, 0x00, 0xa9, 0x00, 0xaa, 0x00, 0xab, 0x00, 0xac, 0x00, 0xad, 0x00, 0xae, 0x00, 0xaf, 0x00, 0xb0, 0x00, 0xb1, 0x00, 0xb2, 0x00, 0xb3, 0x00, 0xb4, 0x00, 0xb5, 0x00, 0xb6, 0x00, 0xb7, 0x00, 0xb8, 0x00, 0xb9, 0x00, 0xba, 0x00, 0xbb, 0x00, 0xbc, 0x00, 0xbd, 0x00, 0xbe, 0x00, 0xbf, 0x00, 0xc0, 0x00, 0xc1, 0x00, 0xc2, 0x00, 0xc3, 0x00, 0xc4, 0x00, 0xc5, 0x00, 0xc6, 0x00, 0xc7, 0x00, 0xc8, 0x00, 0xc9, 0x00, 0xca, 0x00, 0xcb, 0x00, 0xcc, 0x00, 0xcd, 0x00, 0xce, 0x00, 0xcf, 0x00, 0xd0, 0x00, 0xd1, 0x00, 0xd2, 0x00, 0xd3, 0x00, 0xd4, 0x00, 0xd5, 0x00, 0xd6, 0x00, 0xd7, 0x00, 0xd8, 0x00, 0xd9, 0x00, 0xff, 0x01, 0x1f, 0x00, 0x20, 0x00, 0x21, 0x01, 0x22, 0x00, 0x23, 0x00, 0x24, 0x90, 0x25, 0x31, 0x26, 0x00, 0x27, 0x00, 0x28, 0x01, 0x29, 0x00, 0x2a, 0x00, 0x2b, 0x00, 0x2f, 0x00, 0x30, 0x00, 0x31, 0x01, 0x32, 0x00, 0x33, 0x00, 0x34, 0x90, 0x35, 0x31, 0x36, 0x00, 0x37, 0x00, 0x38, 0x01, 0x39, 0x00, 0x3a, 0x00, 0x3b, 0x00, 0x3f, 0x00, 0x40, 0x00, 0x41, 0x01, 0x42, 0x00, 0x43, 0x00, 0x44, 0x90, 0x45, 0x31, 0x46, 0x00, 0x47, 0x00, 0x48, 0x01, 0x49, 0x00, 0x4a, 0x00, 0x4b, 0x00, 0x4f, 0x00, 0x50, 0x00, 0x51, 0x00, 0x52, 0x00, 0x53, 0x00, 0x54, 0x90, 0x55, 0x31, 0x56, 0x00, 0x57, 0x00, 0x58, 0x01, 0x59, 0x00, 0x5a, 0x00, 0x5b, 0x00, 0xff, 0x00
+
+.org (0x14cb << 1)
+    .string     "\r\nWUT TCM control interface ready\r\n"
+
+.org (0x14dd << 1)
+    .string     "\r\n"
+
+.org (0x14df << 1)
+    .string     "Syntax error\r\n"
+
+.org (0x14e7 << 1)
+    .string     "OK\r\n"
+
+.org (0x14ea << 1)
+    .string     "FAIL\r\n"
+
+.org (0x14ee << 1)
+    .string     "\r\nExternal power source: "
+
+.org (0x14fb << 1)
+    .string     "Temperature "
+
+.org (0x1502 << 1)
+    .string     " NORMAL"
+
+.org (0x1506 << 1)
+    .string     " LOW"
+
+.org (0x1509 << 1)
+    .string     " HIGH"
+
+.org (0x150c << 1)
+    .string     " CRITICAL"
+
+.org (0x1511 << 1)
+    .string     "\r\nBoard power "
+
+.org (0x1519 << 1)
+    .string     "ON, "
+
+.org (0x151c << 1)
+    .string     "OFF\r\n"
+
+.org (0x151f << 1)
+    .string     "No alarm, error flags cleared\r\n"
+
+.org (0x152f << 1)
+    .string     "Clock source "
+
+.org (0x1536 << 1)
+    .string     "PRIMARY"
+
+.org (0x153a << 1)
+    .string     "SECONDARY"
+
+.org (0x153f << 1)
+    .string     "INTERNAL"
+
+.org (0x1544 << 1)
+    .string     " (Forced)"
+
+.org (0x1549 << 1)
+    .string     ", PLL "
+
+.org (0x154d << 1)
+    .string     "NOT LOCKED\r\n"
+
+.org (0x1554 << 1)
+    .string     "FPGA not ready\r\n"
+
+.org (0x155d << 1)
+    .string     "FPGA ready\r\n"
+
+.org (0x1564 << 1)
+    .string     "Error\r\n"
+
+.org (0x1568 << 1)
+    .string     "IP Bus interface "
+
+.org (0x1571 << 1)
+    .string     "ON, \r\n"
+
+.org (0x1575 << 1)
+    .string     "GBT link "
+
+.org (0x157a << 1)
+    .string     " no errors\r\n"
+
+.org (0x1581 << 1)
+    .string     " RX errors\r\n"
+
+.org (0x1588 << 1)
+    .string     "IP address: "
+
+.org (0x158f << 1)
+    .string     "\r\nMAC address: "
+
+.org (0x1597 << 1)
+    .string     "Done\r\n\r\n"
+
+.org (0x159c << 1)
+    .string     "Attenuator not connected\r\n"
+
+.org (0x15aa << 1)
+    .string     "Board S/N: "
+
+.org (0x15b0 << 1)
+    .string     " Flash Timestamp: "
+
+.org (0x15ba << 1)
+	.byte       0x78, 0x56, 0x34, 0x12, 0x98, 0xba, 0xdc, 0xfe, 0x5e, 0x26, 0xab, 0x7a
+
+.org (0x100ee << 1)
+    .byte       0x2e, 0xc0, 0xff, 0xff, 0x00, 0xc0, 0xff, 0x93, 0xff, 0xb7, 0xff, 0x93, 0xef, 0x93, 0x3f, 0x93, 0x2f, 0x93, 0x1f, 0x93, 0x0f, 0x93, 0xe2, 0xe0, 0xf0, 0xe2, 0x01, 0x91, 0x11, 0x91, 0x20, 0x81, 0x22, 0x23, 0x11, 0xf0, 0x01, 0x17, 0x31, 0xf4, 0x30, 0x91, 0xa3, 0x0b, 0x3c, 0x7f, 0x30, 0x93, 0xa3, 0x0b, 0x0c, 0xc0, 0x03, 0x95, 0x11, 0x27, 0xe7, 0xe4, 0xf0, 0xe2, 0xe0, 0x0f, 0xf1, 0x1f, 0x10, 0x81, 0x10, 0x93, 0xa0, 0x0b, 0xe2, 0xe0, 0xf0, 0xe2, 0x00, 0x83, 0x0f, 0x91, 0x1f, 0x91, 0x2f, 0x91, 0x3f, 0x91, 0xef, 0x91, 0xff, 0x91, 0xff, 0xbf, 0xff, 0x91, 0x18, 0x95, 0xff, 0x93, 0xff, 0xb7, 0xff, 0x93, 0xef, 0x93, 0x3f, 0x93, 0x2f, 0x93, 0x1f, 0x93, 0x0f, 0x93, 0xe0, 0xe0, 0xf0, 0xe2, 0x01, 0x91, 0x10, 0x81, 0x13, 0x95, 0x1f, 0x73, 0x21, 0x2f, 0x2c, 0x5e, 0x2f, 0x73, 0x20, 0x17, 0x41, 0xf4, 0x21, 0xe0, 0x20, 0x93, 0xa5, 0x06, 0x20, 0x91, 0x05, 0x20, 0x20, 0x68, 0x20, 0x93, 0x05, 0x20, 0x30, 0x91, 0xa1, 0x0b, 0x20, 0x91, 0xa0, 0x0b, 0x34, 0xfd, 0x09, 0xc0, 0x01, 0x17, 0x39, 0xf0, 0x10, 0x83, 0xe7, 0xe0, 0xf0, 0xe2, 0x00, 0x27, 0xe1, 0x0f, 0xf0, 0x1f, 0x20, 0x83, 0x0f, 0x91, 0x1f, 0x91, 0x2f, 0x91, 0x3f, 0x91, 0xef, 0x91, 0xff, 0x91, 0xff, 0xbf, 0xff, 0x91, 0x18, 0x95, 0xff, 0x93, 0xff, 0xb7, 0xff, 0x93, 0xef, 0x93, 0xdf, 0x93, 0x2f, 0x93, 0x1f, 0x93, 0x0f, 0x93, 0xe4, 0xe0, 0xf0, 0xe2, 0xdd, 0x27, 0x00, 0x91, 0xa8, 0x06, 0x01, 0xfd, 0x1b, 0xc0, 0xd3, 0x95, 0x12, 0x91, 0x02, 0x91, 0x01, 0x17, 0xa9, 0xf0, 0x20, 0x91, 0xa1, 0x0b, 0x25, 0xff, 0x0c, 0xc0, 0x11, 0x27, 0x03, 0x95, 0xe7, 0xe4, 0xf0, 0xe2, 0xe0, 0x0f, 0xf1, 0x1f, 0x10, 0x81, 0x10, 0x93, 0xa0, 0x0b, 0xe2, 0xe0, 0xf0, 0xe2, 0x00, 0x83, 0x20, 0x91, 0xa3, 0x0b, 0x22, 0x60, 0x20, 0x93, 0xa3, 0x0b, 0x32, 0x96, 0xd0, 0x83, 0x0f, 0x91, 0x1f, 0x91, 0x2f, 0x91, 0xdf, 0x91, 0xef, 0x91, 0xff, 0x91, 0xff, 0xbf, 0xff, 0x91, 0x18, 0x95
+
 ;************************************************************************************************
 ;*                                           FUNCTION                                           *
 ;************************************************************************************************
 ;undefined xmega_firmware_update(void)
+.org (0x10184 << 1)
+xmega_firmware_update:
     bset        CPU_I_bp                                    
 LAB_code_010185:              
     mov         XL,R3                                  
@@ -4951,7 +5122,7 @@ LAB_code_010185:
     mov         YL,R5                                  
     ldi         R16,0x1                                 
     rcall       FUN_code_01023e                         ;undefined FUN_code_01023e(void)
-    lds         R6,RAMPZ                                
+    lds         R6,CPU_RAMPZ                                
     sub         XL,ZL                                 
     sbc         XH,ZH                                 
     sbc         YL,R6                                  
@@ -4981,7 +5152,7 @@ LAB_code_01019a:
     rjmp        LAB_code_0101ac                         
 LAB_code_0101a5:              
     spm         Z+                                      
-    lds         R6,RAMPZ                                
+    lds         R6,CPU_RAMPZ                                
     cp          ZL,R3                                  
     cpc         ZH,R4                                  
     cpc         R6,R5                                   
@@ -4999,7 +5170,7 @@ LAB_code_0101ac:
 LAB_code_0101b5:              
     rcall       FUN_code_0101f0                         ;undefined FUN_code_0101f0(void)
     rcall       FUN_code_0101eb                         ;undefined FUN_code_0101eb(void)
-    sts         NVM,R20                                 ;= ??
+    sts         NVM_ADDR0,R20                                 ;= ??
     sts         NVM_ADDR1,R21                           ;= ??
     sts         NVM_ADDR2,R22                           ;= ??
     sts         NVM_DATA0,R3                            ;= ??
@@ -5030,7 +5201,7 @@ LAB_code_0101dc:
     brbc        CPU_Z_bp, LAB_code_0101dc                    
     cli                                                 
     ldi         R16,0x1                                 
-    sts         SLEEP,R16                               ;= ??
+    sts         SLEEP_CTRL,R16                               ;= ??
     ldi         R16,0x1                                 
     ldi         R17,0xd8                                
     sts         CPU_CCP,R17                             ;= ??
@@ -5040,6 +5211,8 @@ LAB_code_0101dc:
 ;*                                    @brief Wait NVM status                                    *
 ;************************************************************************************************
 ;undefined FUN_code_0101eb(void)
+.org (0x101eb << 1)
+FUN_code_0101eb:
     lds         R16,NVM_STATUS                          ;= ??
     sbrc        R16,0x7                                 
     rjmp        FUN_code_0101eb                         
@@ -5048,6 +5221,8 @@ LAB_code_0101dc:
 ;*                                           FUNCTION                                           *
 ;************************************************************************************************
 ;undefined FUN_code_0101f0(void)
+.org (0x101f0 << 1)
+FUN_code_0101f0:
     ldi         R16,0x25                                
     sts         NVM_CMD,R16                             ;= ??
     ldi         R16,0x9d                                
@@ -5060,6 +5235,8 @@ LAB_code_0101dc:
 ;*                                           FUNCTION                                           *
 ;************************************************************************************************
 ;undefined FUN_code_0101fa(void)
+.org (0x101fa << 1)
+FUN_code_0101fa:
     push        R16                                     
     push        R17                                     
     push        R18                                     
@@ -5084,6 +5261,8 @@ LAB_code_0101dc:
 ;*                                           FUNCTION                                           *
 ;************************************************************************************************
 ;undefined FUN_code_01020e(void)
+.org (0x1020e << 1)
+FUN_code_01020e:
     andi        R16,0xf                                 
     subi        R16,0xd0                                
     cpi         R16,0x3a                                
@@ -5096,6 +5275,8 @@ LAB_code_010213:
 ;*                                           FUNCTION                                           *
 ;************************************************************************************************
 ;undefined FUN_code_010215(void)
+.org (0x10215 << 1)
+FUN_code_010215:
     push        R17                                     
     push        R18                                     
     push        R20                                     
@@ -5128,7 +5309,7 @@ LAB_code_01022f:
     add         ZL,R17                                 
     adc         ZH,R18                                 
     ld          R18,Z                                   
-    sts         DAT_mem_2000,R17                        ;= ??
+    sts         0x2000,R17                        ;= ??
     mov         R16,R18                                 
     pop         ZH                                     
     pop         ZL                                     
@@ -5140,6 +5321,8 @@ LAB_code_01022f:
 ;*                                           FUNCTION                                           *
 ;************************************************************************************************
 ;undefined FUN_code_01023e(void)
+.org (0x1023e << 1)
+FUN_code_01023e:
     push        ZH                                     
     push        ZL                                     
     push        R20                                     
@@ -5180,7 +5363,7 @@ LAB_code_01025c:
     lds         R20,USARTF0_STATUS                      ;= ??
     sbrs        R20,0x5                                 
     rjmp        LAB_code_010251                         
-    sts         USARTF0,R16                             ;= ??
+    sts         USARTF0_DATA,R16                             ;= ??
     lds         R20,USARTF0_CTRLA                       ;= ??
     ori         R20,0x2                                 
     sts         USARTF0_CTRLA,R20                       ;= ??

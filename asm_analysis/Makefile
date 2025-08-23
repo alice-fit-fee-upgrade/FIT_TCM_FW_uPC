@@ -7,7 +7,7 @@ OBJCOPY = avr-objcopy
 SIZE = avr-size
 
 # Project files
-TARGET = main
+TARGET = fit_tcm
 SRC = main.S
 OBJ = $(SRC:.asm=.o)
 INCDIR = .
@@ -15,7 +15,7 @@ INCDIR = .
 # Flags
 CFLAGS = -mmcu=$(MCU) -x assembler-with-cpp -I$(INCDIR)
 LDFLAGS = -mmcu=$(MCU) -nostartfiles
-HEXFLAGS = -O ihex -R .eeprom 
+HEXFLAGS = -O ihex --gap-fill=0xFF -R .eeprom 
 
 # Outputs
 ELF = $(TARGET).elf
