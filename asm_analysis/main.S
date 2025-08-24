@@ -1968,7 +1968,7 @@ main:
     ldi         R16,0xcb                                
     sts         OSC_XOSCCTRL,R16                        ;= ??
     ldi         R16,0x9                                 
-    sts         OSC_XOSCCTRL,R16                                 ;= ??
+    sts         OSC_CTRL,R16                                 ;= ??
 ;wait for OSC
 LAB_code_000807:              
     lds         R17,OSC_STATUS                          ;= ??
@@ -1977,7 +1977,7 @@ LAB_code_000807:
     ldi         R16,0xc2                                
     sts         OSC_PLLCTRL,R16                         ;= ??
     ldi         R16,0x19                                
-    sts         OSC_XOSCCTRL,R16                                 ;= ??
+    sts         OSC_CTRL,R16                                 ;= ??
 ;wait for OSC
 LAB_code_000811:              
     lds         R17,OSC_STATUS                          ;= ??
@@ -1988,7 +1988,7 @@ LAB_code_000811:
     sts         CPU_CCP,R17                             ;= ??
     sts         CLK_CTRL,R16                                 ;= ??
     ldi         R16,0x18                                
-    sts         OSC_XOSCCTRL,R16                                 ;= ??
+    sts         OSC_CTRL,R16                                 ;= ??
     ser         R25                                     
     out         CPU_SPL,R25                                 
     ldi         R25,0x3f                                
@@ -2720,7 +2720,8 @@ LAB_code_000aeb:
     sts         CPU_CCP,R17                             ;= ??
     sts         NVM_CTRLA,R16                           ;= ??
     bset        CPU_I_bp                                    
-    jmp         xmega_firmware_update                   ;undefined xmega_firmware_update(void)
+    ret
+    ;jmp         xmega_firmware_update                   ;undefined xmega_firmware_update(void)
 ;************************************************************************************************
 ;*                                           FUNCTION                                           *
 ;************************************************************************************************
@@ -5105,275 +5106,3 @@ LAB_code_0012c8:
 
 .org (0x15ba << 1)
 	.byte       0x78, 0x56, 0x34, 0x12, 0x98, 0xba, 0xdc, 0xfe, 0x5e, 0x26, 0xab, 0x7a
-
-.org (0x100ee << 1)
-    .byte       0x2e, 0xc0, 0xff, 0xff, 0x00, 0xc0, 0xff, 0x93, 0xff, 0xb7, 0xff, 0x93, 0xef, 0x93, 0x3f, 0x93, 0x2f, 0x93, 0x1f, 0x93, 0x0f, 0x93, 0xe2, 0xe0, 0xf0, 0xe2, 0x01, 0x91, 0x11, 0x91, 0x20, 0x81, 0x22, 0x23, 0x11, 0xf0, 0x01, 0x17, 0x31, 0xf4, 0x30, 0x91, 0xa3, 0x0b, 0x3c, 0x7f, 0x30, 0x93, 0xa3, 0x0b, 0x0c, 0xc0, 0x03, 0x95, 0x11, 0x27, 0xe7, 0xe4, 0xf0, 0xe2, 0xe0, 0x0f, 0xf1, 0x1f, 0x10, 0x81, 0x10, 0x93, 0xa0, 0x0b, 0xe2, 0xe0, 0xf0, 0xe2, 0x00, 0x83, 0x0f, 0x91, 0x1f, 0x91, 0x2f, 0x91, 0x3f, 0x91, 0xef, 0x91, 0xff, 0x91, 0xff, 0xbf, 0xff, 0x91, 0x18, 0x95, 0xff, 0x93, 0xff, 0xb7, 0xff, 0x93, 0xef, 0x93, 0x3f, 0x93, 0x2f, 0x93, 0x1f, 0x93, 0x0f, 0x93, 0xe0, 0xe0, 0xf0, 0xe2, 0x01, 0x91, 0x10, 0x81, 0x13, 0x95, 0x1f, 0x73, 0x21, 0x2f, 0x2c, 0x5e, 0x2f, 0x73, 0x20, 0x17, 0x41, 0xf4, 0x21, 0xe0, 0x20, 0x93, 0xa5, 0x06, 0x20, 0x91, 0x05, 0x20, 0x20, 0x68, 0x20, 0x93, 0x05, 0x20, 0x30, 0x91, 0xa1, 0x0b, 0x20, 0x91, 0xa0, 0x0b, 0x34, 0xfd, 0x09, 0xc0, 0x01, 0x17, 0x39, 0xf0, 0x10, 0x83, 0xe7, 0xe0, 0xf0, 0xe2, 0x00, 0x27, 0xe1, 0x0f, 0xf0, 0x1f, 0x20, 0x83, 0x0f, 0x91, 0x1f, 0x91, 0x2f, 0x91, 0x3f, 0x91, 0xef, 0x91, 0xff, 0x91, 0xff, 0xbf, 0xff, 0x91, 0x18, 0x95, 0xff, 0x93, 0xff, 0xb7, 0xff, 0x93, 0xef, 0x93, 0xdf, 0x93, 0x2f, 0x93, 0x1f, 0x93, 0x0f, 0x93, 0xe4, 0xe0, 0xf0, 0xe2, 0xdd, 0x27, 0x00, 0x91, 0xa8, 0x06, 0x01, 0xfd, 0x1b, 0xc0, 0xd3, 0x95, 0x12, 0x91, 0x02, 0x91, 0x01, 0x17, 0xa9, 0xf0, 0x20, 0x91, 0xa1, 0x0b, 0x25, 0xff, 0x0c, 0xc0, 0x11, 0x27, 0x03, 0x95, 0xe7, 0xe4, 0xf0, 0xe2, 0xe0, 0x0f, 0xf1, 0x1f, 0x10, 0x81, 0x10, 0x93, 0xa0, 0x0b, 0xe2, 0xe0, 0xf0, 0xe2, 0x00, 0x83, 0x20, 0x91, 0xa3, 0x0b, 0x22, 0x60, 0x20, 0x93, 0xa3, 0x0b, 0x32, 0x96, 0xd0, 0x83, 0x0f, 0x91, 0x1f, 0x91, 0x2f, 0x91, 0xdf, 0x91, 0xef, 0x91, 0xff, 0x91, 0xff, 0xbf, 0xff, 0x91, 0x18, 0x95
-
-;************************************************************************************************
-;*                                           FUNCTION                                           *
-;************************************************************************************************
-;undefined xmega_firmware_update(void)
-.org (0x10184 << 1)
-xmega_firmware_update:
-    bset        CPU_I_bp                                    
-LAB_code_010185:              
-    mov         XL,R3                                  
-    mov         XH,R4                                  
-    mov         YL,R5                                  
-    ldi         R16,0x1                                 
-    rcall       FUN_code_01023e                         ;undefined FUN_code_01023e(void)
-    lds         R6,CPU_RAMPZ                                
-    sub         XL,ZL                                 
-    sbc         XH,ZH                                 
-    sbc         YL,R6                                  
-    subi        XL,0xff                                
-    sbci        XH,0xff                                
-    sbci        YL,0xff                                
-    and         YL,YL                                 
-    brbc        CPU_Z_bp, LAB_code_010196                    
-    cpi         XH,0x2                                 
-    brbs        CPU_C_bp, LAB_code_010198                    
-LAB_code_010196:              
-    eor         XL,XL                                 
-    ldi         XH,0x2                                 
-LAB_code_010198:              
-    ldi         YL,0xae                                
-    ldi         YH,0x21                                
-LAB_code_01019a:              
-    rcall       FUN_code_010215                         ;undefined FUN_code_010215(void)
-    st          Y+,R16                                  
-    sbiw        X,0x1                                   
-    brbc        CPU_Z_bp, LAB_code_01019a                    
-    ldi         YL,0xae                                
-    ldi         YH,0x21                                
-    rcall       FUN_code_0101eb                         ;undefined FUN_code_0101eb(void)
-    ldi         R16,0x23                                
-    sts         NVM_CMD,R16                             ;= ??
-    rjmp        LAB_code_0101ac                         
-LAB_code_0101a5:              
-    spm         Z+                                      
-    lds         R6,CPU_RAMPZ                                
-    cp          ZL,R3                                  
-    cpc         ZH,R4                                  
-    cpc         R6,R5                                   
-    brbc        CPU_C_bp, LAB_code_0101b5                    
-LAB_code_0101ac:              
-    ld          R0,Y+                                   
-    ld          R1,Y+                                   
-    sbrs        ZH,0x0                                 
-    rjmp        LAB_code_0101a5                         
-    cpi         ZL,0xfe                                
-    brbc        CPU_Z_bp, LAB_code_0101a5                    
-    spm         Z                                       
-    rcall       FUN_code_0101f0                         ;undefined FUN_code_0101f0(void)
-    rjmp        LAB_code_010185                         
-LAB_code_0101b5:              
-    rcall       FUN_code_0101f0                         ;undefined FUN_code_0101f0(void)
-    rcall       FUN_code_0101eb                         ;undefined FUN_code_0101eb(void)
-    sts         NVM_ADDR0,R20                                 ;= ??
-    sts         NVM_ADDR1,R21                           ;= ??
-    sts         NVM_ADDR2,R22                           ;= ??
-    sts         NVM_DATA0,R3                            ;= ??
-    sts         NVM_DATA1,R4                            ;= ??
-    sts         NVM_DATA2,R5                            ;= ??
-    ldi         R16,0x3a                                
-    sts         NVM_CMD,R16                             ;= ??
-    ldi         R16,0x1                                 
-    ldi         R17,0xd8                                
-    cli                                                 
-    sts         CPU_CCP,R17                             ;= ??
-    sts         NVM_CTRLA,R16                           ;= ??
-    bset        CPU_I_bp                                    
-    rcall       FUN_code_0101eb                         ;undefined FUN_code_0101eb(void)
-    lds         R16,NVM_DATA2                           ;= ??
-    eor         R17,R17                                 
-    rcall       FUN_code_0101fa                         ;undefined FUN_code_0101fa(void)
-    lds         R16,NVM_DATA0                           ;= ??
-    lds         R17,NVM_DATA1                           ;= ??
-    rcall       FUN_code_0101fa                         ;undefined FUN_code_0101fa(void)
-    ldi         R16,0xd                                 
-    rcall       FUN_code_01023e                         ;undefined FUN_code_01023e(void)
-    ldi         R16,0xa                                 
-    rcall       FUN_code_01023e                         ;undefined FUN_code_01023e(void)
-LAB_code_0101dc:              
-    lds         R19,USARTF0_CTRLA                       ;= ??
-    andi        R19,0x3                                 
-    brbc        CPU_Z_bp, LAB_code_0101dc                    
-    cli                                                 
-    ldi         R16,0x1                                 
-    sts         SLEEP_CTRL,R16                               ;= ??
-    ldi         R16,0x1                                 
-    ldi         R17,0xd8                                
-    sts         CPU_CCP,R17                             ;= ??
-    sts         RST_CTRL,R16                            ;= ??
-    sleep                                               
-;************************************************************************************************
-;*                                    @brief Wait NVM status                                    *
-;************************************************************************************************
-;undefined FUN_code_0101eb(void)
-.org (0x101eb << 1)
-FUN_code_0101eb:
-    lds         R16,NVM_STATUS                          ;= ??
-    sbrc        R16,0x7                                 
-    rjmp        FUN_code_0101eb                         
-    ret                                                 
-;************************************************************************************************
-;*                                           FUNCTION                                           *
-;************************************************************************************************
-;undefined FUN_code_0101f0(void)
-.org (0x101f0 << 1)
-FUN_code_0101f0:
-    ldi         R16,0x25                                
-    sts         NVM_CMD,R16                             ;= ??
-    ldi         R16,0x9d                                
-    cli                                                 
-    sts         CPU_CCP,R16                             ;= ??
-    spm         Z+                                      
-    bset        CPU_I_bp                                    
-    ret                                                 
-;************************************************************************************************
-;*                                           FUNCTION                                           *
-;************************************************************************************************
-;undefined FUN_code_0101fa(void)
-.org (0x101fa << 1)
-FUN_code_0101fa:
-    push        R16                                     
-    push        R17                                     
-    push        R18                                     
-    mov         R18,R16                                 
-    swap        R17                                     
-    mov         R16,R17                                 
-    rcall       FUN_code_01020e                         ;undefined FUN_code_01020e(void)
-    swap        R17                                     
-    mov         R16,R17                                 
-    rcall       FUN_code_01020e                         ;undefined FUN_code_01020e(void)
-    swap        R18                                     
-    mov         R16,R18                                 
-    rcall       FUN_code_01020e                         ;undefined FUN_code_01020e(void)
-    swap        R18                                     
-    mov         R16,R18                                 
-    rcall       FUN_code_01020e                         ;undefined FUN_code_01020e(void)
-    pop         R18                                     
-    pop         R17                                     
-    pop         R16                                     
-    ret                                                 
-;************************************************************************************************
-;*                                           FUNCTION                                           *
-;************************************************************************************************
-;undefined FUN_code_01020e(void)
-.org (0x1020e << 1)
-FUN_code_01020e:
-    andi        R16,0xf                                 
-    subi        R16,0xd0                                
-    cpi         R16,0x3a                                
-    brbs        CPU_C_bp, LAB_code_010213                    
-    subi        R16,0xf9                                
-LAB_code_010213:              
-    rcall       FUN_code_01023e                         ;undefined FUN_code_01023e(void)
-    ret                                                 
-;************************************************************************************************
-;*                                           FUNCTION                                           *
-;************************************************************************************************
-;undefined FUN_code_010215(void)
-.org (0x10215 << 1)
-FUN_code_010215:
-    push        R17                                     
-    push        R18                                     
-    push        R20                                     
-    push        ZL                                     
-    push        ZH                                     
-    ldi         ZL,0x0                                 
-    ldi         ZH,0x20                                
-LAB_code_01021c:              
-    cli                                                 
-    ld          R17,Z                                   
-    ldd         R16,Z+0x1                               
-    bset        CPU_I_bp                                    
-    cp          R16,R17                                 
-    brbs        CPU_Z_bp, LAB_code_01021c                    
-    inc         R17                                     
-    andi        R17,0x3f                                
-    lds         R20,PORTF_OUT                           ;= ??
-    sbrs        R20,0x0                                 
-    rjmp        LAB_code_01022f                         
-    mov         R18,R17                                 
-    subi        R18,0xec                                
-    andi        R18,0x3f                                
-    cpse        R16,R18                                 
-    ldi         R20,0x1                                 
-    sts         PORTF_OUTCLR,R20                        ;= ??
-LAB_code_01022f:              
-    eor         R18,R18                                 
-    ldi         ZL,0x7                                 
-    ldi         ZH,0x20                                
-    add         ZL,R17                                 
-    adc         ZH,R18                                 
-    ld          R18,Z                                   
-    sts         0x2000,R17                        ;= ??
-    mov         R16,R18                                 
-    pop         ZH                                     
-    pop         ZL                                     
-    pop         R20                                     
-    pop         R18                                     
-    pop         R17                                     
-    ret                                                 
-;************************************************************************************************
-;*                                           FUNCTION                                           *
-;************************************************************************************************
-;undefined FUN_code_01023e(void)
-.org (0x1023e << 1)
-FUN_code_01023e:
-    push        ZH                                     
-    push        ZL                                     
-    push        R20                                     
-    push        R19                                     
-    push        R18                                     
-    push        R17                                     
-    ldi         ZL,0x2                                 
-    ldi         ZH,0x20                                
-LAB_code_010246:              
-    cli                                                 
-    ld          R17,Z+                                  
-    ld          R18,Z+                                  
-    cp          R17,R18                                 
-    brbs        CPU_Z_bp, LAB_code_01025c                    
-    inc         R18                                     
-    cp          R17,R18                                 
-    brbc        CPU_Z_bp, LAB_code_010251                    
-    bset        CPU_I_bp                                    
-    sbiw        Z,0x2                                   
-    rjmp        LAB_code_010246                         
-LAB_code_010251:              
-    ldi         ZL,0x47                                
-    ldi         ZH,0x20                                
-    eor         R17,R17                                 
-    add         ZL,R18                                 
-    adc         ZH,R17                                 
-    st          Z,R16                                   
-    ldi         ZL,0x3                                 
-    ldi         ZH,0x20                                
-    st          Z,R18                                   
-    bset        CPU_I_bp                                    
-    rjmp        LAB_code_01026c                         
-LAB_code_01025c:              
-    inc         R18                                     
-    ld          R19,Z                                   
-    and         R19,R19                                 
-    brbs        CPU_Z_bp, LAB_code_010251                    
-    lds         R20,USARTF0_STATUS                      ;= ??
-    sbrs        R20,0x5                                 
-    rjmp        LAB_code_010251                         
-    sts         USARTF0_DATA,R16                             ;= ??
-    lds         R20,USARTF0_CTRLA                       ;= ??
-    ori         R20,0x2                                 
-    sts         USARTF0_CTRLA,R20                       ;= ??
-    bset        CPU_I_bp                                    
-LAB_code_01026c:              
-    pop         R17                                     
-    pop         R18                                     
-    pop         R19                                     
-    pop         R20                                     
-    pop         ZL                                     
-    pop         ZH                                     
-    ret                                                 
-

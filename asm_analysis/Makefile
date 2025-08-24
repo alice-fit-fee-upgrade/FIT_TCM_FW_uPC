@@ -15,7 +15,7 @@ INCDIR = .
 # Flags
 CFLAGS = -mmcu=$(MCU) -x assembler-with-cpp -I$(INCDIR)
 LDFLAGS = -mmcu=$(MCU) -nostartfiles
-HEXFLAGS = -O ihex --gap-fill=0xFF -R .eeprom 
+HEXFLAGS = -O ihex -R .eeprom 
 
 # Outputs
 ELF = $(TARGET).elf
