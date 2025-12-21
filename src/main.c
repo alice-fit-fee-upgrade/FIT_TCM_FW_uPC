@@ -7,10 +7,8 @@
  * @target  ATxmega128A3 @ 32 MHz
  *
  * @details
- * Main entry point for the TCM firmware.
- * Initializes hardware, peripherals, and subsystems.
- * Starts the main control and processing loops.
- * Coordinates overall firmware operation.
+ * Contains the main loop of the TCM firmware. Responsible for subsystem
+ * initialization, cyclic module handling, and execution of safety procedures.
  */
 
 /*

@@ -7,10 +7,9 @@
  * @target  ATxmega128A3 @ 32 MHz
  *
  * @details
- * Implements communication interfaces for the TCM.
- * Handles command parsing and response generation.
- * Provides configuration and diagnostic access.
- * Supports runtime monitoring and control.
+ * Implements an intermediate console layer that bridges the legacy API with
+ * new command parsers. Handles communication via the X36 and RJ45 interfaces
+ * and forwards data to the appropriate parsers.
  */
 
 /*

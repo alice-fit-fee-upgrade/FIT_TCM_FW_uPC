@@ -7,10 +7,9 @@
  * @target  ATxmega128A3 @ 32 MHz
  *
  * @details
- * Implements core functionality of the TCM subsystem.
- * Handles control and coordination tasks.
- * Interfaces with other firmware modules.
- * Supports configuration and monitoring features.
+ * Declares the API of the clock management module. Provides functions for TWI
+ * interface initialization, interrupt handling, and updating clock status and
+ * clock source selection lines.
  */
 
 /*

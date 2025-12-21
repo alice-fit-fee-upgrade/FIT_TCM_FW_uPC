@@ -7,10 +7,10 @@
  * @target  ATxmega128A3 @ 32 MHz
  *
  * @details
- * Implements core functionality of the TCM subsystem.
- * Handles control and coordination tasks.
- * Interfaces with other firmware modules.
- * Supports configuration and monitoring features.
+ * Implements system clock management in the TCM, including communication with
+ * Si5338A/B clock generators and the Si53301 multiplexer. Monitors clock
+ * signal presence, selects the active source, and updates system status in
+ * case of clock loss.
  */
 
 /*

@@ -7,10 +7,9 @@
  * @target  ATxmega128A3 @ 32 MHz
  *
  * @details
- * Implements core functionality of the TCM subsystem.
- * Handles control and coordination tasks.
- * Interfaces with other firmware modules.
- * Supports configuration and monitoring features.
+ * Responsible for the TCM system startup sequence and interconnection of
+ * logical modules. Initializes subsystems in a defined order and registers
+ * callback mechanisms.
  */
 
 /*

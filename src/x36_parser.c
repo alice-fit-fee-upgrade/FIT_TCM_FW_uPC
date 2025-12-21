@@ -7,10 +7,9 @@
  * @target  ATxmega128A3 @ 32 MHz
  *
  * @details
- * Implements core functionality of the TCM subsystem.
- * Handles control and coordination tasks.
- * Interfaces with other firmware modules.
- * Supports configuration and monitoring features.
+ * Implements a parser for the binary communication protocol used on the X36
+ * interface. Responsible for frame decoding and handling communication with an
+ * external controller.
  */
 
 /*

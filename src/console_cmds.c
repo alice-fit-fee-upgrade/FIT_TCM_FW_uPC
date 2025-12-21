@@ -7,10 +7,9 @@
  * @target  ATxmega128A3 @ 32 MHz
  *
  * @details
- * Implements communication interfaces for the TCM.
- * Handles command parsing and response generation.
- * Provides configuration and diagnostic access.
- * Supports runtime monitoring and control.
+ * Implements the complete set of commands available via the text console.
+ * Handles system configuration, EEPROM parameter read/write operations, and
+ * diagnostic commands.
  */
 
 /*

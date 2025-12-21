@@ -7,10 +7,9 @@
  * @target  ATxmega128A3 @ 32 MHz
  *
  * @details
- * Implements core functionality of the TCM subsystem.
- * Handles control and coordination tasks.
- * Interfaces with other firmware modules.
- * Supports configuration and monitoring features.
+ * Implements a software (bit-banging) SPI driver for the ADT7311 temperature
+ * sensor. Responsible for sensor initialization and reading temperature data
+ * used to monitor TCM operating conditions.
  */
 
 /*

@@ -7,10 +7,7 @@
  * @target  ATxmega128A3 @ 32 MHz
  *
  * @details
- * Implements core functionality of the TCM subsystem.
- * Handles control and coordination tasks.
- * Interfaces with other firmware modules.
- * Supports configuration and monitoring features.
+ * Declares the interface of the ASCII command parser for the RJ45 console.
  */
 
 #ifndef RJ45_PARSER_H
